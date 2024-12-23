@@ -79,7 +79,7 @@ const Header = () => {
                                 <Button
                                     variant="text"
                                     color="primary"
-                                    onClick={() => handleNavigation('/login')} 
+                                    onClick={() => handleNavigation('/auth?page=login')} 
                                 >
                                     Login
                                 </Button>
@@ -94,7 +94,7 @@ const Header = () => {
                                 <Button
                                     variant="contained"
                                     color="primary"
-                                    onClick={() => handleNavigation('/signup')} 
+                                    onClick={() => handleNavigation('/auth?page=signup')} 
                                 >
                                     Sign Up
                                 </Button>
@@ -153,10 +153,10 @@ const Header = () => {
 
                         <Divider sx={{ marginY: 1 }} />
 
-                        <ListItem onClick={() => handleNavigation('/login')}>
+                        <ListItem onClick={() => handleNavigation('/auth?page=login')}>
                             <Button fullWidth >Login</Button>
                         </ListItem>
-                        <ListItem onClick={() => handleNavigation('/signup')}>
+                        <ListItem onClick={() => handleNavigation('/auth?page=signup')}>
                             <Button variant="contained" fullWidth >Sign Up</Button>
                         </ListItem>
                     </List>

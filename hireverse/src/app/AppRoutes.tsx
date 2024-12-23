@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import ProtectedRoute from './ProtectedRoute';
 import NotFoundPage from '../pages/NotFoundPage';
+import AuthPage from '../pages/AuthPage';
 
 const LandingRoutes = lazy(() => import('../features/landing/routes'))
 const AdminRoutes = lazy(() => import('../features/admin/routes'));
@@ -15,6 +16,9 @@ const AppRoutes = () => {
             <Suspense fallback={<div>Loading...</div>}>
                 <Routes>
                     <Route path="/" element={<LandingRoutes />} />
+
+                    <Route path='/auth' element={<AuthPage/>}/>
+
                     <Route
                         path="/admin/*"
                         element={
