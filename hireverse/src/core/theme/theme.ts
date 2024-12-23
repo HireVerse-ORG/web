@@ -16,10 +16,14 @@ const theme = createTheme({
   components: {
     MuiButton: {
       styleOverrides: {
+        root: {
+          borderRadius: '0px', 
+          padding: '10px 20px',
+          fontWeight: 600, 
+          textTransform: 'none', 
+          boxShadow: 'none'
+        },
       },
-    },
-    MuiTypography: {
-    
     },
   },
 });

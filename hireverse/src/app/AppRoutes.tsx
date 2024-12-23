@@ -1,9 +1,9 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import LandingPage from '../pages/LandingPage';
 import { lazy, Suspense } from 'react';
 import ProtectedRoute from './ProtectedRoute';
 import NotFoundPage from '../pages/NotFoundPage';
 
+const LandingRoutes = lazy(() => import('../features/landing/routes'))
 const AdminRoutes = lazy(() => import('../features/admin/routes'));
 const CompanyRoutes = lazy(() => import('../features/company/routes'));
 const SeekerRoutes = lazy(() => import('../features/seeker/routes')); 
@@ -14,7 +14,7 @@ const AppRoutes = () => {
         <BrowserRouter>
             <Suspense fallback={<div>Loading...</div>}>
                 <Routes>
-                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/" element={<LandingRoutes />} />
                     <Route
                         path="/admin/*"
                         element={

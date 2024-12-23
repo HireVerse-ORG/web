@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import SeekerDashboard from "./components/SeekerDashboard";
 
-const AdminRoutes = () => {
+const SeekerRoutes = () => {
     return (
         <Routes>
           <Route path="/" element={<SeekerDashboard />} />
@@ -9,4 +9,4 @@ const AdminRoutes = () => {
       );
 }
 
-export default AdminRoutes;
+export default SeekerRoutes;

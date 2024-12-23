@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import CompanyDashboard from "./components/CompanyDashboard";
 
-const AdminRoutes = () => {
+const CompanyRoutes = () => {
     return (
         <Routes>
           <Route path="/" element={<CompanyDashboard />} />
@@ -9,4 +9,4 @@ const AdminRoutes = () => {
       );
 }
 
-export default AdminRoutes;
+export default CompanyRoutes;
