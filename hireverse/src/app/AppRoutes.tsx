@@ -2,9 +2,9 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import ProtectedRoute from './ProtectedRoute';
 import NotFoundPage from '../pages/NotFoundPage';
-import AuthPage from '../pages/AuthPage';
 
 const LandingRoutes = lazy(() => import('../features/landing/routes'))
+const AuthPage = lazy(() => import('../features/auth/routes'))
 const AdminRoutes = lazy(() => import('../features/admin/routes'));
 const CompanyRoutes = lazy(() => import('../features/company/routes'));
 const SeekerRoutes = lazy(() => import('../features/seeker/routes')); 
@@ -17,7 +17,7 @@ const AppRoutes = () => {
                 <Routes>
                     <Route path="/" element={<LandingRoutes />} />
 
-                    <Route path='/auth' element={<AuthPage/>}/>
+                    <Route path='/auth/*' element={<AuthPage/>}/>
 
                     <Route
                         path="/admin/*"

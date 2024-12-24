@@ -1,5 +1,7 @@
 import { Box, useTheme, useMediaQuery } from "@mui/material";
-import Logo from "../Logo";
+import Logo from "../../../../core/components/Logo";
+import useAppSelector from "@core/hooks/useSelector";
+import { Navigate } from "react-router-dom";
 
 type AuthLayoutProps = {
     children: React.ReactNode;
@@ -7,11 +9,20 @@ type AuthLayoutProps = {
 };
 
 const AuthLayout = ({ children, imageSrc = "/images/working-beach.png" }: AuthLayoutProps) => {
+    const user = useAppSelector(state => state.auth.user);
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
+    if(user){
+        if(user.role === "admin") return <Navigate to={'/admin'}/>
+        if(user.role === "seeker") return <Navigate to={'/seeker'}/>
+        if(user.role === "company") return <Navigate to={'/company'}/>
+    }
+
     return (
-        <Box display={isSmallScreen ? "block" : "flex"} height="100vh">
+        <Box display={isSmallScreen ? "block" : "flex"} height="100vh" sx={{
+            overflow: "hidden"
+        }}>
             {!isSmallScreen && (
                 <Box
                     display="flex"
@@ -45,12 +56,14 @@ const AuthLayout = ({ children, imageSrc = "/images/working-beach.png" }: AuthLa
             <Box
                 display="flex"
                 flexDirection="column"
-                justifyContent="center"
+                justifyContent="top"
                 alignItems="center"
                 flex={1}
                 sx={{
                     backgroundColor: "white",
                     padding: 3,
+                    height: '100%',
+                    overflowY: 'scroll'
                 }}
             >
                 {isSmallScreen && (

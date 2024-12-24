@@ -1,24 +1,16 @@
 import { useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import { Box, Button, Typography, Link } from "@mui/material";
-import AuthLayout from "@core/components/layouts/AuthLayout";
-import LoginForm from "@core/components/Forms/LoginForm";
-import SignUpForm from "@core/components/Forms/SignUpForm";
+import { useSearchParams } from "react-router-dom";
+import { Box, Button, Typography } from "@mui/material";
+import AuthLayout from "../components/layouts/AuthLayout";
+import LoginForm from "../components/LoginForm";
+import SignupForm from "../components/SignupForm";
 
 type UserType = "seeker" | "company";
 
 const AuthPage = () => {
     const [searchParams] = useSearchParams();
-    const navigate = useNavigate();
-
     const currentPage = searchParams.get("page") || "login";
-
     const [userType, setUserType] = useState<UserType>("seeker");
-
-    const togglePage = () => {
-        const newPage = currentPage === "login" ? "signup" : "login";
-        navigate(`/auth?page=${newPage}`);
-    };
 
     const tabButtonStyle = (activeFor: UserType) => {
         return {
@@ -71,23 +63,8 @@ const AuthPage = () => {
                     {currentPage === "login" ? (
                         <LoginForm />
                     ) : (
-                        <SignUpForm />
+                        <SignupForm />
                     )}
-                </Box>
-
-
-                <Box mt={2} color={"text.disabled"} textAlign={"left"}>
-                    {currentPage === "login" ? "Don't have an account? " : "Already have an account? "}
-                    <Link
-                        component="button"
-                        variant="body1"
-                        onClick={togglePage}
-                        fontWeight={500}
-                    >
-                        {currentPage === "login"
-                            ? "Sign up"
-                            : "Login"}
-                    </Link>
                 </Box>
             </Box>
         </AuthLayout>

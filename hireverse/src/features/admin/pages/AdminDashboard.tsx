@@ -1,6 +1,5 @@
 
 const AdminDashboard = () => {
-    console.log('AdminDashboard');
     return (
         <div>
             <h1>Admin Dashboard</h1>
