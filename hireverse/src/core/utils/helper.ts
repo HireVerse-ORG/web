@@ -11,3 +11,11 @@ export const getUserDashboardPath = (user: UserRoles) => {
     
     return dashboardPath
 }
+
+export const maskEmail = (email: string, visibleChars = 2) => {
+    const [localPart, domain] = email.split("@");
+    const visiblePart = localPart.slice(0, visibleChars);
+    const maskedLocalPart = `${visiblePart}${"*".repeat(localPart.length - visibleChars)}`;
+    return `${maskedLocalPart}@${domain}`;
+};
+

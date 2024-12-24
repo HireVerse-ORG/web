@@ -1,18 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Box, Button, Typography } from "@mui/material";
 import AuthLayout from "../components/layouts/AuthLayout";
-import LoginForm from "../components/LoginForm";
-import SignupForm from "../components/SignupForm";
+import LoginForm from "../components/forms/LoginForm";
+import SignupForm from "../components/forms/SignupForm";
+import { UserRoles } from "@core/types/user.interface";
 
-type UserType = "seeker" | "company";
 
 const AuthPage = () => {
     const [searchParams] = useSearchParams();
     const currentPage = searchParams.get("page") || "login";
-    const [userType, setUserType] = useState<UserType>("seeker");
+    const [userType, setUserType] = useState<UserRoles>("seeker");
+    
+    const imagePath = (userType === "company" ? '/images/team.png' : '/images/working-beach.png');
 
-    const tabButtonStyle = (activeFor: UserType) => {
+    useEffect(() => {
+        sessionStorage.removeItem("otpStartTime")
+        sessionStorage.removeItem('verifyPageActive');
+    }, [])
+
+    const tabButtonStyle = (activeFor: UserRoles) => {
         return {
             padding: "8px 16px",
             backgroundColor: userType === activeFor ? "#E9EBFD" : "transparent",
@@ -27,7 +34,7 @@ const AuthPage = () => {
     }
 
     return (
-        <AuthLayout>
+        <AuthLayout imageSrc={imagePath}>
             <Box textAlign="center" width="100%" sx={{ width: '100%', maxWidth: 400, mx: 'auto' }}>
                 <Box mb={3} display="flex" justifyContent="center" gap={1}>
                     <Button
