@@ -1,12 +1,14 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import AdminDashboard from "./pages/AdminDashboard";
 import DashboardLayout from "@core/components/layouts/DashboardLayout";
-import Sidebar from "@core/components/Sidebar";
+import Sidebar from "@core/components/ui/Sidebar";
 import { SidebarSection } from "@core/types/sidebar.interface";
 import { HomeOutlined, SettingsOutlined, StarBorderOutlined } from "@mui/icons-material";
 import SkillsPage from "./pages/SkillsPage";
+import SettingsPage from "./pages/SettingsPage";
+import ContentLayout from "./components/layouts/ContentLayout";
 
-const sections: SidebarSection[] = [
+export const sections: SidebarSection[] = [
   {
     items: [
       { name: "Dashboard", icon: <HomeOutlined />, path: "/admin" },
@@ -23,17 +25,13 @@ const sections: SidebarSection[] = [
 ]
 
 const AdminRoutes = () => {
-  const accountInfo = {
-    name: "Admin",
-    email: "admin@gmail.com",
-    profilePicture: "example.png"
-  }
-
   return (
     <Routes>
-      <Route element={<DashboardLayout Sidebar={<Sidebar accountInfo={accountInfo} sections={sections}/>} />}>
-        <Route path="/" element={<AdminDashboard />} />
-        <Route path="/skills" element={<SkillsPage />} />
+      <Route element={<DashboardLayout Sidebar={<Sidebar sections={sections}/>} />}>
+        <Route path="/" element={<ContentLayout><AdminDashboard /></ContentLayout>} />
+        <Route path="/skills" element={<ContentLayout><SkillsPage /></ContentLayout>} />
+
+        <Route path="/settings" element={<ContentLayout><SettingsPage /></ContentLayout>} />
         <Route path="*" element={<Navigate to={'/admin'} />} />
       </Route>
     </Routes>

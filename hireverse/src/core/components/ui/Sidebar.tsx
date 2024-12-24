@@ -4,17 +4,20 @@ import AccountInfo from "./AccountInfo";
 import { SidebarSection } from "@core/types/sidebar.interface";
 import Logo from "./Logo";
 import ScrollableContainer from "./ScrollableContainer";
+import useAppSelector from "@core/hooks/useSelector";
 
 interface SidebarProps {
-    accountInfo: {
-        name: string;
-        email: string;
-        profilePicture: string;
-    };
     sections: SidebarSection[];
 }
 
-const Sidebar = ({ accountInfo, sections }: SidebarProps) => {
+const Sidebar = ({sections }: SidebarProps) => {
+    const user = useAppSelector((state) => state.auth.user);
+    const accountInfo = {
+        name: user!.role,
+        email: user!.email,
+        profilePicture: "example.png"
+    }
+
     return (
         <Box
             minWidth={250}
@@ -40,7 +43,7 @@ const Sidebar = ({ accountInfo, sections }: SidebarProps) => {
                         {section.divider && <Divider sx={{
                             height: '4px',
                             borderColor: 'secondary.main'
-                        }}/>}
+                        }} />}
                     </Box>
                 ))}
             </ScrollableContainer>

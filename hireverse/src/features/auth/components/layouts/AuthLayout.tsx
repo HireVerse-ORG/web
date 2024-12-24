@@ -1,5 +1,5 @@
 import { Box, useTheme, useMediaQuery } from "@mui/material";
-import Logo from "../../../../core/components/Logo";
+import Logo from "../../../../core/components/ui/Logo";
 import useAppSelector from "@core/hooks/useSelector";
 import { Navigate } from "react-router-dom";
 

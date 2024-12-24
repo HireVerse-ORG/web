@@ -1,4 +1,4 @@
-import { MenuItemProps } from "@core/components/MenuItem";
+import { MenuItemProps } from "@core/components/ui/MenuItem";
 
 export interface SidebarSection {
     name?: string;

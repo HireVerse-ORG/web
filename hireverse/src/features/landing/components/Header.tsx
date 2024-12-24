@@ -1,11 +1,14 @@
-import { Box, Button, Divider, Typography, Container, IconButton, Drawer, List, ListItem, ListItemText } from '@mui/material';
-import Logo from "@core/components/Logo";
+import { Box, Button, Divider, Typography, Container, Drawer, List, ListItem, ListItemText } from '@mui/material';
+import Logo from "@core/components/ui/Logo";
 import { useNavigate } from 'react-router-dom';
-import MenuIcon from '@mui/icons-material/Menu';
 import { useTheme, useMediaQuery } from '@mui/material';
 import { useState } from 'react';
+import useAppSelector from '@core/hooks/useSelector';
+import { getUserDashboardPath } from '@core/utils/helper';
+import MenuButton from '@core/components/ui/MenuButton';
 
 const Header = () => {
+    const user = useAppSelector((state) => state.auth.user);
     const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -76,28 +79,40 @@ const Header = () => {
                     <Box display="flex" alignItems="center" justifyContent={'center'} gap={1}>
                         {!isMobile && (
                             <>
-                                <Button
-                                    variant="text"
-                                    color="primary"
-                                    onClick={() => handleNavigation('/auth?page=login')} 
-                                >
-                                    Login
-                                </Button>
-                                <Divider
-                                    orientation="vertical"
-                                    sx={{
-                                        margin: '0 8px',
-                                        borderColor: 'primary.main',
-                                        height: 30,
-                                    }}
-                                />
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => handleNavigation('/auth?page=signup')} 
-                                >
-                                    Sign Up
-                                </Button>
+                                {!user ? (
+                                    <>
+                                        <Button
+                                            variant="text"
+                                            color="primary"
+                                            onClick={() => handleNavigation('/auth?page=login')}
+                                        >
+                                            Login
+                                        </Button>
+                                        <Divider
+                                            orientation="vertical"
+                                            sx={{
+                                                margin: '0 8px',
+                                                borderColor: 'primary.main',
+                                                height: 30,
+                                            }}
+                                        />
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={() => handleNavigation('/auth?page=signup')}
+                                        >
+                                            Sign Up
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <Button
+                                        variant="outlined"
+                                        color="primary"
+                                        onClick={() => handleNavigation(getUserDashboardPath(user.role))}
+                                    >
+                                        Go to Dashboard
+                                    </Button>
+                                )}
                             </>
                         )}
                     </Box>
@@ -105,9 +120,7 @@ const Header = () => {
 
                     {isMobile && (
                         <Box display="flex" alignItems="center" justifyContent={'center'}>
-                            <IconButton onClick={toggleMenu}>
-                                <MenuIcon />
-                            </IconButton>
+                            <MenuButton onToggle={toggleMenu}/>
                         </Box>
                     )}
                 </Box>
@@ -153,12 +166,22 @@ const Header = () => {
 
                         <Divider sx={{ marginY: 1 }} />
 
-                        <ListItem onClick={() => handleNavigation('/auth?page=login')}>
-                            <Button fullWidth >Login</Button>
-                        </ListItem>
-                        <ListItem onClick={() => handleNavigation('/auth?page=signup')}>
-                            <Button variant="contained" fullWidth >Sign Up</Button>
-                        </ListItem>
+                        {!user ? (
+                            <>
+                                <ListItem onClick={() => handleNavigation('/auth?page=login')}>
+                                    <Button fullWidth >Login</Button>
+                                </ListItem>
+                                <ListItem onClick={() => handleNavigation('/auth?page=signup')}>
+                                    <Button variant="contained" fullWidth >Sign Up</Button>
+                                </ListItem>
+                            </>
+                        ) : (
+                            <>
+                                <ListItem onClick={() => handleNavigation(getUserDashboardPath(user.role))}>
+                                    <Button variant="contained" fullWidth >Go to Dashboard</Button>
+                                </ListItem>
+                            </>
+                        )}
                     </List>
                 </Box>
 
