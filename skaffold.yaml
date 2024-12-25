@@ -1,0 +1,16 @@
+apiVersion: skaffold/v4beta12
+kind: Config
+metadata:
+  name: web-service
+build:
+  artifacts:
+    - image: hireverse/web-app
+      context: hireverse
+      docker:
+        dockerfile: Dockerfile
+        target: development
+manifests:
+  rawYaml:
+    - k8s/web-depl.yaml
+
+
