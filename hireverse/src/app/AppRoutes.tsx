@@ -5,6 +5,7 @@ import NotFoundPage from '../pages/NotFoundPage';
 import { getUser } from '@core/api/auth/authapi';
 import useAppDispatch from '@core/hooks/useDispatch';
 import { setUser } from '@core/store/authslice';
+import { getUser as getStoredUser } from '@core/utils/storage';
 
 const LandingRoutes = lazy(() => import('../features/landing/routes'))
 const AuthPage = lazy(() => import('../features/auth/routes'))
@@ -15,11 +16,14 @@ const SeekerRoutes = lazy(() => import('../features/seeker/routes'));
 
 const AppRoutes = () => {
     const dispatch = useAppDispatch();
+    const user = getStoredUser();
 
     useEffect(() => {
-        getUser().then((res) => {
-            dispatch(setUser({user: res}))
-        }).catch((_) => {})
+        if(user){
+            getUser().then((res) => {
+                dispatch(setUser({user: res}))
+            }).catch((_) => {})
+        }
     }, []);
     
 

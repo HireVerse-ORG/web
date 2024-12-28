@@ -42,3 +42,19 @@ export const verifyUser = async (data: {email: string, otp: string}): Promise<Lo
         throw handleApiError(error);
     }
 }
+
+export const requestResetPassword = async (data: {email: string}) => {
+    try {
+        return (await axios.post('/user/request-password-reset', data)).data; 
+    } catch (error: any) {
+        throw handleApiError(error);
+    }
+}
+
+export const resetPassword = async (data: {token: string, newPassword: string, confirmPassword: string}) => {
+    try {
+        return (await axios.post('/user/reset-password', data)).data; 
+    } catch (error: any) {
+        throw handleApiError(error);
+    }
+}
