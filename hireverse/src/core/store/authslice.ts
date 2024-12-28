@@ -29,6 +29,16 @@ const authSlice = createSlice({
                 sessionStorage.setItem("user", JSON.stringify(user));
             }
         },
+
+        setUser: (state, action: PayloadAction<{ user: User}>) => {
+            const {user} = action.payload;
+            state.user = user;
+            if(sessionStorage.getItem("user")){
+                sessionStorage.setItem("user", JSON.stringify(user));
+            } else {
+                localStorage.setItem("user", JSON.stringify(user))
+            }
+        },
         clearCredential: (state) => {
             state.user = null;
 
@@ -41,6 +51,6 @@ const authSlice = createSlice({
     },
 });
 
-export const { setCredential, clearCredential } = authSlice.actions;
+export const { setCredential, clearCredential, setUser } = authSlice.actions;
 
 export default authSlice.reducer;

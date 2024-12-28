@@ -7,7 +7,7 @@ interface AccountInfoProps {
 }
 
 const AccountInfo = ({ name, email, profilePicture }: AccountInfoProps) => (
-    <Box display="flex" alignItems="center">
+    <Box display="flex" alignItems="center" width={"100%"} overflow={"hidden"}>
         <Avatar src={profilePicture} alt={name} />
         <Box ml={2}>
             <Typography variant="h6">{name}</Typography>

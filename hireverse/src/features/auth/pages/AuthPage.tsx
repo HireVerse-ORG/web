@@ -70,7 +70,7 @@ const AuthPage = () => {
                     {currentPage === "login" ? (
                         <LoginForm />
                     ) : (
-                        <SignupForm />
+                        <SignupForm role={userType}/>
                     )}
                 </Box>
             </Box>

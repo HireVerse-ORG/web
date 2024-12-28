@@ -4,7 +4,9 @@ import { Formik, Form, Field } from "formik";
 import LoginSchema from "./schema";
 import useAppDispatch from "@core/hooks/useDispatch";
 import { setCredential } from "@core/store/authslice";
-
+import { loginUser, sendOtp } from "@core/api/auth/authapi";
+import { getUserDashboardPath } from "@core/utils/helper";
+import { toast } from "sonner";
 
 const LoginForm = () => {
     const dispatch = useAppDispatch();
@@ -14,52 +16,28 @@ const LoginForm = () => {
         values: { email: string; password: string; rememberMe: boolean },
         { setErrors }: { setErrors: (errors: { [key: string]: string }) => void }
     ) => {
-        if (values.password === "test123") {
-            if (values.email === "admin@gmail.com") {
-                dispatch(
-                    setCredential({
-                        user: {
-                            email: values.email,
-                            role: "admin",
-                        },
-                        token: "yufoiydfidyof",
-                        rememberMe: values.rememberMe,
-                    })
-                );
-                navigate('/admin');
-            } else if (values.email === "company@gmail.com") {
-                dispatch(
-                    setCredential({
-                        user: {
-                            email: values.email,
-                            role: "company",
-                        },
-                        token: "companyToken123",
-                        rememberMe: values.rememberMe,
-                    })
-                );
-                navigate('/company-dashboard');
-            } else if (values.email === "seeker@gmail.com") {
-                dispatch(
-                    setCredential({
-                        user: {
-                            email: values.email,
-                            role: "seeker",
-                        },
-                        token: "seekerToken123",
-                        rememberMe: values.rememberMe,
-                    })
-                );
-                navigate('/seeker');
-            } else {
-                setErrors({ email: "Invalid email or password" });
+        try {
+            const res = await loginUser(values.email, values.password);
+            if(res.user.isBlocked) {
+                toast.error("You have been blocked")
+                return;
             }
-        } else {
-            setErrors({ email: "Invalid email or password" });
+
+            if (!res.user.isVerified) {
+                await sendOtp(res.user.email);
+                sessionStorage.setItem('verifyPageActive', "1");
+                toast.warning("Please verify your account")
+                navigate('/auth/verify', {state: {email: res.user.email}})
+                return;
+            }
+            dispatch(setCredential({ user: res.user, token: res.token, rememberMe: values.rememberMe }));
+            navigate(getUserDashboardPath(res.user.role))
+        } catch (error: any) {
+            setErrors({ password: error })
         }
     };
-    
-    
+
+
 
     return (
         <Formik

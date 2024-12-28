@@ -3,17 +3,31 @@ import { useState, useEffect } from "react";
 import OTPInput from "react-otp-input";
 import './otp.css';
 import { toast } from "sonner";
+import { sendOtp, verifyUser } from "@core/api/auth/authapi";
+import useAppDispatch from "@core/hooks/useDispatch";
+import { useNavigate } from "react-router-dom";
+import { setCredential } from "@core/store/authslice";
+import { getUserDashboardPath } from "@core/utils/helper";
 
 const RESEND_OTP_SECONDS = 120;
 
-const OtpForm = () => {
+type OtpFormProps = {
+    email: string;
+}
+
+const OtpForm = ({ email }: OtpFormProps) => {
     const [otp, setOtp] = useState("");
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
     const [timer, setTimer] = useState(RESEND_OTP_SECONDS);
     const [isResendEnabled, setIsResendEnabled] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isResending, setIsResending] = useState(false);
+
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const savedStartTime = sessionStorage.getItem("otpStartTime");
@@ -51,24 +65,36 @@ const OtpForm = () => {
         return true;
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!validateOtp()) return;
 
         setIsSubmitting(true);
-        setTimeout(() => {
-            setIsSubmitting(false);
+        try {
+            const res = await verifyUser({ email, otp })
+            dispatch(setCredential({ user: res.user, token: res.token, rememberMe: false }));
+            navigate(getUserDashboardPath(res.user.role))
             toast.success("OTP Verified!");
-        }, 2000);
+        } catch (error: any) {
+            toast.error(error)
+        } finally {
+            setIsSubmitting(false)
+        }
     };
 
-    const handleResendOtp = () => {
-        // Reset the timer and resend the OTP
-        sessionStorage.setItem("otpStartTime", Date.now().toString());
-        setTimer(RESEND_OTP_SECONDS); // Reset timer to 120 seconds
-        setIsResendEnabled(false);
+    const handleResendOtp = async () => {
+        setIsResending(true)
+        try {
+            await sendOtp(email)
+            sessionStorage.setItem("otpStartTime", Date.now().toString());
+            setTimer(RESEND_OTP_SECONDS);
+            setIsResendEnabled(false);
+            toast.success("A new OTP has been sent!");
+        } catch (error: any) {
+            toast.error(error)
+        } finally {
+            setIsResending(false)
+        }
 
-        // Simulate sending a new OTP and notify the user
-        toast.success("A new OTP has been sent!");
     };
 
     return (
@@ -111,9 +137,18 @@ const OtpForm = () => {
             >
                 <Button
                     onClick={handleResendOtp}
-                    disabled={!isResendEnabled}
+                    disabled={!isResendEnabled || isResending}
                 >
-                    Resend OTP {isResendEnabled ? "?" : `in (${Math.floor(timer / 60)}:${timer % 60 < 10 ? `0${timer % 60}` : timer % 60})`}
+                    {isResending ? (
+                        <>
+                            Resending..<CircularProgress size={14} />
+                        </>
+                    )
+                        : (
+                            <>
+                                Resend OTP {isResendEnabled ? "?" : `in (${Math.floor(timer / 60)}:${timer % 60 < 10 ? `0${timer % 60}` : timer % 60})`}
+                            </>
+                        )}
                 </Button>
             </Box>
 

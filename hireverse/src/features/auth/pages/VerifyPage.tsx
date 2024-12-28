@@ -14,7 +14,6 @@ const VerifyPage = () => {
     useEffect(() => {
         const pageActive = sessionStorage.getItem('verifyPageActive');
         if (pageActive !== "1") {
-            console.log(pageActive);
             navigate(-1)
         }
     }, [])
@@ -43,7 +42,7 @@ const VerifyPage = () => {
                 >
                     Enter the OTP sent to {email ? <strong>{maskEmail(email)}</strong> : "your mail"}
                 </Typography>
-                <OtpForm />
+                <OtpForm email={email} />
             </Box>
         </AuthLayout>
     );

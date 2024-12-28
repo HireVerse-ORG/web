@@ -1,4 +1,5 @@
 import { UserRoles } from "@core/types/user.interface"
+import { AxiosError } from "axios";
 
 export const getUserDashboardPath = (user: UserRoles) => {
     let dashboardPath = '/seeker';
@@ -19,3 +20,10 @@ export const maskEmail = (email: string, visibleChars = 2) => {
     return `${maskedLocalPart}@${domain}`;
 };
 
+export const handleApiError = (error: any) => {
+    if(error instanceof AxiosError){
+        return error.response?.data?.message || error.response?.data
+    }
+
+    return "Unknown Errors"
+}

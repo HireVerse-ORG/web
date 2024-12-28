@@ -1,7 +1,10 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import ProtectedRoute from './ProtectedRoute';
 import NotFoundPage from '../pages/NotFoundPage';
+import { getUser } from '@core/api/auth/authapi';
+import useAppDispatch from '@core/hooks/useDispatch';
+import { setUser } from '@core/store/authslice';
 
 const LandingRoutes = lazy(() => import('../features/landing/routes'))
 const AuthPage = lazy(() => import('../features/auth/routes'))
@@ -11,6 +14,15 @@ const SeekerRoutes = lazy(() => import('../features/seeker/routes'));
 
 
 const AppRoutes = () => {
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        getUser().then((res) => {
+            dispatch(setUser({user: res}))
+        }).catch((_) => {})
+    }, []);
+    
+
     return (
         <BrowserRouter>
             <Suspense fallback={<div>Loading...</div>}>

@@ -13,7 +13,7 @@ interface SidebarProps {
 const Sidebar = ({sections }: SidebarProps) => {
     const user = useAppSelector((state) => state.auth.user);
     const accountInfo = {
-        name: user!.role,
+        name: user!.fullname || "User",
         email: user!.email,
         profilePicture: "example.png"
     }

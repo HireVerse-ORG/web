@@ -8,26 +8,32 @@ import {
   import { Link, useNavigate } from "react-router-dom";
   import { Formik, Form, Field } from "formik";
 import SignupSchema from "./schema";
+import { registerUser, sendOtp } from "@core/api/auth/authapi";
+import { toast } from "sonner";
+
+type SignupFormProps = {
+  role: string
+}
   
-  const SignupForm = () => {
+  const SignupForm = ({role}: SignupFormProps) => {
     const navigate = useNavigate();
 
-    const handleSubmit = async (values: {
-      fullName: string;
-      email: string;
-      password: string;
-      confirmPassword: string;
-    }) => {
-      console.log("Signup form values:", values);
-      // Perform signup API call here
-      sessionStorage.setItem('verifyPageActive', '1')
-      navigate('/auth/verify', {state: {email: values.email}})
+    const handleSubmit = async (values: { fullname: string; email: string; password: string; confirmPassword: string;}
+    ) => {
+      try {
+        const res = await registerUser({...values, role})
+        await sendOtp(res.user.email);
+        sessionStorage.setItem('verifyPageActive', "1");
+        navigate('/auth/verify', {state: {email: res.user.email}})
+      } catch (error: any) {
+        toast.error(error)
+      }
     };
   
     return (
       <Formik
         initialValues={{
-          fullName: "",
+          fullname: "",
           email: "",
           password: "",
           confirmPassword: "",
@@ -45,12 +51,12 @@ import SignupSchema from "./schema";
               <Field
                 as={TextField}
                 fullWidth
-                name="fullName"
+                name="fullname"
                 type="text"
                 variant="outlined"
                 placeholder="Enter your full name"
-                error={touched.fullName && !!errors.fullName}
-                helperText={touched.fullName && errors.fullName}
+                error={touched.fullname && !!errors.fullname}
+                helperText={touched.fullname && errors.fullname}
               />
             </Box>
   
