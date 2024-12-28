@@ -19,7 +19,7 @@ const VerifyPage = () => {
     }, [])
 
     return (
-        <AuthLayout contentPosition="center">
+        <AuthLayout>
             <Box
                 textAlign="center"
                 width="100%"

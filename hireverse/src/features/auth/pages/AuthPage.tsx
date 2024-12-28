@@ -35,7 +35,7 @@ const AuthPage = () => {
 
     return (
         <AuthLayout imageSrc={imagePath}>
-            <Box textAlign="center" width="100%" sx={{ width: '100%', maxWidth: 400, mx: 'auto' }}>
+            <Box textAlign="center" width="100%" sx={{ width: '100%', maxWidth: 400, mx: 'auto', paddingTop: currentPage === "login" ? 0 : 12 }}>
                 <Box mb={3} display="flex" justifyContent="center" gap={1}>
                     <Button
                         variant="contained"

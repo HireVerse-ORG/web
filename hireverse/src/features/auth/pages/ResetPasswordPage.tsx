@@ -29,7 +29,7 @@ const ResetPasswordPage = () => {
     };
 
     return (
-        <AuthLayout contentPosition="center">
+        <AuthLayout>
             <Box
                 sx={{ width: "100%", maxWidth: 400, mx: "auto" }}
             >
