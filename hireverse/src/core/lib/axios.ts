@@ -1,3 +1,4 @@
+import { clearToken, clearUser } from "@core/utils/storage";
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -28,13 +29,13 @@ axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
         if (!error.response) {
-            // Network error (e.g., server down or no internet)
-            console.error(error);
             toast.error("Network Error: Unable to reach the server!");
         } else if (error.response.status >= 500) {
-            // Server error (5xx)
-            console.error(error);
             toast.error("Something went wrong!", {description: "Please  try after sometime"})
+        } else if (error.response.status === 401){
+            clearUser()
+            clearToken()
+            window.location.reload();
         }
 
         // Reject all errors so the application

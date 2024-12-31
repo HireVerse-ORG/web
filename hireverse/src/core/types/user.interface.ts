@@ -7,4 +7,5 @@ export interface User {
     fullname: string;
     isVerified: boolean;
     isBlocked: boolean;
+    createdAT: Date;
 }

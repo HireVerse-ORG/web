@@ -1,5 +1,5 @@
 import { User } from "@core/types/user.interface";
-import { getUser } from "@core/utils/storage";
+import { clearToken, clearUser, getUser } from "@core/utils/storage";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface AuthState {
@@ -43,10 +43,8 @@ const authSlice = createSlice({
             state.user = null;
 
             // Clear storage
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
-            sessionStorage.removeItem("token");
-            sessionStorage.removeItem("user");
+            clearUser();
+            clearToken();
         },
     },
 });

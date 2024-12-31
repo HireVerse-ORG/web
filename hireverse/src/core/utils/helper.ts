@@ -27,3 +27,11 @@ export const handleApiError = (error: any) => {
 
     return "Unknown Errors"
 }
+
+export const apiWrapper = async <T>(fn: Promise<T>): Promise<T> => {
+    try {
+        return await fn;
+    } catch (error: any) {
+        throw handleApiError(error);
+    }
+};
