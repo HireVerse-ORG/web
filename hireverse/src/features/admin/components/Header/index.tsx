@@ -4,7 +4,8 @@ import { useState } from "react";
 import MenuButton from "@core/components/ui/MenuButton";
 import { HomeOutlined } from "@mui/icons-material";
 import Sidebar from "@core/components/ui/Sidebar";
-import { sections } from "../routes";
+import { sections } from "../../routes";
+import { getTitle } from "./helper";
 
 const Header = () => {
     const [openMenu, setOpenMenu] = useState(false);
@@ -14,29 +15,18 @@ const Header = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-    const getTitle = (path: string, id: string | undefined) => {
-        switch (path) {
-            case "/admin/skills":
-                return id ? `Edit Skill - ${id}` : "Manage Skills";
-            case "/admin/settings":
-                return "Settings";
-            default:
-                return "Admin Panel";
-        }
-    };
-
     const toggleMenu = () => {
         setOpenMenu(!openMenu);
     };
 
     return (
-        <Box borderBottom={'1px solid'} borderColor={"secondary.main"} sx={{
-            padding: isMobile ? 2 : 3,
+        <Box borderBottom={isMobile ? '1px solid' : 'none'} borderColor={"secondary.main"} sx={{
+            padding: isMobile ? 2 : 0,
             display: isMobile ? "flex" : "block",
             alignItems: "center",
             justifyContent: "space-between"
         }}>
-            {isMobile ? (
+            {isMobile && (
                 <>
                     <Box display="flex" alignItems="center" justifyContent={'center'} gap={1}>
                         <MenuButton onToggle={toggleMenu} />
@@ -47,10 +37,7 @@ const Header = () => {
                         <HomeOutlined />
                     </Link>
                 </>
-            ) : (
-                <Typography variant="h6">{getTitle(location.pathname, id)}</Typography>
-            )}
-
+            )} 
             {/* Mobile Menu */}
             <Drawer
                 anchor="left"
