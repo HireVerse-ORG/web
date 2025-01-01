@@ -70,7 +70,7 @@ const CompaniesPage = () => {
         <>
             <Box display={"flex"} justifyContent={"space-between"} alignItems={"center"} sx={{ paddingBlock: 2, mb: 2, backgroundColor: "white", position: "sticky", top: 0, zIndex: 1 }}>
                 <Typography variant="h6" fontWeight={"bold"}>
-                    Total Companies: {totalUsers}
+                    Total Companies: {loading ? <CircularProgress size={20} /> : totalUsers}
                 </Typography>
                 <Box display={"flex"} justifyContent={"space-between"} alignItems={"center"} gap={2}>
                     <SearchBox placeholder="Search companies" onSearch={handleSearch} />

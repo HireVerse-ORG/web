@@ -35,3 +35,7 @@ export const apiWrapper = async <T>(fn: Promise<T>): Promise<T> => {
         throw handleApiError(error);
     }
 };
+
+export const dateFormatter = (date: Date) => {
+    return new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });  
+} 

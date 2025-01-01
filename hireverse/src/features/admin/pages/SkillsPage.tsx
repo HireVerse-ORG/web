@@ -1,75 +1,110 @@
-import { listSkills } from "@core/api/admin/skillapi";
+import CustomDialog from "@core/components/ui/CustomDialog";
 import SearchBox from "@core/components/ui/SearchBox";
 import TableComponent, { TableColumn } from "@core/components/ui/TableComponent";
 import { Add, Edit, Delete } from "@mui/icons-material";
-import { Box, Button, IconButton, Typography } from "@mui/material";
-import { useEffect } from "react";
+import { Box, Button, Chip, CircularProgress, debounce, IconButton, Pagination, Typography } from "@mui/material";
+import { useState } from "react";
+import useSkills from "../hooks/useSkill";
+import SkillForm from "../components/forms/SkillForm";
+import { ISkill } from "@core/types/skill.interface";
+import { deactivateSkill, restoreSkill } from "@core/api/admin/skillapi";
+import { toast } from "sonner";
 
 const SkillsPage = () => {
+    const [modelOpen, setModelOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [editableSkill, setEditableSkill] = useState<ISkill | null>(null);
+    const { skills, setSkills, totalSkills, totalPages, loading, refetch } = useSkills(currentPage, 10, searchQuery);
 
-    useEffect(() => {
+    const handleSearch = debounce((value: string) => {
+        setCurrentPage(1);
+        setSearchQuery(value);
+    }, 500);
 
-    }, [])
-
-    const handleSearch = (value: string) => {
-        console.log("Search value:", value);
+    const handleEdit = (row: ISkill) => {
+        setEditableSkill(row)
+        setModelOpen(true);
     };
 
-    const handleEdit = (row: any) => {
-        console.log("Edit row:", row);
-    };
-
-    const handleDelete = (row: any) => {
-        console.log("Delete row:", row);
-    };
-
-    const handleAdd = async() => {
+    const handleSkillStatus = async (row: ISkill) => {
         try {
-            const res = await listSkills();
-            console.log(res);
-        } catch (error) {
-            console.log(error);
+            if(row.isActive){
+                await deactivateSkill(row.id);
+            } else {
+                await restoreSkill(row.id);
+            }
+            toast.success(`Skill ${row.isActive ? "deactivated" : "restored"} successfully`);
+            setSkills((prevSkills) => prevSkills.map((skill) => (skill.id === row.id ? { ...skill, isActive: !skill.isActive } : skill)));
+        } catch (error: any) {
+            toast.error(error.message || "Failed to delete skill");
         }
-    } 
+    };
+
+    const handleAdd = async () => {
+        setModelOpen(true);
+    };
+
+    const handleCloseModel = () => {
+        setModelOpen(false);
+        setEditableSkill(null);
+    };
+
+    const handleFormSuccess = () => {
+        handleCloseModel();
+        refetch();
+    };
+
+    const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
+        setCurrentPage(page);
+    };
 
     const columns: TableColumn[] = [
         { id: "name", label: "Skill Name", minWidth: 170 },
-        { id: "category", label: "Category", minWidth: 100 },
-        { id: "level", label: "Level", minWidth: 100, align: "right" },
+        { id: "createdAt", label: "Created", minWidth: 100 },
+        {
+            id: "isActive",
+            label: "Status",
+            minWidth: 100,
+            align: "center",
+            render: (row: ISkill) => (
+                <Chip
+                    label={row.isActive ? "Active" : "Inactive"}
+                    color={row.isActive ? "success" : "error"}
+                    variant="outlined"
+                />
+            ),
+        },
         {
             id: "actions",
             label: "Actions",
             minWidth: 150,
             align: "center",
-            render: (row: any) => (
-                <Box display="flex" gap={1} justifyContent="center">
-                    <IconButton onClick={() => handleEdit(row)} color="primary">
-                        <Edit />
-                    </IconButton>
-                    <IconButton onClick={() => handleDelete(row)} color="error">
-                        <Delete />
-                    </IconButton>
-                </Box>
+            render: (row: ISkill) => (
+                <>
+                    {row.isActive ? (
+                        <Box display="flex" gap={1} justifyContent="center">
+                            <IconButton size="small" onClick={() => handleEdit(row)} color="primary">
+                                <Edit />
+                            </IconButton>
+                            <IconButton size="small" onClick={() => handleSkillStatus(row)} color="error">
+                                <Delete />
+                            </IconButton>
+                        </Box>
+                    ) : (
+                        <Button
+                            size="small"
+                            variant="contained"
+                            color="inherit"
+                            sx={{ minWidth: "90px" }}
+                            onClick={() => handleSkillStatus(row)}
+                        >
+                            Activate
+                        </Button>
+                    )}
+                </>
             ),
         },
-    ];
-
-    const rows = [
-        { name: "JavaScript", category: "Programming", level: "Expert" },
-        { name: "React", category: "Frontend", level: "Intermediate" },
-        { name: "Node.js", category: "Backend", level: "Expert" },
-        { name: "JavaScript", category: "Programming", level: "Expert" },
-        { name: "JavaScript", category: "Programming", level: "Expert" },
-        { name: "JavaScript", category: "Programming", level: "Expert" },
-        { name: "JavaScript", category: "Programming", level: "Expert" },
-        { name: "JavaScript", category: "Programming", level: "Expert" },
-        { name: "JavaScript", category: "Programming", level: "Expert" },
-        { name: "JavaScript", category: "Programming", level: "Expert" },
-        { name: "JavaScript", category: "Programming", level: "Expert" },
-        { name: "JavaScript", category: "Programming", level: "Expert" },
-        { name: "JavaScript", category: "Programming", level: "Expert" },
-        { name: "JavaScript", category: "Programming", level: "Expert" },
-        { name: "JavaScript", category: "Programming", level: "Expert" },
     ];
 
     return (
@@ -88,7 +123,7 @@ const SkillsPage = () => {
                 }}
             >
                 <Typography variant="h6" fontWeight={"bold"}>
-                    Total Skills: 190
+                    Total Skills: {loading ? <CircularProgress size={20} /> : totalSkills}
                 </Typography>
 
                 <Box display={"flex"} justifyContent={"space-between"} alignItems={"center"} gap={2}>
@@ -107,10 +142,27 @@ const SkillsPage = () => {
                     </Button>
                 </Box>
             </Box>
-            <TableComponent
-                columns={columns}
-                rows={rows}
-            />
+
+            {loading ? (
+                <Box display="flex" justifyContent="center" alignItems="center" height="300px">
+                    <CircularProgress />
+                </Box>
+            ) : skills.length === 0 ? (
+                <Typography variant="h6" fontWeight={"bold"} sx={{ textAlign: "center", color: "gray", fontSize: "1.2rem", marginTop: 4, padding: 2 }}>
+                    No Skills found
+                </Typography>
+            ) : (
+                <>
+                    <TableComponent columns={columns} rows={skills} />
+                    <Box display="flex" justifyContent="center" py={3}>
+                        <Pagination count={totalPages} page={currentPage} onChange={handlePageChange} color="primary" />
+                    </Box>
+                </>
+            )}
+
+            <CustomDialog open={modelOpen} onClose={handleCloseModel} title="Add/Edit Skill">
+                <SkillForm skill={editableSkill} onSuccess={handleFormSuccess} />
+            </CustomDialog>
         </>
     );
 };

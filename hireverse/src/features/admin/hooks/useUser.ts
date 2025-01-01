@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { listUsers } from "@core/api/admin/userapi";
 import { toast } from "sonner";
 import { UserRoles } from "@core/types/user.interface";
+import { dateFormatter } from "@core/utils/helper";
 
 export default function useUser(role: UserRoles, currentPage: number, searchQuery: string) {
   const [rows, setRows] = useState<any[]>([]);
@@ -22,7 +23,7 @@ export default function useUser(role: UserRoles, currentPage: number, searchQuer
           profile: "N/A",
           name: user.fullname || "N/A",
           email: user.email,
-          joined: new Date(user.createAt).toLocaleDateString(),
+          joined: dateFormatter(user.createAt),
           status: user.isBlocked ? "Blocked" : "Active",
         })));
       } catch (error: any) {

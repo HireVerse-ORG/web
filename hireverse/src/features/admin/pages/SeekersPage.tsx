@@ -69,9 +69,9 @@ const SeekersPage = () => {
 
     return (
         <>
-            <Box display={"flex"} justifyContent={"space-between"} alignItems={"center"} sx={{ paddingBlock: 2, mb: 2, backgroundColor: "white", position: "sticky", top: 0, zIndex: 1 }}>
+            <Box display={"flex"} justifyContent={"space-between"} alignItems={"center"} sx={{ paddingBlock: 2, mb: 2, backgroundColor: "white", position: "sticky", top: 0, zIndex: 1 }}>  
                 <Typography variant="h6" fontWeight={"bold"}>
-                    Total Seekers: {totalUsers}
+                    Total Seekers: {loading ? <CircularProgress size={20} /> : totalUsers}
                 </Typography>
                 <Box display={"flex"} justifyContent={"space-between"} alignItems={"center"} gap={2}>
                     <SearchBox placeholder="Search seekers" onSearch={handleSearch} />
