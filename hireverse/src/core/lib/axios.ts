@@ -1,4 +1,4 @@
-import { clearToken, clearUser } from "@core/utils/storage";
+import { clearToken, clearUser, getToken } from "@core/utils/storage";
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -12,7 +12,7 @@ const axiosInstance = axios.create({
 // Request Interceptor (Optional)
 axiosInstance.interceptors.request.use(
     (config) => {
-        const token = sessionStorage.getItem("token") || localStorage.getItem("token");
+        const token = getToken()
         if(token){
             config.headers.Authorization = `Bearer ${token}`;
         } 
@@ -28,14 +28,25 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (!error.response) {
+        const { response } = error;
+
+        if (!response) {
             toast.error("Network Error: Unable to reach the server!");
-        } else if (error.response.status >= 500) {
-            toast.error("Something went wrong!", {description: "Please  try after sometime"})
-        } else if (error.response.status === 401){
-            clearUser()
-            clearToken()
-            window.location.reload();
+        } else if (response.status >= 500) {
+            toast.error("Something went wrong!", { description: "Please try again later." });
+        } else if (response.status === 401 || response.status === 403) {
+            const errorMessage =
+                response.status === 401
+                    ? "Session expired. Please log in to continue."
+                    : response.data?.message || "Forbidden access.";
+            toast.error(errorMessage, {
+                duration: 3000,
+                onAutoClose: () => {
+                    clearUser();
+                    clearToken();
+                    window.location.href = "/auth"; 
+                },
+            });
         }
 
         // Reject all errors so the application
