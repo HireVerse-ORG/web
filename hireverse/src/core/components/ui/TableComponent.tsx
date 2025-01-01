@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Box } from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 
 export interface TableColumn {
     id: string;
@@ -21,7 +21,7 @@ const TableComponent = ({ columns, rows }: TableComponentProps) => {
     return (
         <TableContainer>
             <Table>
-                <TableHead sx={{ border: `2px solid ${borderColour}` }}>
+                <TableHead sx={{ border: `2px solid ${borderColour}`, marginBottom: 2 }}>
                     <TableRow>
                         {columns.map((column) => (
                             <TableCell
@@ -29,7 +29,7 @@ const TableComponent = ({ columns, rows }: TableComponentProps) => {
                                 align={column.align || "left"}
                                 style={{
                                     minWidth: column.minWidth,
-                                    color: "GrayText"
+                                    color: "GrayText",
                                 }}
                             >
                                 {column.label}
@@ -37,14 +37,13 @@ const TableComponent = ({ columns, rows }: TableComponentProps) => {
                         ))}
                     </TableRow>
                 </TableHead>
-                <Box  height={16}> </Box>
-                <TableBody sx={{border: `2px solid ${borderColour}`}}>
+                {/* Adding gap using margin */}
+                <TableBody sx={{ border: `2px solid ${borderColour}` }}>
                     {rows.map((row, index) => (
                         <TableRow
                             key={index}
                             sx={{
-                                backgroundColor:
-                                    index % 2 === 0 ? stripeColour : "inherit", 
+                                backgroundColor: index % 2 === 0 ? stripeColour : "inherit",
                                 "&:hover": {
                                     backgroundColor: borderColour,
                                 },

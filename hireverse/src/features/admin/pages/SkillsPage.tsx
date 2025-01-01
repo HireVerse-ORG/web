@@ -99,7 +99,7 @@ const SkillsPage = () => {
                             sx={{ minWidth: "90px" }}
                             onClick={() => handleSkillStatus(row)}
                         >
-                            Activate
+                            Restore
                         </Button>
                     )}
                 </>
