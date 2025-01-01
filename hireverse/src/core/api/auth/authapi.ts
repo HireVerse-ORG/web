@@ -1,6 +1,6 @@
 import axios from "@core/lib/axios"
 import { LoginResponse, RegisterResponse } from "./types";
-import { handleApiError } from "@core/utils/helper";
+import { apiWrapper, handleApiError } from "@core/utils/helper";
 import { User } from "@core/types/user.interface";
 
 export const getUser = async (): Promise<User> => {
@@ -9,6 +9,10 @@ export const getUser = async (): Promise<User> => {
     } catch (error: any) {
         throw handleApiError(error);
     }
+}
+
+export const msSignin = async (data: { msToken: string, role: string}): Promise<LoginResponse> => {
+    return (await apiWrapper(axios.post<LoginResponse>("/user/auth/microsoft", data))).data;
 }
 
 export const loginUser = async (email: string, password: string): Promise<LoginResponse> => {
