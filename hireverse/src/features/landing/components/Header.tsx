@@ -46,7 +46,7 @@ const Header = () => {
 
     return (
         <>
-            <Container maxWidth="lg">
+            <Container>
                 <Box
                     display="flex"
                     justifyContent="space-between"
