@@ -11,5 +11,5 @@ export const msalConfig = {
 };
 
 export const mslLoginRequest = {
-    scopes: ["User.Read"],
+    scopes: ["openid", "profile", "email"],
 };
