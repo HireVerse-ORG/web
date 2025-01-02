@@ -51,9 +51,6 @@ const Header = () => {
                     display="flex"
                     justifyContent="space-between"
                     minHeight={78}
-                    sx={{
-                        padding: '0 16px',
-                    }}
                 >
                     {/* Left side */}
                     <Box height={'inherit'} display="flex" gap={3} alignItems="center">

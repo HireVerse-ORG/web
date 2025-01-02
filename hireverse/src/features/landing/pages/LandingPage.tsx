@@ -1,13 +1,22 @@
-import { Link } from 'react-router-dom';
+import { Box, Container } from '@mui/material';
 import Layout from '../components/Layout';
+import HeroSection from '../components/sections/HeroSection';
 
 const LandingPage = () => {
     return (
         <Layout>
-            <div>
-                <h1>Landing Page</h1>
-                <Link to="/admin">Admin Dashboard</Link>
-            </div>
+            <Container maxWidth="lg">
+                <HeroSection />
+                {/* explore catrgory */}
+            </Container>
+            <Box bgcolor={"primary.main"} color={"white"}>
+                <Container maxWidth="lg">
+                    {/* start job post call to action */}
+                </Container>
+            </Box>
+            <Container maxWidth="lg">
+                {/* fetured job sectiom */}
+            </Container>
         </Layout>
     );
 }
