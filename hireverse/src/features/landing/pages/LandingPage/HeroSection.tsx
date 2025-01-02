@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import JobSeachBox from "../JobSeachBox";
+import JobSeachBox from "../../components/JobSeachBox";
 
 
 const HeroSection = () => {
@@ -7,8 +7,7 @@ const HeroSection = () => {
         <Box sx={{
             position: 'relative',
             paddingY: { xs: 8, sm: 10 },
-            height: 'calc(100vh - 78px)',
-            maxHeight: 700,
+            minHeight: 'calc(100vh - 78px)',
         }}>
             {/* Image */}
             <Box

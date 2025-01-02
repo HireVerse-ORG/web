@@ -30,7 +30,7 @@ const JobSeachBox = () => {
             sx={{
                 flexDirection: {xs: "column", sm: "row"},
                 gap: {xs: 3, sm: 2},
-                paddingBlock: 2,
+                paddingBlock: {xs: 5, sm: 3},
                 paddingInline: 3,
                 backgroundColor: "background.paper",
                 boxShadow: 4,

@@ -1,6 +1,6 @@
 import { Box, Container } from '@mui/material';
-import Layout from '../components/Layout';
-import HeroSection from '../components/sections/HeroSection';
+import Layout from '../../components/Layout';
+import HeroSection from './HeroSection';
 
 const LandingPage = () => {
     return (
