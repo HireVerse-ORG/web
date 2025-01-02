@@ -12,9 +12,10 @@ type GoogleSignInProps = {
     role: string;
     onStart?: () => void;
     onFinished?: () => void;
+    disabled?: boolean;
 };
 
-const GoogleSignIn = ({ role, onStart, onFinished }: GoogleSignInProps) => {
+const GoogleSignIn = ({ role, onStart, onFinished, disabled }: GoogleSignInProps) => {
     const [loading, setLoading] = useState(false);
 
     const dispatch = useAppDispatch();
@@ -63,7 +64,7 @@ const GoogleSignIn = ({ role, onStart, onFinished }: GoogleSignInProps) => {
             onClick={handleLogin}
             variant="outlined"
             fullWidth
-            disabled={loading}
+            disabled={loading || disabled}
             sx={{ borderColor: "text.disabled", position: "relative" }}
         >
             <img

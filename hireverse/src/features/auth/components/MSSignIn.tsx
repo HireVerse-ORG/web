@@ -13,9 +13,10 @@ type MSSignInProps = {
     role: string;
     onStart?: () => void;
     onFinished?: () => void;
+    disabled?: boolean;
 };
 
-const MSSignIn = ({ role, onStart, onFinished }: MSSignInProps) => {
+const MSSignIn = ({ role, onStart, onFinished, disabled }: MSSignInProps) => {
     const [loading, setLoading] = useState(false);
 
     const { instance } = useMsal();
@@ -49,7 +50,7 @@ const MSSignIn = ({ role, onStart, onFinished }: MSSignInProps) => {
             onClick={login}
             variant="outlined"
             fullWidth
-            disabled={loading}
+            disabled={loading || disabled}
             sx={{ borderColor: "text.disabled" }}
         >
             <img

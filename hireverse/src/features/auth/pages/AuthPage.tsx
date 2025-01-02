@@ -82,8 +82,8 @@ const AuthPage = () => {
                 </Typography>
 
                 <Box mb={2} sx={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 1 }}>
-                    <GoogleSignIn role={userType.toString()} onStart={handleThirdPartyLoginStart} onFinished={handleThirdPartyLoginFinish} />
-                    <MSSignIn role={userType.toString()} onStart={handleThirdPartyLoginStart} onFinished={handleThirdPartyLoginFinish}/>
+                    <GoogleSignIn role={userType.toString()} onStart={handleThirdPartyLoginStart} onFinished={handleThirdPartyLoginFinish} disabled={formDisabled}/>
+                    <MSSignIn role={userType.toString()} onStart={handleThirdPartyLoginStart} onFinished={handleThirdPartyLoginFinish} disabled={formDisabled}/>
                 </Box>
 
                 {/* "Or with Email" text with a horizontal line */}

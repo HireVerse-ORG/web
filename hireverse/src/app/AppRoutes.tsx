@@ -6,6 +6,7 @@ import { getUser } from '@core/api/auth/authapi';
 import useAppDispatch from '@core/hooks/useDispatch';
 import { setUser } from '@core/store/authslice';
 import { getUser as getStoredUser } from '@core/utils/storage';
+import PageLoader from '@core/components/ui/PageLoader';
 
 const LandingRoutes = lazy(() => import('../features/landing/routes'))
 const AuthPage = lazy(() => import('../features/auth/routes'))
@@ -29,7 +30,7 @@ const AppRoutes = () => {
 
     return (
         <BrowserRouter>
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<PageLoader/>}>
                 <Routes>
                     <Route path="/" element={<LandingRoutes />} />
 
