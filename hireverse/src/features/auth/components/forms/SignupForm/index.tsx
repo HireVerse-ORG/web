@@ -13,9 +13,10 @@ import { toast } from "sonner";
 
 type SignupFormProps = {
   role: string
+  disabled?: boolean;
 }
   
-  const SignupForm = ({role}: SignupFormProps) => {
+  const SignupForm = ({role, disabled}: SignupFormProps) => {
     const navigate = useNavigate();
 
     const handleSubmit = async (values: { fullname: string; email: string; password: string; confirmPassword: string;}
@@ -118,7 +119,7 @@ type SignupFormProps = {
               color="primary"
               size="large"
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || disabled}
             >
               {isSubmitting ? <CircularProgress size={20} /> : "Continue"}
             </Button>

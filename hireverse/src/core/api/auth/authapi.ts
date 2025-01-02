@@ -15,6 +15,10 @@ export const msSignin = async (data: { msToken: string, role: string}): Promise<
     return (await apiWrapper(axios.post<LoginResponse>("/user/auth/microsoft", data))).data;
 }
 
+export const googleSignin = async (data: { gToken: string, role: string}): Promise<LoginResponse> => {
+    return (await apiWrapper(axios.post<LoginResponse>("/user/auth/google", data))).data;
+}
+
 export const loginUser = async (email: string, password: string): Promise<LoginResponse> => {
     try {
         return (await axios.post<LoginResponse>('/user/login', {email, password})).data;

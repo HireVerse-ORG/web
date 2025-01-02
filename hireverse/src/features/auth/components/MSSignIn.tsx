@@ -2,7 +2,7 @@ import { useMsal } from "@azure/msal-react";
 import { mslLoginRequest } from "@core/lib/mslConfig";
 import { msSignin } from "@core/api/auth/authapi";
 import { toast } from "sonner";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import { useState } from "react";
 import useAppDispatch from "@core/hooks/useDispatch";
 import { useNavigate } from "react-router-dom";
@@ -34,7 +34,7 @@ const MSSignIn = ({ role, onStart, onFinished }: MSSignInProps) => {
             }
             dispatch(setCredential({ user: res.user, token: res.token, rememberMe: true }));
             navigate(getUserDashboardPath(res.user.role))
-            
+
         } catch (error: any) {
             toast.error(error.message || "Failed to authenticate Microsoft");
         } finally {
@@ -57,7 +57,7 @@ const MSSignIn = ({ role, onStart, onFinished }: MSSignInProps) => {
                 alt="Microsoft"
                 style={{ width: 24, height: 24, marginRight: 8 }}
             />
-            Continue with Microsoft
+            {loading ? <CircularProgress size={20} /> : "Continue with Microsoft"}
         </Button>
     );
 };

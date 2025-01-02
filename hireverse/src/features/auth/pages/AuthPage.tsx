@@ -10,6 +10,7 @@ import GoogleSignIn from "../components/GoogleSignIn";
 
 
 const AuthPage = () => {
+    const [formDisabled, setFormDisabled] = useState(false);
     const [searchParams] = useSearchParams();
     const currentPage = searchParams.get("page") || "login";
     const [userType, setUserType] = useState<Omit<UserRoles, "admin">>("seeker");
@@ -33,6 +34,13 @@ const AuthPage = () => {
                 color: userType === activeFor ? "primary.contrastText" : "primary.main",
             },
         }
+    }
+
+    const handleThirdPartyLoginStart = () => {
+        setFormDisabled(true);
+    }
+    const handleThirdPartyLoginFinish = () => {
+        setFormDisabled(false);
     }
 
     return (
@@ -74,8 +82,8 @@ const AuthPage = () => {
                 </Typography>
 
                 <Box mb={2} sx={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 1 }}>
-                    <GoogleSignIn role={userType.toString()} />
-                    <MSSignIn role={userType.toString()} />
+                    <GoogleSignIn role={userType.toString()} onStart={handleThirdPartyLoginStart} onFinished={handleThirdPartyLoginFinish} />
+                    <MSSignIn role={userType.toString()} onStart={handleThirdPartyLoginStart} onFinished={handleThirdPartyLoginFinish}/>
                 </Box>
 
                 {/* "Or with Email" text with a horizontal line */}
@@ -106,9 +114,9 @@ const AuthPage = () => {
                 {/* Form */}
                 <Box marginBlock={2}>
                     {currentPage === "login" ? (
-                        <LoginForm />
+                        <LoginForm disabled={formDisabled} />
                     ) : (
-                        <SignupForm role={userType.toString()} />
+                        <SignupForm role={userType.toString()} disabled={formDisabled} />
                     )}
                 </Box>
             </Box>

@@ -8,7 +8,11 @@ import { loginUser, sendOtp } from "@core/api/auth/authapi";
 import { getUserDashboardPath } from "@core/utils/helper";
 import { toast } from "sonner";
 
-const LoginForm = () => {
+type LoginFormProps = {
+    disabled?: boolean;
+};
+
+const LoginForm = ({disabled}: LoginFormProps) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
@@ -111,7 +115,7 @@ const LoginForm = () => {
                         color="primary"
                         size="large"
                         type="submit"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || disabled}
                     >
                         {isSubmitting ? <CircularProgress size={20} /> : "Login"}
                     </Button>
