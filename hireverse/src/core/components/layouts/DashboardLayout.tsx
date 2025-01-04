@@ -1,23 +1,20 @@
 import { Box, Container, useMediaQuery, useTheme } from "@mui/material";
+import React from "react";
 import { Outlet } from "react-router-dom";
 
 type DashboardLayoutProps = {
     Sidebar: React.ReactNode;
-}
+    ContentLayout?: React.ComponentType<{ children: React.ReactNode }>;
+};
 
-const DashboardLayout = ({ Sidebar }: DashboardLayoutProps) => {
+const DashboardLayout = ({ Sidebar, ContentLayout }: DashboardLayoutProps) => {
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     return (
         <Box display="flex">
             {/* Sidebar */}
-            {!isMobile && (
-                <>
-                    {Sidebar}
-                </>
-            )}
-
+            {!isMobile && Sidebar}
 
             {/* Main Content */}
             <Container
@@ -27,10 +24,16 @@ const DashboardLayout = ({ Sidebar }: DashboardLayoutProps) => {
                     flexGrow: 1,
                     height: "100vh",
                     overflowY: "hidden",
-                    padding: '0 !important'
+                    padding: "0 !important",
                 }}
             >
-                <Outlet />
+                {ContentLayout ? (
+                    <ContentLayout>
+                        <Outlet />
+                    </ContentLayout>
+                ) : (
+                    <Outlet />
+                )}
             </Container>
         </Box>
     );

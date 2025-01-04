@@ -5,14 +5,16 @@ export type MenuItemProps = {
     name: string;
     icon: React.ReactNode;
     path: string;
+    onItemClick?: () => void;
 };
 
-const MenuItem = ({ name, icon, path }: MenuItemProps) => {
+const MenuItem = ({ name, icon, path, onItemClick }: MenuItemProps) => {
     const location = useLocation();
     const isActive = location.pathname === path;
 
     return (
         <ListItem
+            onClick={() => onItemClick?.()}
             component={Link}
             to={path}
             sx={{

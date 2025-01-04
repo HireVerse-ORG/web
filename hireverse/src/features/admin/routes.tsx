@@ -31,13 +31,13 @@ export const sections: SidebarSection[] = [
 const AdminRoutes = () => {
   return (
     <Routes>
-      <Route element={<DashboardLayout Sidebar={<Sidebar sections={sections}/>} />}>
-        <Route path="/" element={<ContentLayout><AdminDashboard /></ContentLayout>} />
-        <Route path="/seekers" element={<ContentLayout><SeekersPage /></ContentLayout>} />
-        <Route path="/companies" element={<ContentLayout><CompaniesPage /></ContentLayout>} />
-        <Route path="/skills" element={<ContentLayout><SkillsPage /></ContentLayout>} />
+      <Route element={<DashboardLayout ContentLayout={ContentLayout} Sidebar={<Sidebar sections={sections} />} />}>
+        <Route path="/" element={<AdminDashboard />} />
+        <Route path="/seekers" element={<SeekersPage />} />
+        <Route path="/companies" element={<CompaniesPage />} />
+        <Route path="/skills" element={<SkillsPage />} />
 
-        <Route path="/settings" element={<ContentLayout><SettingsPage /></ContentLayout>} />
+        <Route path="/settings" element={<SettingsPage />} />
         <Route path="*" element={<Navigate to={'/admin'} />} />
       </Route>
     </Routes>

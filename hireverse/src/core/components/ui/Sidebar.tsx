@@ -8,9 +8,10 @@ import useAppSelector from "@core/hooks/useSelector";
 
 interface SidebarProps {
     sections: SidebarSection[];
+    onMenuItemClick?: () => void;
 }
 
-const Sidebar = ({sections }: SidebarProps) => {
+const Sidebar = ({sections, onMenuItemClick}: SidebarProps) => {
     const user = useAppSelector((state) => state.auth.user);
     const accountInfo = {
         name: user!.fullname || "User",
@@ -37,7 +38,7 @@ const Sidebar = ({sections }: SidebarProps) => {
                     <Box key={index}>
                         <List>
                             {section.items.map((item, idx) => (
-                                <MenuItem key={idx} {...item} />
+                                <MenuItem key={idx} {...item} onItemClick={onMenuItemClick} />
                             ))}
                         </List>
                         {section.divider && <Divider sx={{

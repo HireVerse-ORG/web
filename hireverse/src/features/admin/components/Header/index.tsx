@@ -44,7 +44,7 @@ const Header = () => {
                 open={openMenu}
                 onClose={toggleMenu}
             >
-                <Sidebar sections={sections}/>
+                <Sidebar sections={sections} onMenuItemClick={toggleMenu}/>
             </Drawer>
         </Box>
     );
