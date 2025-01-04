@@ -19,6 +19,10 @@ export const googleSignin = async (data: { gToken: string, role: string}): Promi
     return (await apiWrapper(axios.post<LoginResponse>("/user/auth/google", data))).data;
 }
 
+export const refreahToken = async (): Promise<{token: string}> => {
+    return (await apiWrapper(axios.post<{token: string}>("/user/refresh-token"))).data;
+}
+
 export const loginUser = async (email: string, password: string): Promise<LoginResponse> => {
     try {
         return (await axios.post<LoginResponse>('/user/login', {email, password})).data;

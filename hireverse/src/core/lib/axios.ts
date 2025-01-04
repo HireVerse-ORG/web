@@ -1,4 +1,4 @@
-import { clearToken, clearUser, getToken } from "@core/utils/storage";
+import { clearToken, clearUser, getToken, getUser } from "@core/utils/storage";
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -27,20 +27,39 @@ axiosInstance.interceptors.request.use(
 // Response Interceptor
 axiosInstance.interceptors.response.use(
     (response) => response,
-    (error) => {
+    async (error) => {
         const { response } = error;
+        const originalRequest = error.config
 
         if (!response) {
             toast.error("Network Error: Unable to reach the server!");
         } else if (response.status >= 500) {
             toast.error("Something went wrong!", { description: "Please try again later." });
-        } else if (response.status === 401 || response.status === 403) {
-            const errorMessage =
-                response.status === 401
-                    ? "Session expired. Please log in to continue."
-                    : response.data?.message || "Forbidden access.";
-            toast.error(errorMessage, {
-                duration: 3000,
+        } else if (response.status === 401 && !originalRequest?._retry) {
+            originalRequest._retry = true;
+
+            try {
+                const userId = getUser()?.id
+                const token = (await axiosInstance.post<{token: string}>("/user/refresh-token", {userId})).data.token;
+                if(localStorage.getItem('token')){
+                    localStorage.setItem('token', token);
+                } else {
+                    sessionStorage.setItem('token', token);
+                }
+                return axiosInstance(originalRequest);
+            } catch (error) {
+                toast.error("Session expired. Please log in to continue", {
+                    duration: 500,
+                    onAutoClose: () => {
+                        clearUser();
+                        clearToken();
+                        window.location.href = "/auth"; 
+                    },
+                });
+            }
+        } else if(response.status === 403){
+            toast.error("Forbidden access. Please log in to continue.", {
+                duration: 500,
                 onAutoClose: () => {
                     clearUser();
                     clearToken();
