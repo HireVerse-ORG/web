@@ -44,7 +44,7 @@ const Header = () => {
                     }}
                 >
                     {isMobile && <MenuButton onToggle={toggleMenu} />}
-                    <Typography variant={isMobile ? "h6" : "h4"} fontWeight={"500"}>
+                    <Typography variant={isMobile ? "h6" : "h5"} fontWeight={"500"}>
                         {currentTitle}
                     </Typography>
                 </Box>

@@ -32,7 +32,7 @@ const AppRoutes = () => {
         <BrowserRouter>
             <Suspense fallback={<PageLoader/>}>
                 <Routes>
-                    <Route path="/" element={<LandingRoutes />} />
+                    <Route path="/*" element={<LandingRoutes />} />
 
                     <Route path='/auth/*' element={<AuthPage/>}/>
 
@@ -54,7 +54,7 @@ const AppRoutes = () => {
                             <SeekerRoutes />
                         </ProtectedRoute>
                     } />
-                    <Route path="*" element={<NotFoundPage/>} />
+                    <Route path="/not-found" element={<NotFoundPage/>} />
                 </Routes>
             </Suspense>
         </BrowserRouter>
