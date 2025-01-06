@@ -22,7 +22,7 @@ type SignupFormProps = {
     const handleSubmit = async (values: { fullname: string; email: string; password: string; confirmPassword: string;}
     ) => {
       try {
-        const res = await registerUser({...values, role})
+        const res = await registerUser({...values, role});
         await sendOtp(res.user.email);
         sessionStorage.setItem('verifyPageActive', "1");
         navigate('/auth/verify', {state: {email: res.user.email}})
