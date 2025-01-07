@@ -10,9 +10,10 @@ import PortfolioCard from "../components/profile/PortfolioCard";
 
 type ProfilePageProps = {
     mode: "edit" | "read";
+    username?: string;
 }
 
-const ProfilePage = ({mode}: ProfilePageProps) => {
+const ProfilePage = ({mode, username}: ProfilePageProps) => {
     const editable = mode === "edit";
 
     return (
@@ -42,7 +43,7 @@ const ProfilePage = ({mode}: ProfilePageProps) => {
                     overflow: "hidden",
                 }}
             >
-                <ProfileCard editable={editable} />
+                <ProfileCard editable={editable} username={username} />
             </Box>
 
             {/* Right Side */}
@@ -58,8 +59,8 @@ const ProfilePage = ({mode}: ProfilePageProps) => {
                     overflow: "hidden",
                 }}
             >
-                <ProfileUrlCard editable={editable} />
-                <AdditionalDetailCard editable={editable} />
+                <ProfileUrlCard editable={editable} username={username} />
+                <AdditionalDetailCard editable={editable} username={username} />
             </Box>
 
             {/* Left Side Content */}
@@ -72,7 +73,7 @@ const ProfilePage = ({mode}: ProfilePageProps) => {
                     overflow: "hidden",
                 }}
             >
-                <AboutMeCard editable={editable} />
+                <AboutMeCard editable={editable} username={username}/>
             </Box>
             <Box
                 sx={{
@@ -83,7 +84,7 @@ const ProfilePage = ({mode}: ProfilePageProps) => {
                     overflow: "hidden",
                 }}
             >
-                <ExperiencesCard editable={editable} />
+                <ExperiencesCard editable={editable} username={username} />
             </Box>
             <Box
                 sx={{
@@ -94,7 +95,7 @@ const ProfilePage = ({mode}: ProfilePageProps) => {
                     overflow: "hidden",
                 }}
             >
-                <EducationCard editable={editable} />
+                <EducationCard editable={editable} username={username} />
             </Box>
             <Box
                 sx={{
@@ -105,7 +106,7 @@ const ProfilePage = ({mode}: ProfilePageProps) => {
                     overflow: "hidden",
                 }}
             >
-                <SkillsCard editable={editable} />
+                <SkillsCard editable={editable} username={username}/>
             </Box>
             <Box
                 sx={{
@@ -116,7 +117,7 @@ const ProfilePage = ({mode}: ProfilePageProps) => {
                     overflow: "hidden",
                 }}
             >
-                <PortfolioCard editable={editable} />
+                <PortfolioCard editable={editable} username={username}/>
             </Box>
         </Box>
     );

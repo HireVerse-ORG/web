@@ -9,10 +9,11 @@ import useGet from "@core/hooks/useGet";
 
 type ProfileUrlCardProps = {
     editable?: boolean;
+    username?: string;
 };
 
-const ProfileUrlCard = ({ editable }: ProfileUrlCardProps) => {
-    const { data: profileUsername, loading, error } = useGet<string>(getSeekerUsername);
+const ProfileUrlCard = ({ editable, username }: ProfileUrlCardProps) => {
+    const { data: profileUsername, loading, error } = useGet<string>(() => getSeekerUsername(username));
 
     const [profileUrl, setProfileUrl] = useState<string>("");
 

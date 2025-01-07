@@ -1,11 +1,20 @@
-import { Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, TextField, Typography, FormControlLabel, Checkbox } from "@mui/material";
 import { Formik, Form, Field } from "formik";
 import { toast } from "sonner";
 import { useState } from "react";
 import { SeekerProfileSchema } from "./schema";
 import ImageUploader from "@core/components/ui/ImageUploader";
+import CountryInput from "@core/components/ui/LocationInputs/CountryInput";
+import CityInput from "@core/components/ui/LocationInputs/CityInput";
+import { SeekerProfile } from "@core/types/seeker.interface";
+import { updateSeekerProfile } from "@core/api/seeker/profileApi";
+import { uploadToCloudinary } from "@core/lib/cloudinary";
 
-const SeekerProfileForm = () => {
+type SeekerProfileFormProps = {
+    profile?: SeekerProfile | null;
+    onSucces?: (profile: SeekerProfile) => void;
+}
+const SeekerProfileForm = ({profile, onSucces}: SeekerProfileFormProps) => {
     const [profileImage, setProfileImage] = useState<File | null>(null);
 
     const handleImageChange = (image: File | null) => {
@@ -16,7 +25,22 @@ const SeekerProfileForm = () => {
 
     const handleSubmit = async (values: any, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
         try {
-            console.log(values);
+            let uploadedImage; 
+            if(profileImage){
+                uploadedImage = await uploadToCloudinary(profileImage);
+            }
+
+            const updatedProfile = await updateSeekerProfile({
+                profileName: values.fullName,
+                title: values.currentTitle,
+                location: {
+                    country: values.country,
+                    city: values.city
+                },
+                isOpenToWork: values.openToWork,
+                image: uploadedImage
+            });
+            onSucces?.(updatedProfile);
             toast.success("Profile updated successfully!");
         } catch (error) {
             toast.error("Failed to update profile.");
@@ -28,17 +52,16 @@ const SeekerProfileForm = () => {
     return (
         <Formik
             initialValues={{
-                firstName: "",
-                lastName: "",
-                currentTitle: "",
-                country: "",
-                city: "",
-                profileImage: null,
+                fullName: profile?.profileName || "",
+                currentTitle: profile?.title || "",
+                country: profile?.location?.country || "",
+                city: profile?.location?.city || "",
+                openToWork: profile?.isOpenToWork || false,
             }}
             validationSchema={SeekerProfileSchema}
             onSubmit={handleSubmit}
         >
-            {({ errors, touched, isSubmitting, setFieldValue }) => (
+            {({ errors, touched, isSubmitting, setFieldValue, values }) => (
                 <Form>
                     <Box
                         sx={{
@@ -49,7 +72,7 @@ const SeekerProfileForm = () => {
                     >
 
                         {/* Image Upload */}
-                        <ImageUploader onChange={handleImageChange} />
+                        <ImageUploader onChange={handleImageChange} initialImageUrl={profile?.image} preview />
 
                         {/* Title */}
                         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
@@ -58,35 +81,19 @@ const SeekerProfileForm = () => {
                             </Typography>
                         </Box>
 
-                        {/* First Name */}
+                        {/* Full Name */}
                         <Box mb={3}>
                             <Typography variant="body1" fontWeight={500} mb={1}>
-                                First Name
+                                Full Name
                             </Typography>
                             <Field
                                 as={TextField}
                                 fullWidth
-                                name="firstName"
+                                name="fullName"
                                 variant="outlined"
-                                placeholder="Enter your first name"
-                                error={touched.firstName && !!errors.firstName}
-                                helperText={touched.firstName && errors.firstName}
-                            />
-                        </Box>
-
-                        {/* Last Name */}
-                        <Box mb={3}>
-                            <Typography variant="body1" fontWeight={500} mb={1}>
-                                Last Name
-                            </Typography>
-                            <Field
-                                as={TextField}
-                                fullWidth
-                                name="lastName"
-                                variant="outlined"
-                                placeholder="Enter your last name"
-                                error={touched.lastName && !!errors.lastName}
-                                helperText={touched.lastName && errors.lastName}
+                                placeholder="Enter your Full name"
+                                error={touched.fullName && !!errors.fullName}
+                                helperText={touched.fullName && errors.fullName}
                             />
                         </Box>
 
@@ -112,25 +119,40 @@ const SeekerProfileForm = () => {
                         </Typography>
                         <Box display="flex" gap={2} mb={3}>
                             {/* Country */}
-                            <Field
-                                as={TextField}
-                                fullWidth
-                                name="country"
-                                variant="outlined"
-                                placeholder="Country"
-                                error={touched.country && !!errors.country}
+                            <CountryInput 
+                                initialValue={values.country}
+                                onCountryChange={(newCountry) => {
+                                    setFieldValue("country", newCountry);
+                                    setFieldValue("city", null); 
+                                }}
+                                error={touched.country && !!errors.country} 
                                 helperText={touched.country && errors.country}
                             />
 
                             {/* City */}
-                            <Field
-                                as={TextField}
-                                fullWidth
-                                name="city"
-                                variant="outlined"
-                                placeholder="City"
-                                error={touched.city && !!errors.city}
-                                helperText={touched.city && errors.city}
+                            <CityInput 
+                                initialValue={values.city}
+                                country={values.country} 
+                                onCityChange={(newCity) => {
+                                    setFieldValue("city", newCity); 
+                                }}
+                                error={touched.city && !!errors.city} 
+                                helperText={touched.city && errors.city} 
+                            />
+                        </Box>
+
+                        {/* Open to Work Checkbox */}
+                        <Box mb={3}>
+                            <FormControlLabel
+                                control={
+                                    <Field
+                                        as={Checkbox}
+                                        name="openToWork"
+                                        checked={values.openToWork}
+                                        onChange={() => setFieldValue("openToWork", !values.openToWork)}
+                                    />
+                                }
+                                label="Open to Work"
                             />
                         </Box>
 

@@ -1,0 +1,1 @@
+export const DEAFULT_SEEKER_PROFILE_IMAGE_URL = "images/defaultProfie.png"

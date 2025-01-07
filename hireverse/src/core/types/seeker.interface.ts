@@ -10,4 +10,5 @@ export interface SeekerProfile {
     bio: string;
     profileUsername: string;
     image: string;
+    coverImage: string;
 }

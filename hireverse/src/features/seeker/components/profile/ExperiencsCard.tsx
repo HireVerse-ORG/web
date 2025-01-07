@@ -62,9 +62,10 @@ const experiences = [
 type ExperienceCardProps = {
     editable?: boolean;
     showCount?: number;
+    username?: string;
 };
 
-const ExperiencesCard = ({ editable, showCount = 2 }: ExperienceCardProps) => {
+const ExperiencesCard = ({ editable, showCount = 2, username }: ExperienceCardProps) => {
     const [showAll, setShowAll] = useState(false);
     const visibleExperiences = showAll ? experiences : experiences.slice(0, showCount);
     const restExperienceCount = experiences.length - visibleExperiences.length;

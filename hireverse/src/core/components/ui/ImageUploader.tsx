@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, Avatar, IconButton } from "@mui/material";
 import { CloudUploadOutlined, Close } from "@mui/icons-material";
 
@@ -6,16 +6,26 @@ interface ImageUploaderProps {
     onChange: (file: File | null) => void;
     previewSize?: number;
     maxSize?: { width: number; height: number };
+    initialImageUrl?: string;
+    preview?: boolean;
 }
 
 const ImageUploader = ({
     onChange,
     previewSize = 100,
     maxSize = { width: 400, height: 400 },
+    initialImageUrl = "",
+    preview
 }: ImageUploaderProps) => {
     const [image, setImage] = useState<File | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [isDragging, setIsDragging] = useState(false); // State to track drag-and-drop
+    const [isDragging, setIsDragging] = useState(false);
+
+    useEffect(() => {
+        if (initialImageUrl) {
+            setImage(null);
+        }
+    }, [initialImageUrl]);
 
     const handleFileChange = (file: File | null) => {
         if (file) {
@@ -78,37 +88,39 @@ const ImageUploader = ({
             }}
         >
             {/* Image Preview with Remove Button */}
-            <Box sx={{ position: "relative", display: "inline-block" }}>
-                <Avatar
-                    src={image ? URL.createObjectURL(image) : ""}
-                    alt="Profile Image"
-                    sx={{
-                        width: previewSize,
-                        height: previewSize,
-                        border: "2px solid #e0e0e0",
-                        boxShadow: "0 0 5px rgba(0,0,0,0.2)",
-                    }}
-                >
-                    {!image && "N/A"}
-                </Avatar>
-                {image && (
-                    <IconButton
-                        size="small"
-                        color="error"
+            {preview && (
+                <Box sx={{ position: "relative", display: "inline-block" }}>
+                    <Avatar
+                        src={image ? URL.createObjectURL(image) : initialImageUrl || ""}
+                        alt="Profile Image"
                         sx={{
-                            position: "absolute",
-                            top: -8,
-                            right: -8,
-                            background: "white",
+                            width: previewSize,
+                            height: previewSize,
+                            border: "2px solid #e0e0e0",
                             boxShadow: "0 0 5px rgba(0,0,0,0.2)",
-                            "&:hover": { background: "#f5f5f5" },
                         }}
-                        onClick={removeImage}
                     >
-                        <Close fontSize="small" />
-                    </IconButton>
-                )}
-            </Box>
+                        {!image && !initialImageUrl && "N/A"}
+                    </Avatar>
+                    {(image || initialImageUrl) && (
+                        <IconButton
+                            size="small"
+                            color="error"
+                            sx={{
+                                position: "absolute",
+                                top: -8,
+                                right: -8,
+                                background: "white",
+                                boxShadow: "0 0 5px rgba(0,0,0,0.2)",
+                                "&:hover": { background: "#f5f5f5" },
+                            }}
+                            onClick={removeImage}
+                        >
+                            <Close fontSize="small" />
+                        </IconButton>
+                    )}
+                </Box>
+            )}
 
             {/* File Upload Button with Drag-and-Drop */}
             <Box
@@ -121,8 +133,8 @@ const ImageUploader = ({
                     border: error
                         ? "2px dashed red"
                         : isDragging
-                        ? "2px dashed blue"
-                        : "2px dashed #e0e0e0",
+                            ? "2px dashed blue"
+                            : "2px dashed #e0e0e0",
                     borderRadius: 2,
                     height: previewSize + 16,
                     width: "300px",

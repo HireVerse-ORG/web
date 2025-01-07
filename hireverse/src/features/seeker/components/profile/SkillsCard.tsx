@@ -5,6 +5,7 @@ import { Box, Typography, Chip } from "@mui/material";
 
 type SkillsCardProps = {
     editable?: boolean;
+    username?: string;
 }
 
 const skills = [
@@ -16,7 +17,7 @@ const skills = [
     { id: 6, name: "TypeScript" },
 ];
 
-const SkillsCard = ({ editable }: SkillsCardProps) => {
+const SkillsCard = ({ editable, username }: SkillsCardProps) => {
     return (
         <Box sx={{ padding: 3, border: `1px solid ${colors.borderColour}` }}>
             <Box display="flex" alignItems="center" justifyContent="space-between">

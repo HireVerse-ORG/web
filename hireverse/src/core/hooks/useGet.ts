@@ -23,5 +23,5 @@ export default function useGet<T>(fetchData: () => Promise<T>) {
         fetch();
     }, []);
 
-    return { data, loading, error, refetch: fetch };
+    return { data, setData, loading, error, refetch: fetch };
 }

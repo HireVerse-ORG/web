@@ -5,8 +5,9 @@ import { Box, Typography } from "@mui/material";
 
 type AdditionalDetailCardProps = {
     editable?: boolean;
+    username?: string;
 }
-const AdditionalDetailCard = ({ editable }: AdditionalDetailCardProps) => {
+const AdditionalDetailCard = ({ editable, username }: AdditionalDetailCardProps) => {
     return (
         <Box sx={{ padding: 3, border: `1px solid ${colors.borderColour}` }}>
             <Box display="flex" alignItems="center" justifyContent="space-between">

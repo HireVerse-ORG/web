@@ -8,26 +8,40 @@ import { SeekerProfile } from "@core/types/seeker.interface";
 import useGet from "@core/hooks/useGet";
 import CustomDialog from "@core/components/ui/CustomDialog";
 import SeekerProfileForm from "../forms/SeekerProfileForm";
+import SeekerCoverPicForm from "../forms/SeekerCoverPicForm";
 
 type ProfileCardProps = {
     editable?: boolean;
+    username?: string;
 };
 
-const ProfileCard = ({ editable }: ProfileCardProps) => {
-    const { data: profile, loading, error, refetch } = useGet<SeekerProfile>(getSeekerProfile);
+const ProfileCard = ({ editable, username }: ProfileCardProps) => {
+    const { data: profile, setData: seProfile, loading, error, refetch } = useGet<SeekerProfile>(() => getSeekerProfile(username));
     const [modelOpen, setModelOpen] = useState(false);
+    const [coverPhotoModalOpen, setCoverPhotoModalOpen] = useState(false);
     const [avatarLoading, setAvatarLoading] = useState(true);
+
     const profilePicSize = 120;
 
     const handleAvatarLoaded = () => setAvatarLoading(false);
     const handleAvatarLoadingError = () => setAvatarLoading(false);
-    const handleProfileEdit = () => {
-        setModelOpen(true);
+
+    const handleProfileEdit = () => setModelOpen(true)
+    const handleModelClose = () => setModelOpen(false)
+    const handleProfileFormSucces = (profile: SeekerProfile) => {
+        handleModelClose();
+        seProfile(profile);
     }
 
-    const handleModelClose = () => {
-        setModelOpen(false);
-    }
+    const handleCoverPicEdit = () => setCoverPhotoModalOpen(true)
+    const handleCoverModelClose = () => setCoverPhotoModalOpen(false)
+    const handleCoverPicFormSucces = (newCoverImage: string) => {
+        if (profile) {
+            const updatedProfile = { ...profile, coverImage: newCoverImage };
+            seProfile(updatedProfile); 
+        }
+        handleCoverModelClose();
+    };
 
     if (loading) {
         return (
@@ -67,7 +81,7 @@ const ProfileCard = ({ editable }: ProfileCardProps) => {
                 <Avatar
                     src="https://placehold.co/100x100?text=Error"
                     alt="Error Illustration"
-                    sx={{ width: 80, height: 80}}
+                    sx={{ width: 80, height: 80 }}
                 />
                 <Typography variant="h6" color="error" fontWeight="bold">
                     Oops! Something went wrong.
@@ -86,7 +100,6 @@ const ProfileCard = ({ editable }: ProfileCardProps) => {
             </Box>
         );
     }
-    
 
     return (
         <Box
@@ -100,12 +113,13 @@ const ProfileCard = ({ editable }: ProfileCardProps) => {
             <Box sx={{ color: "white", position: "relative" }}>
                 <Box
                     sx={{
-                        background: "linear-gradient(90deg,#6A5ACD,  #4640DE)",
+                        background: profile?.coverImage ? `url(${profile.coverImage}) no-repeat center center/cover` : "linear-gradient(90deg,#6A5ACD,  #4640DE)",
                         height: 140,
                     }}
                 />
                 {editable && (
                     <EditButton
+                        onClick={handleCoverPicEdit}
                         color="white"
                         sx={{
                             position: "absolute",
@@ -115,6 +129,7 @@ const ProfileCard = ({ editable }: ProfileCardProps) => {
                     />
                 )}
             </Box>
+
             {/* Profile info */}
             <Box sx={{ padding: 3, position: "relative" }}>
                 {/* Profile Picture */}
@@ -133,7 +148,7 @@ const ProfileCard = ({ editable }: ProfileCardProps) => {
                 )}
                 <Avatar
                     alt={profile?.profileName || "User Picture"}
-                    src={profile?.image || "https://placehold.co/400x400"}
+                    src={profile?.image || ""}
                     sx={{
                         width: profilePicSize,
                         height: profilePicSize,
@@ -215,6 +230,7 @@ const ProfileCard = ({ editable }: ProfileCardProps) => {
                         </Button>
                     )}
                 </Box>
+
                 {/* Edit Profile Button */}
                 {editable && (
                     <EditButton
@@ -231,9 +247,14 @@ const ProfileCard = ({ editable }: ProfileCardProps) => {
 
             {/* form */}
             {editable && (
-                <CustomDialog open={modelOpen} onClose={handleModelClose}>
-                    <SeekerProfileForm />
-                </CustomDialog>
+                <>
+                    <CustomDialog open={modelOpen} onClose={handleModelClose}>
+                        <SeekerProfileForm profile={profile} onSucces={handleProfileFormSucces} />
+                    </CustomDialog>
+                    <CustomDialog open={coverPhotoModalOpen} onClose={handleCoverModelClose}>
+                        <SeekerCoverPicForm onSucces={handleCoverPicFormSucces} initialImageUrl={profile?.coverImage} />
+                    </CustomDialog>
+                </>
             )}
         </Box>
     );

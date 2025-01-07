@@ -7,6 +7,7 @@ import { useState } from "react";
 type EducationCardProps = {
     editable?: boolean;
     showCount?: number;
+    username?: string;
 }
 
 const educations = [
@@ -60,7 +61,7 @@ const educations = [
     }
 ];
 
-const EducationCard = ({ editable, showCount = 2 }: EducationCardProps) => {
+const EducationCard = ({ editable, showCount = 2, username }: EducationCardProps) => {
     const [showAll, setShowAll] = useState(false);
     const visibleEducations = showAll ? educations : educations.slice(0, showCount);
     const restEducationCount = educations.length - visibleEducations.length;

@@ -6,6 +6,7 @@ import { Box, Typography } from "@mui/material";
 
 type PortfolioCardProps = {
     editable?: boolean;
+    username?: string;
 }
 
 const portfolios = [
@@ -15,7 +16,7 @@ const portfolios = [
     { id: 4, title: "Portfolio 4", image: "https://placehold.co/500x500", mediaLink: "dummy-link" },
 ];
 
-const PortfolioCard = ({ editable }: PortfolioCardProps) => {
+const PortfolioCard = ({ editable, username }: PortfolioCardProps) => {
     return (
         <Box sx={{ padding: 3, border: `1px solid ${colors.borderColour}` }}>
             <Box display="flex" alignItems="center" justifyContent="space-between">

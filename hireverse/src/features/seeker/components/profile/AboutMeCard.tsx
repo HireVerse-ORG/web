@@ -6,10 +6,11 @@ import { Box, Typography, Skeleton } from "@mui/material";
 
 type AboutMeCardProps = {
     editable?: boolean;
+    username?: string;
 };
 
-const AboutMeCard = ({ editable }: AboutMeCardProps) => {
-    const { data: bio, loading, error } = useGet<string>(getSeekerBio);
+const AboutMeCard = ({ editable, username }: AboutMeCardProps) => {
+    const { data: bio, loading, error } = useGet<string>(() => getSeekerBio(username));
 
     return (
         <Box sx={{ padding: 3, border: `1px solid ${colors.borderColour}`, display: !editable && !bio ? "none" : "block"  }}>
