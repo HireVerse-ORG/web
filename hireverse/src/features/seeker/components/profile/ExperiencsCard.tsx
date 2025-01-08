@@ -3,6 +3,7 @@ import AddButton from "@core/components/ui/AddButton";
 import EditButton from "@core/components/ui/EditButton";
 import colors from "@core/theme/colors";
 import { Box, Typography } from "@mui/material";
+import { DEAFULT_COMPANY_IMAGE_URL } from "@core/utils/constants";
 
 const experiences = [
     {
@@ -92,7 +93,7 @@ const ExperiencesCard = ({ editable, showCount = 2, username }: ExperienceCardPr
                 >
                     <Box
                         component="img"
-                        src={experience.image}
+                        src={DEAFULT_COMPANY_IMAGE_URL}
                         alt={experience.title}
                         sx={{
                             width: { xs: 60, sm: 80 },

@@ -38,6 +38,7 @@ const CountryInput = ({ onCountryChange, error, helperText, initialValue }: Coun
 
     return (
         <Autocomplete
+            fullWidth
             options={options}
             value={selectedCountry} 
             onChange={(_, newValue) => {

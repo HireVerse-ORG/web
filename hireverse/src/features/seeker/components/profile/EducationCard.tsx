@@ -1,70 +1,72 @@
+import { listSeekerEducation } from "@core/api/seeker/educationApi";
 import AddButton from "@core/components/ui/AddButton";
+import CustomDialog from "@core/components/ui/CustomDialog";
 import EditButton from "@core/components/ui/EditButton";
+import useGet from "@core/hooks/useGet";
 import colors from "@core/theme/colors";
-import { Box, Typography } from "@mui/material";
-import { useState } from "react";
+import { SeekerEducation } from "@core/types/seeker.interface";
+import { Box, Typography, Skeleton } from "@mui/material";
+import { useEffect, useState } from "react";
+import SeekerEducationForm from "../forms/SeekerEducationForm";
+import { DEAFULT_SEEKER_EDUCATION_IMAGE_URL } from "@core/utils/constants";
 
 type EducationCardProps = {
     editable?: boolean;
     showCount?: number;
     username?: string;
-}
-
-const educations = [
-    {
-        organisation: "Harvard University",
-        field: "Postgraduate degree, Applied Psychology",
-        startYear: "2018",
-        present: true,
-        endDate: "2022",
-        image: "https://placehold.co/150x150",
-    },
-    {
-        organisation: "Stanford University",
-        field: "Bachelor of Science, Computer Science",
-        startYear: "2015",
-        present: false,
-        endDate: "2019",
-        image: "https://placehold.co/150x150",
-    },
-    {
-        organisation: "University of Oxford",
-        field: "Master of Business Administration (MBA)",
-        startYear: "2016",
-        present: false,
-        endDate: "2018",
-        image: "https://placehold.co/150x150",
-    },
-    {
-        organisation: "Massachusetts Institute of Technology (MIT)",
-        field: "PhD, Electrical Engineering",
-        startYear: "2020",
-        present: true,
-        endDate: "2024",
-        image: "https://placehold.co/150x150",
-    },
-    {
-        organisation: "University of California, Berkeley",
-        field: "Bachelor of Arts, Philosophy",
-        startYear: "2012",
-        present: false,
-        endDate: "2016",
-        image: "https://placehold.co/150x150",
-    },
-    {
-        organisation: "University of Cambridge",
-        field: "Master’s Degree, Data Science",
-        startYear: "2019",
-        present: false,
-        endDate: "2021",
-        image: "https://placehold.co/150x150",
-    }
-];
+};
 
 const EducationCard = ({ editable, showCount = 2, username }: EducationCardProps) => {
+    const { data: educations, setData: setEducations, loading, error } = useGet<SeekerEducation[]>(() => listSeekerEducation(username));
+
     const [showAll, setShowAll] = useState(false);
-    const visibleEducations = showAll ? educations : educations.slice(0, showCount);
-    const restEducationCount = educations.length - visibleEducations.length;
+    const [visibleEducations, setVisibleEducations] = useState<SeekerEducation[]>([]);
+    const [restEducationCount, setRestEducationCount] = useState(0);
+    const [education, setEducation] = useState<SeekerEducation | null>(null);
+    const [modelOpen, setModelOpen] = useState(false);
+
+
+    useEffect(() => {
+        if (educations) {
+            const list = showAll ? educations : educations.slice(0, showCount);
+            const count = educations.length - list.length;
+            setVisibleEducations(list)
+            setRestEducationCount(count)
+        }
+    }, [educations, showAll])
+
+    const handleAddEducation = () => {
+        setEducation(null);
+        setModelOpen(true);
+    }
+
+    const handleEditEducation = (education: SeekerEducation) => {
+        setEducation(education);
+        setModelOpen(true);
+    }
+
+    const handleModelClose = () => setModelOpen(false)
+
+    const handleFormAddSuccess = (education: SeekerEducation) => {
+        setEducations((prevEducations) => [...prevEducations!, education]);
+        handleModelClose();
+    };
+
+    const handleFormEditSuccess = (education: SeekerEducation) => {
+        setEducations((prevEducations) =>
+            prevEducations!.map((educ) =>
+                educ.id === education.id ? { ...educ, ...education } : educ
+            )
+        );
+        handleModelClose();
+    };
+
+    const handleEducationDeleteSuccess = (education: SeekerEducation) => {
+        setEducations((prevEducations) =>
+            prevEducations!.filter((educ) => educ.id !== education.id)
+        );
+        handleModelClose();
+    }
 
     return (
         <Box sx={{ padding: 3, border: `1px solid ${colors.borderColour}` }}>
@@ -72,78 +74,146 @@ const EducationCard = ({ editable, showCount = 2, username }: EducationCardProps
                 <Typography variant="h6" fontWeight="bold">
                     Educations
                 </Typography>
-                {editable && <AddButton color="primary" />}
+                {editable && <AddButton onClick={handleAddEducation} color="primary" />}
             </Box>
 
-            {visibleEducations.map((education, index) => (
-                <Box
-                    key={index}
-                    sx={{
-                        py: 2,
-                        borderBottom: `1px solid ${colors.borderColour}`,
-                        display: "flex",
-                        alignItems: "start",
-                        gap: 2,
-                    }}
-                >
-                    <Box
-                        component="img"
-                        src={education.image}
-                        alt={education.organisation}
-                        sx={{
-                            width: { xs: 60, sm: 80 },
-                            height: { xs: 60, sm: 80 },
-                            objectFit: "cover",
-                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                        }}
-                        loading="lazy"
-                    />
-                    <Box flexGrow={1} display="flex" alignItems="start" justifyContent="space-between">
-                        <Box>
-                            <Typography variant="h6" fontWeight={500}>
-                                {education.field}
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: "gray" }}>
-                                {education.startYear} - {education.present ? "Present" : education.endDate}
-                            </Typography>
+            {/* Loading State with Skeleton */}
+            {loading && (
+                <Box>
+                    {Array.from({ length: showCount }).map((_, index) => (
+                        <Box
+                            key={index}
+                            sx={{
+                                py: 2,
+                                borderBottom: `1px solid ${colors.borderColour}`,
+                                display: "flex",
+                                alignItems: "start",
+                                gap: 2,
+                            }}
+                        >
+                            <Skeleton
+                                variant="rectangular"
+                                sx={{
+                                    width: { xs: 60, sm: 80 },
+                                    height: { xs: 60, sm: 80 },
+                                    borderRadius: 1,
+                                }}
+                            />
+                            <Box flexGrow={1}>
+                                <Skeleton variant="text" width="50%" />
+                                <Skeleton variant="text" width="30%" />
+                            </Box>
                         </Box>
-                        {editable && <EditButton color="primary" />}
-                    </Box>
+                    ))}
                 </Box>
-            ))}
+            )}
 
-            {/* Show/hide toggle */}
-            {!showAll && restEducationCount > 0 ? (
-                <Typography
-                    variant="body2"
-                    onClick={() => setShowAll(true)}
-                    sx={{
-                        mt: 2,
-                        color: "primary.main",
-                        cursor: "pointer",
-                        textAlign: "center",
-                        fontWeight: "bold",
-                    }}
-                >
-                    Show {restEducationCount} more education{restEducationCount > 1 ? "s" : ""}
+            {/* Error State */}
+            {error && (
+                <Box display="flex" flexDirection="column" alignItems="center" py={3}>
+                    <Typography variant="body2" color="error">
+                        Failed to load educations. Please try again.
+                    </Typography>
+                </Box>
+            )}
+
+            {/* Loaded State */}
+            {!loading && !error && educations && educations.length > 0 && (
+                <>
+                    {visibleEducations.map((education) => (
+                        <Box
+                            key={education.id}
+                            sx={{
+                                py: 2,
+                                borderBottom: `1px solid ${colors.borderColour}`,
+                                display: "flex",
+                                alignItems: "start",
+                                gap: 2,
+                            }}
+                        >
+                            <Box
+                                component="img"
+                                src={DEAFULT_SEEKER_EDUCATION_IMAGE_URL}
+                                alt={education.school || "Education Image"}
+                                sx={{
+                                    width: { xs: 60, sm: 80 },
+                                    height: { xs: 60, sm: 80 },
+                                    objectFit: "cover",
+                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                                }}
+                                loading="lazy"
+                            />
+                            <Box flexGrow={1} display="flex" alignItems="start" justifyContent="space-between">
+                                <Box>
+                                    <Typography variant="h6" fontWeight={500}>
+                                        {education.school}
+                                    </Typography>
+                                    <Typography variant="subtitle1">{education.fieldOfStudy}</Typography>
+                                    <Typography variant="body2" sx={{ color: "gray" }}>
+                                        {education.startYear} - {education.currentlyPursuing ? "Present" : education.endYear}
+                                    </Typography>
+                                    <Typography variant="subtitle2" sx={{ color: "gray" }}>
+                                        {education.location?.city}{", "}{education.location?.country}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mt: 1, color: "gray" }}>
+                                        {education.description}
+                                    </Typography>
+                                </Box>
+                                {editable && <EditButton onClick={() => handleEditEducation(education)} color="primary" />}
+                            </Box>
+                        </Box>
+                    ))}
+
+                    {/* Show/Hide Toggle */}
+                    {!showAll && restEducationCount > 0 ? (
+                        <Typography
+                            variant="body2"
+                            onClick={() => setShowAll(true)}
+                            sx={{
+                                mt: 2,
+                                color: "primary.main",
+                                cursor: "pointer",
+                                textAlign: "center",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            Show {restEducationCount} more education{restEducationCount > 1 ? "s" : ""}
+                        </Typography>
+                    ) : showAll && (
+                        <Typography
+                            variant="body2"
+                            onClick={() => setShowAll(false)}
+                            sx={{
+                                mt: 2,
+                                color: "primary.main",
+                                cursor: "pointer",
+                                textAlign: "center",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            Show less
+                        </Typography>
+                    )}
+                </>
+            )}
+
+            {/* No Data State */}
+            {!loading && !error && educations?.length === 0 && (
+                <Typography variant="body2" sx={{ py: 2 }}>
+                    No education records found.
                 </Typography>
-            ) : showAll && (
-                <Typography
-                    variant="body2"
-                    onClick={() => setShowAll(false)}
-                    sx={{
-                        mt: 2,
-                        color: "primary.main",
-                        cursor: "pointer",
-                        textAlign: "center",
-                        fontWeight: "bold",
-                    }}
-                >
-                    Show less
-                </Typography>
+            )}
+
+            {/* form */}
+            {editable && (
+                <>
+                    <CustomDialog open={modelOpen} onClose={handleModelClose}>
+                        <SeekerEducationForm onAdded={handleFormAddSuccess} onUpdated={handleFormEditSuccess} onDeleted={handleEducationDeleteSuccess} education={education} />
+                    </CustomDialog>
+                </>
             )}
         </Box>
     );
-}
+};
 
 export default EducationCard;

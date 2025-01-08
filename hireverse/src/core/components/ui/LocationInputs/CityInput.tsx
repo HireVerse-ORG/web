@@ -7,7 +7,7 @@ interface CityInputProps {
     onCityChange: (city: string | null) => void;
     error?: boolean;
     helperText?: string | false;
-    initialValue?: string; // Add initialValue prop
+    initialValue?: string; 
 }
 
 const CityInput = ({ country, onCityChange, error, helperText, initialValue }: CityInputProps) => {
@@ -25,7 +25,7 @@ const CityInput = ({ country, onCityChange, error, helperText, initialValue }: C
 
     useEffect(() => {
         if (initialValue) {
-            setSelectedCity(initialValue); // Set the initial city when the component mounts
+            setSelectedCity(initialValue); 
         }
     }, [initialValue]);
 
@@ -49,12 +49,12 @@ const CityInput = ({ country, onCityChange, error, helperText, initialValue }: C
     return (
         <Autocomplete
             fullWidth
-            value={selectedCity} // Set the value to the selected city
+            value={selectedCity} 
             options={cityOptions}
             onInputChange={handleCityInputChange}
             onChange={(_, newValue) => {
-                setSelectedCity(newValue); // Update the local state
-                onCityChange(newValue); // Notify parent component
+                setSelectedCity(newValue); 
+                onCityChange(newValue); 
             }}
             renderInput={(params) => (
                 <TextField
