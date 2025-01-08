@@ -23,3 +23,7 @@ export const updateSeekerProfile = async (data: Partial<SeekerProfile>): Promise
     return (await apiWrapper(axios.put<SeekerProfile>(`${baseUrl}`, data))).data;
 };
 
+export const checkSeekerUsernameExist = async (username: string, userid?: string): Promise<{exist: boolean}> => {
+    return (await apiWrapper(axios.get<{exist: boolean}>(`${baseUrl}/username-exist/${username}?exclude=${userid}`))).data;
+};
+

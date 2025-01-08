@@ -23,7 +23,7 @@ const AppRoutes = () => {
         if(user){
             getUser().then((res) => {
                 dispatch(setUser({user: res}))
-            }).catch((_) => {})
+            }).catch(() => {})
         }
     }, []);
     

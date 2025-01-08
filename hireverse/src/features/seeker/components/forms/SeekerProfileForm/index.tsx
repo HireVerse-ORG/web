@@ -8,7 +8,7 @@ import CountryInput from "@core/components/ui/LocationInputs/CountryInput";
 import CityInput from "@core/components/ui/LocationInputs/CityInput";
 import { SeekerProfile } from "@core/types/seeker.interface";
 import { updateSeekerProfile } from "@core/api/seeker/profileApi";
-import { uploadToCloudinary } from "@core/lib/cloudinary";
+import { uploadToCloudinary } from "@core/api/external/cloudinaryApi";
 
 type SeekerProfileFormProps = {
     profile?: SeekerProfile | null;

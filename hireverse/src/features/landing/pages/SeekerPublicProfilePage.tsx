@@ -3,7 +3,7 @@ import { Container } from "@mui/material";
 import Header from "../components/Header";
 import {useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getSeekerProfile } from "@core/api/seeker/profileApi";
+import { checkSeekerUsernameExist } from "@core/api/seeker/profileApi";
 import PageLoader from "@core/components/ui/PageLoader";
 
 const SeekerPublicProfilePage = () => {
@@ -13,9 +13,9 @@ const SeekerPublicProfilePage = () => {
 
     useEffect(() => {
         if(name){
-            getSeekerProfile(name)
+             checkSeekerUsernameExist(name)
             .then((data) => {
-                if(!data){
+                if(!data.exist){
                     navigate("/not-found");
                 }else {
                     setLoading(false)

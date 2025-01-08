@@ -6,6 +6,8 @@ import { Box, Typography, Skeleton } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import useGet from "@core/hooks/useGet";
+import CustomDialog from "@core/components/ui/CustomDialog";
+import SeekerProfileUrlForm from "../forms/SeekerProfileUrlForm";
 
 type ProfileUrlCardProps = {
     editable?: boolean;
@@ -13,11 +15,19 @@ type ProfileUrlCardProps = {
 };
 
 const ProfileUrlCard = ({ editable, username }: ProfileUrlCardProps) => {
-    const { data: profileUsername, loading, error } = useGet<string>(() => getSeekerUsername(username));
-
+    const { data: profileUsername, setData: setProfileUsername, loading, error } = useGet<string>(() => getSeekerUsername(username));
     const [profileUrl, setProfileUrl] = useState<string>("");
 
     const baseUrl = import.meta.env.VITE_APP_URL;
+
+    const [modelOpen, setModelOpen] = useState(false);
+
+    const handleEdit = () => setModelOpen(true)
+    const handleModelClose = () => setModelOpen(false)
+    const handleFormSucces = (username: string) => {
+        handleModelClose();
+        setProfileUsername(username);
+    }
 
     useEffect(() => {
         if (profileUsername) {
@@ -31,7 +41,7 @@ const ProfileUrlCard = ({ editable, username }: ProfileUrlCardProps) => {
                 <Typography variant="h6" fontWeight="bold">
                     Profile URL
                 </Typography>
-                {editable && <EditButton color="primary" />}
+                {editable && <EditButton onClick={handleEdit} color="primary" />}
             </Box>
 
             {loading ? (
@@ -61,6 +71,15 @@ const ProfileUrlCard = ({ editable, username }: ProfileUrlCardProps) => {
                         {profileUrl}
                     </Typography>
                 </Box>
+            )}
+
+            {/* form */}
+            {editable && (
+                <>
+                    <CustomDialog open={modelOpen} onClose={handleModelClose}>
+                        <SeekerProfileUrlForm baseUrl={baseUrl} username={profileUsername} onSuccess={handleFormSucces}/>
+                    </CustomDialog>
+                </>
             )}
         </Box>
     );

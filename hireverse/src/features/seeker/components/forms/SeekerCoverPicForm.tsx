@@ -1,6 +1,6 @@
 import { updateSeekerProfile } from "@core/api/seeker/profileApi";
 import ImageUploader from "@core/components/ui/ImageUploader";
-import { uploadToCloudinary } from "@core/lib/cloudinary";
+import { uploadToCloudinary } from "@core/api/external/cloudinaryApi";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { useState } from "react";
 import { toast } from "sonner";

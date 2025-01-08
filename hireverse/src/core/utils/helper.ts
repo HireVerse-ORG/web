@@ -1,5 +1,6 @@
 import { UserRoles } from "@core/types/user.interface"
 import { AxiosError } from "axios";
+import DOMPurify from 'dompurify';
 
 export const getUserDashboardPath = (user: UserRoles) => {
     let dashboardPath = '/seeker';
@@ -45,3 +46,7 @@ export const timeFormatter = (ms: number) => {
     const seconds = Math.floor((ms % 60000) / 1000);
     return `${minutes === 0 ? '' : minutes + ':'}${seconds < 10 ? '0' : ''}${seconds}`;
 };
+
+export const sanitizeHtml = (html: string) => {
+    return DOMPurify.sanitize(html);
+}
