@@ -18,14 +18,23 @@ export interface SeekerEducation {
     profileId: string;
     school: string;
     fieldOfStudy: string;
-    startMonth: number;  
-    startYear: number;   
-    endMonth: number;    
-    endYear: number;     
+    startMonth: number;
+    startYear: number;
+    endMonth: number;
+    endYear: number;
     currentlyPursuing: boolean;
     location: {
         city: string;
         country: string;
     };
     description: string;
+}
+
+export interface SeekerPortfolio {
+    id: string,
+    userId: string,
+    profileId: string;
+    thumbnail: string;
+    title: string;
+    mediaLink: string;
 }

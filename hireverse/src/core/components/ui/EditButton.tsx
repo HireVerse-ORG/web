@@ -3,7 +3,7 @@ import { IconButton, SxProps, Theme } from "@mui/material";
 
 type EditButtonProps = {
     color?: "white" | "primary" | "black";
-    onClick?: () => void;
+    onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     sx?: SxProps<Theme>;
 };
 

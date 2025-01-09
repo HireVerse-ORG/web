@@ -9,6 +9,7 @@ import useGet from "@core/hooks/useGet";
 import CustomDialog from "@core/components/ui/CustomDialog";
 import SeekerProfileForm from "../forms/SeekerProfileForm";
 import SeekerCoverPicForm from "../forms/SeekerCoverPicForm";
+import { DEAFULT_SEEKER_PROFILE_IMAGE_URL } from "@core/utils/constants";
 
 type ProfileCardProps = {
     editable?: boolean;
@@ -148,7 +149,7 @@ const ProfileCard = ({ editable, username }: ProfileCardProps) => {
                 )}
                 <Avatar
                     alt={profile?.profileName || "User Picture"}
-                    src={profile?.image || ""}
+                    src={profile?.image || DEAFULT_SEEKER_PROFILE_IMAGE_URL}
                     sx={{
                         width: profilePicSize,
                         height: profilePicSize,
