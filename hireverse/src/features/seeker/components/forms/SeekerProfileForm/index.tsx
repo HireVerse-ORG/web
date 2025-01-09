@@ -9,24 +9,32 @@ import CityInput from "@core/components/ui/LocationInputs/CityInput";
 import { SeekerProfile } from "@core/types/seeker.interface";
 import { updateSeekerProfile } from "@core/api/seeker/profileApi";
 import { uploadToCloudinary } from "@core/api/external/cloudinaryApi";
+import ImagePreviewer from "@core/components/ui/ImagePreviewer";
 
 type SeekerProfileFormProps = {
     profile?: SeekerProfile | null;
     onSucces?: (profile: SeekerProfile) => void;
 }
-const SeekerProfileForm = ({profile, onSucces}: SeekerProfileFormProps) => {
+const SeekerProfileForm = ({ profile, onSucces }: SeekerProfileFormProps) => {
     const [profileImage, setProfileImage] = useState<File | null>(null);
+    const [profileImagePreview, setProfileImagePreview] = useState<File | string>(profile?.image || "");
 
     const handleImageChange = (image: File | null) => {
         if (image) {
             setProfileImage(image);
+            setProfileImagePreview(image);
         }
     };
 
+    const handleCropped = (croppedImage: File, url: string) => {
+        setProfileImage(croppedImage);
+        setProfileImagePreview(url);
+    }
+
     const handleSubmit = async (values: any, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
         try {
-            let uploadedImage; 
-            if(profileImage){
+            let uploadedImage;
+            if (profileImage) {
                 uploadedImage = await uploadToCloudinary(profileImage);
             }
 
@@ -72,7 +80,22 @@ const SeekerProfileForm = ({profile, onSucces}: SeekerProfileFormProps) => {
                     >
 
                         {/* Image Upload */}
-                        <ImageUploader onChange={handleImageChange} initialImageUrl={profile?.image} preview />
+                        <Box sx={{
+                            display: "flex",
+                            flexDirection: {xs: "column", sm: "row"},
+                            alignContent: "center",
+                            justifyContent: "center",
+                            gap: {xs: 0, sm: 2}
+                        }}>
+                                <ImagePreviewer
+                                    onCropped={handleCropped}
+                                    image={profileImagePreview}
+                                    shape="circle"
+                                    styles={{ width: "100%", maxWidth: "100px", height: "100px", marginBlock: 1, marginInline: "auto" }} />
+                            <Box flexGrow={1}>
+                                <ImageUploader onChange={handleImageChange} />
+                            </Box>
+                        </Box>
 
                         {/* Title */}
                         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
@@ -119,25 +142,25 @@ const SeekerProfileForm = ({profile, onSucces}: SeekerProfileFormProps) => {
                         </Typography>
                         <Box display="flex" gap={2} mb={3}>
                             {/* Country */}
-                            <CountryInput 
+                            <CountryInput
                                 initialValue={values.country}
                                 onCountryChange={(newCountry) => {
                                     setFieldValue("country", newCountry);
-                                    setFieldValue("city", null); 
+                                    setFieldValue("city", null);
                                 }}
-                                error={touched.country && !!errors.country} 
+                                error={touched.country && !!errors.country}
                                 helperText={touched.country && errors.country}
                             />
 
                             {/* City */}
-                            <CityInput 
+                            <CityInput
                                 initialValue={values.city}
-                                country={values.country} 
+                                country={values.country}
                                 onCityChange={(newCity) => {
-                                    setFieldValue("city", newCity); 
+                                    setFieldValue("city", newCity);
                                 }}
-                                error={touched.city && !!errors.city} 
-                                helperText={touched.city && errors.city} 
+                                error={touched.city && !!errors.city}
+                                helperText={touched.city && errors.city}
                             />
                         </Box>
 

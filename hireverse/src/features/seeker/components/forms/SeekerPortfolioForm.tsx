@@ -1,5 +1,6 @@
 import { uploadToCloudinary } from "@core/api/external/cloudinaryApi";
 import { createSeekerPortfolio, deleteSeekerPortfolio, updateSeekerPortfolio } from "@core/api/seeker/portfolioApi";
+import ImagePreviewer from "@core/components/ui/ImagePreviewer";
 import ImageUploader from "@core/components/ui/ImageUploader";
 import { SeekerPortfolio } from "@core/types/seeker.interface";
 import { Box, TextField, Typography, Button, CircularProgress } from "@mui/material";
@@ -22,17 +23,20 @@ const SeekerPortfolioFormSchema = Yup.object({
 
 const SeekerPortfolioForm = ({ portfolio, onAdded, onUpdated, onDeleted }: SeekerPortfolioFormProps) => {
     const [portfolioImage, setPortfolioImage] = useState<File | null>(null);
-    const [portfolioImagePreview, setPortfolioImagePreview] =  useState<string | undefined>(portfolio?.thumbnail);
+    const [portfolioImagePreview, setPortfolioImagePreview] = useState<File | string>(portfolio?.thumbnail || "");
     const [deleting, setDeleting] = useState<boolean>(false);
 
     const handleImageChange = (image: File | null) => {
         if (image) {
             setPortfolioImage(image);
-            const reader = new FileReader();
-            reader.onloadend = () => setPortfolioImagePreview(reader.result as string);
-            reader.readAsDataURL(image);
+            setPortfolioImagePreview(image)
         }
     };
+
+    const handleCropped = (croppedImage: File, url: string) => {
+        setPortfolioImage(croppedImage);
+        setPortfolioImagePreview(url)
+    }
 
     const handleSubmit = async (
         values: any,
@@ -89,25 +93,7 @@ const SeekerPortfolioForm = ({ portfolio, onAdded, onUpdated, onDeleted }: Seeke
                     </Box>
 
                     {/* Display the portfolio image preview or default image */}
-                    <Box
-                        sx={{
-                            position: "relative",
-                            height: 200,
-                            width: "100%",
-                            background: portfolioImagePreview
-                                ? `url(${portfolioImagePreview}) no-repeat center center/cover`
-                                : "#d1d1d1",
-                            borderRadius: 2,
-                            mb: 2,
-                        }}
-                    >
-                        {!portfolioImagePreview && (
-                            <Typography variant="body2" sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", color: "white" }}>
-                                No portfolio thumbnail
-                            </Typography>
-                        )}
-                    </Box>
-
+                    <ImagePreviewer image={portfolioImagePreview} onCropped={handleCropped} styles={{width: "200px", height: "200px", marginInline: "auto"}}/>
                     <ImageUploader onChange={handleImageChange} maxSize={{width: 200, height: 200}} />
 
                     {/* Title */}

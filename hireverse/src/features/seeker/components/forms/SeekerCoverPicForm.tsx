@@ -4,6 +4,7 @@ import { uploadToCloudinary } from "@core/api/external/cloudinaryApi";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { useState } from "react";
 import { toast } from "sonner";
+import ImagePreviewer from "@core/components/ui/ImagePreviewer";
 
 type SeekerCoverPicForm = {
   initialImageUrl?: string;
@@ -12,17 +13,20 @@ type SeekerCoverPicForm = {
 
 const SeekerCoverPicForm = ({ initialImageUrl, onSucces }: SeekerCoverPicForm) => {
   const [coverImage, setCoverImage] = useState<File | null>(null);
-  const [coverImagePreview, setCoverImagePreview] = useState<string | undefined>(initialImageUrl);
+  const [coverImagePreview, setCoverImagePreview] = useState<string | File>(initialImageUrl || "");
   const [submitting, setSubmitting] = useState<boolean>(false);
 
   const handleImageChange = (image: File | null) => {
     if (image) {
       setCoverImage(image);
-      const reader = new FileReader();
-      reader.onloadend = () => setCoverImagePreview(reader.result as string);
-      reader.readAsDataURL(image);
+      setCoverImagePreview(image);
     }
   };
+
+  const handleCropped = (croppedImage: File, url: string) => {
+    setCoverImage(croppedImage);
+    setCoverImagePreview(url)
+  }
 
   const handleCoverPicSubmit = async () => {
     if (coverImage) {
@@ -45,29 +49,11 @@ const SeekerCoverPicForm = ({ initialImageUrl, onSucces }: SeekerCoverPicForm) =
       <Typography variant="h6" gutterBottom>
         Update Cover Picture
       </Typography>
-      
+
       {/* Display the cover image preview or default image */}
-      <Box
-        sx={{
-          position: "relative",
-          height: 200,
-          width: "100%",
-          background: coverImagePreview
-            ? `url(${coverImagePreview}) no-repeat center center/cover`
-            : "#d1d1d1",
-          borderRadius: 2,
-          mb: 2,
-        }}
-      >
-        {!coverImagePreview && (
-          <Typography variant="body2" sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", color: "white" }}>
-            No cover photo
-          </Typography>
-        )}
-      </Box>
-      
+      <ImagePreviewer image={coverImagePreview} aspect={4 / 1} onCropped={handleCropped} />
       <ImageUploader onChange={handleImageChange} />
-      
+
       {/* Submit button */}
       {coverImage && (
         <Button
