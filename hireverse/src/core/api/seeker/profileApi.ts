@@ -1,5 +1,6 @@
 import axios from "@core/lib/axios";
 import { SeekerProfile } from "@core/types/seeker.interface";
+import { ISkill } from "@core/types/skill.interface";
 import { apiWrapper } from "@core/utils/helper";
 
 const baseUrl = '/profile/seeker';
@@ -17,6 +18,19 @@ export const getSeekerBio = async (username?: string): Promise<string> => {
 export const getSeekerUsername = async (username?: string): Promise<string> => {
     const url = (username ? `${baseUrl}/${username}` : `${baseUrl}`) + "?field=username";
     return (await apiWrapper(axios.get<string>(url))).data;
+};
+
+export const getSeekerSkills = async (username?: string): Promise<ISkill[]> => {
+    const url = (username ? `${baseUrl}/${username}` : `${baseUrl}`) + "?field=skills";
+    return (await apiWrapper(axios.get<ISkill[]>(url))).data;
+};
+
+export const updateSeekerProfileSkills = async (data: {skill: string}): Promise<{skill: ISkill, status: boolean}> => {
+    return (await apiWrapper(axios.put<{skill: ISkill, status: boolean}>(`${baseUrl}/skills`, data))).data;
+};
+
+export const removeSeekerProfileSkill = async (skillId: string): Promise<{skill: ISkill, status: boolean}> => {
+    return (await apiWrapper(axios.delete<{skill: ISkill, status: boolean}>(`${baseUrl}/skills/${skillId}`))).data;
 };
 
 export const updateSeekerProfile = async (data: Partial<SeekerProfile>): Promise<SeekerProfile> => {

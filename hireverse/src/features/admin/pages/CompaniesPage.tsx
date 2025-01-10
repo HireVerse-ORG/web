@@ -90,7 +90,7 @@ const CompaniesPage = () => {
                 </>
             ) : (
                 <Typography variant="h6" fontWeight={"bold"} sx={{ textAlign: "center", color: "gray", fontSize: "1.2rem", marginTop: 4, padding: 2 }}>
-                    No Seekers found
+                    No Companies found
                 </Typography>
             )}
         </>
