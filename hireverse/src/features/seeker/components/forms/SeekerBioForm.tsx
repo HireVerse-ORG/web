@@ -40,7 +40,6 @@ const SeekerBioForm = ({ bio, onSuccess }: SeekerBioFormProps) => {
             }
 
             const content = sanitizeHtml(quillRef.current?.getSemanticHTML() || "");
-            console.log("Submitted Bio:", content);
             await updateSeekerProfile({bio: content});
             onSuccess?.(content);
         } catch (error) {
