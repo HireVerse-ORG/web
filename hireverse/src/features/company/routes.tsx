@@ -7,16 +7,19 @@ import { CompanySidebarSections } from "./components/SidebarSections";
 import { CompanyProvider } from "@core/contexts/CompanyContext";
 import ProtectedRoute from "./components/ProtectedRoutes";
 import ProfileCreationPage from "./pages/ProfileCreationPage";
+import DashboardContentLayout from "./components/layouts/DashboardContentLayout";
+import CompanyProfilePage from "./pages/CompanyProfilePage";
 
 
 const CompanyRoutes = () => {
   return (
     <CompanyProvider>
       <Routes>
-        <Route element={<DashboardLayout Sidebar={<Sidebar sections={CompanySidebarSections} />} />}>
+        <Route element={<DashboardLayout ContentLayout={DashboardContentLayout} Sidebar={<Sidebar sections={CompanySidebarSections} />} />}>
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<CompanyDashboard />} />
+            <Route path="/profile" element={<CompanyProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Route>
 
