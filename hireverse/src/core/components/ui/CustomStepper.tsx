@@ -1,4 +1,4 @@
-import { Box, Button, Step, StepLabel, Stepper, Typography, MobileStepper } from "@mui/material";
+import { Box, Button, Step, StepLabel, Stepper, Typography, MobileStepper, CircularProgress } from "@mui/material";
 import { useTheme, useMediaQuery } from "@mui/material";
 import StepIcon from "./StepIcon";
 
@@ -11,6 +11,7 @@ interface Step {
 interface CustomStepperProps {
     steps: Step[];
     activeStep: number;
+    finishing: boolean;
     onNext: () => void;
     onBack: () => void;
     onReset: () => void;
@@ -21,6 +22,7 @@ interface CustomStepperProps {
 const CustomStepper = ({
     steps,
     activeStep,
+    finishing,
     onNext,
     onBack,
     onReset,
@@ -33,7 +35,7 @@ const CustomStepper = ({
     const isLastStep = activeStep === steps.length;
 
     return (
-        <Box sx={{ width: "100%", height: "100%", mt: 5}}>
+        <Box sx={{ width: "100%", height: "100%", mt: 5 }}>
             {/* Stepper */}
             {isMobile ? (
                 <>
@@ -47,16 +49,20 @@ const CustomStepper = ({
                                 <Button
                                     size="small"
                                     onClick={onNext}
-                                    disabled={isLastStep}
+                                    disabled={isLastStep || finishing}
                                 >
-                                    {isLastStep ? "Finish" : "Next"}
+                                    {finishing ? (
+                                        <CircularProgress size={24} color="inherit" />
+                                    ) : (
+                                        isLastStep ? "Finish" : "Next"
+                                    )}
                                 </Button>
                             }
                             backButton={
                                 <Button
                                     size="small"
                                     onClick={onBack}
-                                    disabled={activeStep === 0}
+                                    disabled={activeStep === 0 || finishing}
                                 >
                                     Back
                                 </Button>
@@ -119,7 +125,7 @@ const CustomStepper = ({
                             }}
                         >
                             <Button
-                                disabled={activeStep === 0}
+                                disabled={activeStep === 0 || finishing}
                                 onClick={onBack}
                                 variant="outlined"
                             >
@@ -129,8 +135,15 @@ const CustomStepper = ({
                                 onClick={onNext}
                                 variant="contained"
                                 color={activeStep === steps.length - 1 ? "success" : "primary"}
+                                disabled={finishing}
                             >
-                                {activeStep === steps.length - 1 ? "Finish" : "Next Step"}
+                                {finishing ? (
+                                    <CircularProgress size={24} color="inherit" />
+                                ) : activeStep === steps.length - 1 ? (
+                                    "Finish"
+                                ) : (
+                                    "Next Step"
+                                )}
                             </Button>
                         </Box>
                     )}

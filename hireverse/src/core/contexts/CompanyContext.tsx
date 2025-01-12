@@ -1,17 +1,18 @@
+import { ICompanyProfile } from "@core/types/company.interface";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 interface CompanyContextType {
-    hasProfile: boolean;
-    setHasProfile: (hasProfile: boolean) => void;
+    companyProfile: ICompanyProfile | null;
+    setCompanyProfile: (profile: ICompanyProfile | null) => void;
 }
 
 const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
 
 export const CompanyProvider = ({ children }: { children: ReactNode }) => {
-    const [hasProfile, setHasProfile] = useState(false);
+    const [companyProfile, setCompanyProfile] = useState<ICompanyProfile | null>(null);
 
     return (
-        <CompanyContext.Provider value={{ hasProfile, setHasProfile }}>
+        <CompanyContext.Provider value={{ companyProfile, setCompanyProfile }}>
             {children}
         </CompanyContext.Provider>
     );

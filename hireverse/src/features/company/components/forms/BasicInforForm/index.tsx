@@ -16,7 +16,6 @@ interface Location {
 
 export interface BasicInfoFormValues {
     companyName: string;
-    companyEmail: string;
     companyType: string;
     industry: string;
     location: Location;
@@ -63,7 +62,6 @@ const BasicInfoForm = forwardRef(({ image, data, onSubmit }: BasicInfoFormProps,
     return (
         <Formik
             initialValues={{
-                companyEmail: data?.companyEmail || "",
                 companyName: data?.companyName || "",
                 companyType: data?.companyType || "",
                 industry: data?.industry || "",
@@ -104,7 +102,6 @@ const BasicInfoForm = forwardRef(({ image, data, onSubmit }: BasicInfoFormProps,
                             </Typography>
                             <Field
                                 name="companyName"
-                                label=""
                                 variant="outlined"
                                 fullWidth
                                 placeholder="Enter your company's name"
