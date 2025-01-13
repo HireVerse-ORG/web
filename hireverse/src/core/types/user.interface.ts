@@ -1,3 +1,5 @@
+import { ICompanyProfile } from "./company.interface";
+
 export type UserRoles = 'admin' | 'seeker' | 'company';
 
 export interface User {
@@ -8,4 +10,8 @@ export interface User {
     isVerified: boolean;
     isBlocked: boolean;
     createdAT: Date;
+}
+
+export interface ICompanyUser extends User {
+    profile: ICompanyProfile | null;
 }
