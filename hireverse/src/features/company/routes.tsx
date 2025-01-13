@@ -9,6 +9,8 @@ import ProtectedRoute from "./components/ProtectedRoutes";
 import ProfileCreationPage from "./pages/ProfileCreationPage";
 import DashboardContentLayout from "./components/layouts/DashboardContentLayout";
 import CompanyProfilePage from "./pages/CompanyProfilePage";
+import PostJobPage from "./pages/PostJobPage";
+import MyJobsPage from "./pages/MyJobsPage";
 
 
 const CompanyRoutes = () => {
@@ -20,6 +22,8 @@ const CompanyRoutes = () => {
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<CompanyDashboard />} />
             <Route path="/profile" element={<CompanyProfilePage />} />
+            <Route path="/post-job" element={<PostJobPage />} />
+            <Route path="/jobs" element={<MyJobsPage />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Route>
 

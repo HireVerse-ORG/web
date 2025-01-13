@@ -2,17 +2,17 @@ import Sidebar from "@core/components/ui/Sidebar";
 import { Box, Button, Container, Drawer, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useState } from "react";
 import MenuButton from "@core/components/ui/MenuButton";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { CompanySidebarSections } from "./SidebarSections";
 import { useCompanyContext } from "@core/contexts/CompanyContext";
 import { DEAFULT_COMPANY_IMAGE_URL } from "@core/utils/constants";
+import { Add } from "@mui/icons-material";
 
 const Header = () => {
     const { companyProfile } = useCompanyContext();
     const [openMenu, setOpenMenu] = useState(false);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-    const location = useLocation();
 
     const toggleMenu = () => {
         setOpenMenu(!openMenu);
@@ -60,6 +60,7 @@ const Header = () => {
                         <Typography
                             variant="h6"
                             sx={{
+                                fontSize: {xs: "14px", sm: "16px"},
                                 fontWeight: 600,
                                 color: "text.primary",
                             }}
@@ -70,11 +71,13 @@ const Header = () => {
                 </Box>
 
                 {/* Link Button */}
-                {location.pathname !== "/company/settings" && companyProfile?.status === "verified" && (
+                {companyProfile?.status === "verified" && (
                     <Button
                         variant="contained"
                         component={Link}
-                        to="/"
+                        to="/company/post-job"
+                        startIcon={<Add />}
+                        sx={{textWrap: "nowrap"}}
                     >
                         Post a job
                     </Button>
