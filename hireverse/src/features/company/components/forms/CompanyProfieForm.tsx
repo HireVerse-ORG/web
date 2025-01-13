@@ -1,11 +1,9 @@
 import { TextField, Box, Typography } from "@mui/material";
 import { Formik, Field, Form, FormikProps } from "formik";
-import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import FormLayout from "@core/components/layouts/FormLayout";
 import * as Yup from "yup";
-import Quill from "quill";
-import QuillEditor from "@core/components/ui/QuillEditor";
-import { sanitizeHtml } from "@core/utils/helper";
+import AboutCompanyEditor from "../AboutCompanyEditor";
 
 interface CompanyProfileFormValues {
     employeeCount: string;
@@ -19,10 +17,9 @@ const CompanyProfileFormSchema = Yup.object({
     employeeCount: Yup.number()
         .notRequired()
         .typeError('Employee count must be a number')
-        .integer('Employee count must be a whole number') 
-        .min(0, 'Employee count cannot be negative'), 
+        .integer('Employee count must be a whole number')
+        .min(0, 'Employee count cannot be negative'),
 });
-
 
 type CompanyProfileFormProps = {
     data?: CompanyProfileValues;
@@ -32,43 +29,20 @@ type CompanyProfileFormProps = {
 const CompanyProfileForm = forwardRef(
     ({ data, onSubmit }: CompanyProfileFormProps, ref) => {
         const formikRef = useRef<FormikProps<CompanyProfileFormValues> | null>(null);
-        const quillRef = useRef<Quill | null>(null);
-        const aboutCompany = useRef<string>(data?.aboutCompany || "");
-
-        const toolbarOptions = [
-            [{ 'header': '2' }],
-            ["bold", "italic", "underline"],
-            [{ list: "ordered" }, { list: "bullet" }],
-            ["clean"],
-        ];
-
-        useEffect(() => {
-            if (quillRef.current && data?.aboutCompany) {
-                quillRef.current.clipboard.dangerouslyPasteHTML(data.aboutCompany);
-            }
-        }, [data?.aboutCompany]);
+        const [aboutCompany, setAboutCompany] = useState<string>(data?.aboutCompany || "");
 
         useImperativeHandle(ref, () => ({
             submitForm: () => formikRef.current?.submitForm(),
         }));
 
-        const handleTextChange = () => {
-            if (quillRef.current) {
-                const textContent = quillRef.current.getText();
-                const htmlContent = quillRef.current.getSemanticHTML();
-                if (textContent.length > 0) {
-                    aboutCompany.current = sanitizeHtml(htmlContent);
-                }
-            }
-        }
 
+        // Formik submit handler
         const handleSubmit = (values: CompanyProfileFormValues) => {
             onSubmit({
-                aboutCompany: aboutCompany.current,
+                aboutCompany: aboutCompany,
                 employeeCount: values.employeeCount,
             });
         };
-
 
         return (
             <Formik
@@ -86,16 +60,7 @@ const CompanyProfileForm = forwardRef(
                                 <Typography variant="body1" fontWeight={500} mb={1}>
                                     About Company
                                 </Typography>
-                                <QuillEditor
-                                    ref={quillRef}
-                                    modules={{
-                                        toolbar: toolbarOptions,
-                                    }}
-                                    placeholder="Write about your company"
-                                    style={{ height: "200px" }}
-                                    maxLength={700}
-                                    onTextChange={handleTextChange}
-                                />
+                                <AboutCompanyEditor value={data?.aboutCompany} onData={(data) => {setAboutCompany(data)}} />
                             </Box>
 
                             <Box sx={{ width: "100%", maxWidth: "400px", mx: { xs: "auto", sm: 0 }, mb: 6 }}>
@@ -119,6 +84,5 @@ const CompanyProfileForm = forwardRef(
         );
     }
 );
-
 
 export default CompanyProfileForm;

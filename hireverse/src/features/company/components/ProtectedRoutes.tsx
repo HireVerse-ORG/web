@@ -34,11 +34,11 @@ const ProtectedRoute = () => {
         return <PageLoader />;
     }
 
-    if (!companyProfile) {
+    if (!loading && !companyProfile) {
         return <Navigate to="/company/profile-creation" replace />;
     }
 
-    if (!isExcludedPath) {
+    if (!isExcludedPath && companyProfile) {
         switch (companyProfile.status) {
             case "pending":
                 return renderStatusMessage(

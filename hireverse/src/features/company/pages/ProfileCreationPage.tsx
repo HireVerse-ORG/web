@@ -12,6 +12,7 @@ import { getUserDashboardPath } from "@core/utils/helper";
 import { useCompanyContext } from "@core/contexts/CompanyContext";
 import { toast } from "sonner";
 import { createCompanyProfile } from "@core/api/company/profileApi";
+import { uploadToCloudinary } from "@core/api/external/cloudinaryApi";
 
 const ProfileCreationPage = () => {
     const { companyProfile, setCompanyProfile } = useCompanyContext();
@@ -68,23 +69,34 @@ const ProfileCreationPage = () => {
 
     const handleCompanyProfileFormSubmit = (values: CompanyProfileValues) => {
         setFormValues((prev) => ({ ...prev, companyProfile: values }));
-        handleFinish();
+        handleFinish({...formValues, companyProfile: values});
     };
 
-    const handleFinish = async () => {
+    const handleFinish = async (values: {
+        basicInfo: BasicInfoFormValues;
+        contactInfo: CompanyContactFormValues;
+        companyProfile: CompanyProfileValues;
+    }) => {
         setFinishing(true)
         try {
+            const imageurl = logo ? await uploadToCloudinary(logo) : "";
             const reponse = await createCompanyProfile({
-                name: formValues.basicInfo.companyName,
-                companyType: formValues.basicInfo.companyType,
-                industry: formValues.basicInfo.industry,
-                location: formValues.basicInfo.location,
-                email: formValues.contactInfo.email,
-                phone: formValues.contactInfo.phoneNumber,
-                website: formValues.contactInfo.website,
-                socialLinks: formValues.contactInfo.socialMedia,
-                employeeCount: parseInt(formValues.companyProfile.employeeCount),
-                bio: formValues.companyProfile.aboutCompany
+                image: imageurl,
+                name: values.basicInfo.companyName,
+                companyType: values.basicInfo.companyType,
+                industry: values.basicInfo.industry,
+                location: values.basicInfo.location,
+                email: values.contactInfo.email,
+                phone: values.contactInfo.phoneNumber,
+                website: values.contactInfo.website,
+                socialLinks: {
+                    facebook: values.contactInfo.socialMedia.facebook,
+                    instagram: values.contactInfo.socialMedia.instagram,
+                    twitter: values.contactInfo.socialMedia.twitter,
+                    linkedin: values.contactInfo.socialMedia.linkedIn,
+                },
+                employeeCount: parseInt(values.companyProfile.employeeCount),
+                bio: values.companyProfile.aboutCompany
             });
             setCompanyProfile(reponse.profile)
             setActiveStep((prevActiveStep) => prevActiveStep + 1);
