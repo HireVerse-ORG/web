@@ -16,3 +16,11 @@ export const getCompanyProfile = async (companyId?: string): Promise<ICompanyPro
     const url = (companyId ? `${baseUrl}/${companyId}` : `${baseUrl}`);
     return (await apiWrapper(axios.get<ICompanyProfile>(url))).data;
 };
+
+export const addWorksplaceImage = async (data: {image: string}): Promise<{message: string}> => {
+    return (await apiWrapper(axios.put<{message: string}>(`${baseUrl}/workplace-image`, data))).data;
+};
+
+export const removeWorksplaceImage = async (data: { image: string }): Promise<{ message: string }> => {
+    return (await apiWrapper(axios.delete<{ message: string }>(`${baseUrl}/workplace-image`, { data }))).data;
+};

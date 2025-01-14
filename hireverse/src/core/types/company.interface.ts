@@ -24,7 +24,8 @@ export interface ICompanyProfile {
         instagram?: string;
     };
     employeeCount: number;
-    status: CompanyProfileStatus; 
+    status: CompanyProfileStatus;
+    workplaceImages: string[]; 
     createdAt: Date;
     updatedAt: Date;
 }

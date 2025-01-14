@@ -5,7 +5,6 @@ import CompanyInfoCard from "../../company/components/profile/CompanyInfoCard";
 import AboutCompanyCard from "../..//company/components/profile/AboutCompanyCard";
 import ContactCard from "../..//company/components/profile/ContactCard";
 import CompanyImagesCard from "../..//company/components/profile/CompanyImagesCard";
-import CompanyBenifitList from "../..//company/components/profile/CompanyBenifitList";
 import useGet from "@core/hooks/useGet";
 import { getCompanyProfile } from "@core/api/company/profileApi";
 import PageLoader from "@core/components/ui/PageLoader";
@@ -40,8 +39,8 @@ const CompanyPublicViewPage = () => {
                         facebook: profile?.socialLinks.facebook,
                         twitter: profile?.socialLinks.twitter,
                     }}/>
-                    <CompanyImagesCard mode={mode} />
-                    <CompanyBenifitList mode={mode} />
+                    {profile!.workplaceImages.length > 0 && <CompanyImagesCard mode={mode} companyName={profile!.name} images={profile!.workplaceImages}/>}
+                    {/* <CompanyBenifitList mode={mode} /> */}
                 </Box>
             </Container>
         </>
