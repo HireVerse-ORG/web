@@ -8,6 +8,8 @@ import { MsalProvider } from "@azure/msal-react";
 import { msalConfig } from "@core/lib/mslConfig";
 import { PublicClientApplication } from "@azure/msal-browser";
 import { GoogleOAuthProvider } from '@react-oauth/google'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -18,8 +20,10 @@ function App() {
         <MsalProvider instance={msalInstance}>
           <Provider store={store}>
             <ThemeProvider theme={theme}>
-              <CssBaseline />
-              <AppRoutes />
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <CssBaseline />
+                <AppRoutes />
+              </LocalizationProvider>
             </ThemeProvider>
             <Toaster richColors={true} visibleToasts={2} />
           </Provider>

@@ -40,7 +40,7 @@ const CompaniesPage = () => {
                 if (row.profileData) {
                     return (
                         <Box display="flex" alignItems="center" gap={1}
-                            component={"a"} href={`/company/${row.profileData.companyId}`}
+                            component={"a"} href={`/company-view/${row.profileData.companyId}`} target="_blank"
                             style={{
                                 color: "inherit",
                                 textDecoration: "none",

@@ -8,6 +8,10 @@ export const createCompanyProfile = async (data: Partial<ICompanyProfile>): Prom
     return (await apiWrapper(axios.post<{message: string, profile: ICompanyProfile}>(baseUrl, data))).data;
 };
 
+export const updateCompanyProfile = async (data: Partial<ICompanyProfile>): Promise<{message: string, profile: ICompanyProfile}> => {
+    return (await apiWrapper(axios.put<{message: string, profile: ICompanyProfile}>(baseUrl, data))).data;
+};
+
 export const getCompanyProfile = async (companyId?: string): Promise<ICompanyProfile> => {
     const url = (companyId ? `${baseUrl}/${companyId}` : `${baseUrl}`);
     return (await apiWrapper(axios.get<ICompanyProfile>(url))).data;

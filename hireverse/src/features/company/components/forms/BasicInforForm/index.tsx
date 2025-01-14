@@ -7,7 +7,7 @@ import ImageUploader from "@core/components/ui/ImageUploader";
 import CountryInput from "@core/components/ui/LocationInputs/CountryInput";
 import CityInput from "@core/components/ui/LocationInputs/CityInput";
 import { BasicInfoFormSchema } from "./schema";
-import { companyTypes, industries } from "./data";
+import { companyTypes, industries } from "@core/data/companyFormData";
 
 interface Location {
     city: string;

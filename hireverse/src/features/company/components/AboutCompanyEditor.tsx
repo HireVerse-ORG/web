@@ -27,9 +27,13 @@ const AboutCompanyEditor = ({ value, onData }: { value?: string; onData: (data: 
             }
 
             quillRef.current.on("text-change", () => {
-                const htmlContent = quillRef.current?.root.innerHTML || "";
-                const sanitizedContent = sanitizeHtml(htmlContent);
-                onData(sanitizedContent);
+                if(quillRef.current?.getLength() === 1){
+                    onData("");
+                } else {
+                    const htmlContent = quillRef.current?.root.innerHTML || "";
+                    const sanitizedContent = sanitizeHtml(htmlContent);
+                    onData(sanitizedContent);
+                }
             });
         }
     }, [value]); 

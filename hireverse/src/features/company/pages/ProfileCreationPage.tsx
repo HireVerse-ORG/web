@@ -28,10 +28,6 @@ const ProfileCreationPage = () => {
         setLoading(false);
     }, []);
 
-    if(loading){
-        return <PageLoader />;
-    }
-
     const [activeStep, setActiveStep] = useState(0);
     const [finishing, setFinishing] = useState(false);
     const [logo, setLogo] = useState<File | null>(null);
@@ -45,6 +41,9 @@ const ProfileCreationPage = () => {
     const contactFormRef = useRef<any>(null);
     const companyProfileFormRef = useRef<any>(null);
 
+    if(loading){
+        return <PageLoader />;
+    }
 
     const handleNext = () => {
         if (activeStep === 0) {

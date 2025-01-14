@@ -50,3 +50,19 @@ export const timeFormatter = (ms: number) => {
 export const sanitizeHtml = (html: string) => {
     return DOMPurify.sanitize(html);
 }
+
+export const formatCount = (count: number): string => {
+    if (count < 1000) {
+        return count.toString(); 
+    }
+    if (count >= 1000 && count < 1_000_000) {
+        return (count / 1000).toFixed(1) + 'k';
+    }
+    if (count >= 1_000_000 && count < 1_000_000_000) {
+        return (count / 1_000_000).toFixed(1) + 'M'; 
+    }
+    if (count >= 1_000_000_000) {
+        return (count / 1_000_000_000).toFixed(1) + 'B'; 
+    }
+    return count.toString(); 
+};
