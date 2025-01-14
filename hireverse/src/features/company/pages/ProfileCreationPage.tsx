@@ -7,22 +7,30 @@ import ProfileCreationSteppperLayout from "../components/layouts/ProfileCreation
 import BasicInfoForm, { BasicInfoFormValues } from "../components/forms/BasicInforForm";
 import CompanyContactForm, { CompanyContactFormValues } from "../components/forms/CompanyContactForm";
 import CompanyProfileForm, { CompanyProfileValues } from "../components/forms/CompanyProfieForm";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getUserDashboardPath } from "@core/utils/helper";
 import { useCompanyContext } from "@core/contexts/CompanyContext";
 import { toast } from "sonner";
 import { createCompanyProfile } from "@core/api/company/profileApi";
 import { uploadToCloudinary } from "@core/api/external/cloudinaryApi";
+import PageLoader from "@core/components/ui/PageLoader";
 
 const ProfileCreationPage = () => {
     const { companyProfile, setCompanyProfile } = useCompanyContext();
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         if (companyProfile) {
-            navigate(getUserDashboardPath("company"));
+            navigate(location.state.from || getUserDashboardPath("company"));
         }
+        setLoading(false);
     }, []);
+
+    if(loading){
+        return <PageLoader />;
+    }
 
     const [activeStep, setActiveStep] = useState(0);
     const [finishing, setFinishing] = useState(false);

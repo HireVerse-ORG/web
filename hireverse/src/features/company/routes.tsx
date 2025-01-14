@@ -21,7 +21,7 @@ const CompanyRoutes = () => {
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<CompanyDashboard />} />
-            <Route path="/profile" element={<CompanyProfilePage />} />
+            <Route path="/profile" element={<CompanyProfilePage mode="edit"/>} />
             <Route path="/post-job" element={<PostJobPage />} />
             <Route path="/jobs" element={<MyJobsPage />} />
             <Route path="/settings" element={<SettingsPage />} />

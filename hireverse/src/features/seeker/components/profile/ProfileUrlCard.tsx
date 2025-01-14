@@ -59,6 +59,7 @@ const ProfileUrlCard = ({ editable, username }: ProfileUrlCardProps) => {
                         variant="body2"
                         component={Link}
                         to={profileUrl}
+                        target="_blank"
                         sx={{
                             textDecoration: "none",
                             color: "text.primary",

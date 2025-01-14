@@ -35,7 +35,7 @@ const ProtectedRoute = () => {
     }
 
     if (!loading && !companyProfile) {
-        return <Navigate to="/company/profile-creation" replace />;
+        return <Navigate to="/company/profile-creation" replace state={{from: location.pathname}} />;
     }
 
     if (!isExcludedPath && companyProfile) {
