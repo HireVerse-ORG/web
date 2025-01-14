@@ -53,7 +53,6 @@ const Header = () => {
                             sx={{
                                 height: 40,
                                 width: 40,
-                                borderRadius: "50%",
                                 objectFit: "cover",
                             }}
                         />

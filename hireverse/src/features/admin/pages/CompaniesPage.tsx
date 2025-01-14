@@ -41,9 +41,14 @@ const CompaniesPage = () => {
                     return (
                         <Box display="flex" alignItems="center" gap={1}
                             component={"a"} href={`/company-view/${row.profileData.companyId}`} target="_blank"
-                            style={{
+                            sx={{
                                 color: "inherit",
                                 textDecoration: "none",
+                                "&:hover": {
+                                    textDecoration: "underline",
+                                    color: "primary.main",
+                                    fontWeight: 500, 
+                                },
                             }}>
                             <img
                                 src={row.profileData.image || DEAFULT_COMPANY_IMAGE_URL}
@@ -51,7 +56,6 @@ const CompaniesPage = () => {
                                 style={{
                                     width: 40,
                                     height: 40,
-                                    borderRadius: "50%",
                                     objectFit: "cover",
                                 }}
                             />

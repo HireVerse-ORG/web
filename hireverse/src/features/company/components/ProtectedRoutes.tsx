@@ -12,7 +12,7 @@ const ProtectedRoute = () => {
     const { companyProfile, setCompanyProfile } = useCompanyContext();
     const location = useLocation();
 
-    const excludedPaths = ["/company/settings"];
+    const excludedPaths = ["/company/settings", "/company/profile"];
     const isExcludedPath = excludedPaths.includes(location.pathname);
 
     useEffect(() => {
