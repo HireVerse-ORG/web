@@ -8,20 +8,24 @@ import SeekerDashboard from "./pages/SeekerDashboard";
 import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
 import PricingPage from "./pages/PricingPage";
+import { SubscriptionProvider } from "@core/contexts/SeekerSubscriptionContext";
 
 
 const SeekerRoutes = () => {
-  return (
-    <Routes>
-      <Route element={<DashboardLayout Sidebar={<Sidebar sections={SeekerSidebarSections} />} ContentLayout={ContentLayout}/>}>
-        <Route path="/" element={<SeekerDashboard />} />
-        <Route path="/profile" element={<ProfilePage mode="edit" />} />
-        <Route path="/pricing" element={<PricingPage/>} />
 
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="*" element={<Navigate to={"/seeker"} />} />
-      </Route>
-    </Routes>
+  return (
+    <SubscriptionProvider>
+      <Routes>
+        <Route element={<DashboardLayout Sidebar={<Sidebar sections={SeekerSidebarSections} />} ContentLayout={ContentLayout} />}>
+          <Route path="/" element={<SeekerDashboard />} />
+          <Route path="/profile" element={<ProfilePage mode="edit" />} />
+          <Route path="/pricing-plans" element={<PricingPage />} />
+
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="*" element={<Navigate to={"/seeker"} />} />
+        </Route>
+      </Routes>
+    </SubscriptionProvider>
   );
 }
 

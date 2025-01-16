@@ -20,7 +20,10 @@ interface PaymentPlanCardProps {
   duration: string;
   features: { name: string; available: boolean }[];
   isPopular?: boolean;
-  isActive?: boolean;
+  isActive?: boolean;  
+  isCurrentPlan?: boolean;
+  buttonText?: string;
+  disabled?: boolean;  
   onSubscribe: () => void;
 }
 
@@ -30,8 +33,11 @@ const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({
   duration,
   features,
   isPopular = false,
-  isActive = false,
+  isActive = true,
+  isCurrentPlan = false, 
   onSubscribe,
+  buttonText="Subscribe",
+  disabled= false
 }) => {
   return (
     <Card
@@ -41,6 +47,9 @@ const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({
         position: 'relative',
         overflow: 'visible',
         borderRadius: 2,
+        opacity: isActive ? 1 : 0.5, 
+        pointerEvents: isActive ? 'auto' : 'none', 
+        backgroundColor: isCurrentPlan ? '#f5f5f5' : 'transparent', 
       }}
     >
       {isPopular && (
@@ -51,6 +60,18 @@ const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({
             position: 'absolute',
             top: -10,
             right: 10,
+            fontWeight: 'bold',
+          }}
+        />
+      )}
+      {isCurrentPlan && (
+        <Chip
+          label="Current Plan"
+          color="secondary"
+          sx={{
+            position: 'absolute',
+            top: -10,
+            left: 10,
             fontWeight: 'bold',
           }}
         />
@@ -77,12 +98,12 @@ const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px', 
+                gap: '8px',
               }}
             >
               <ListItemIcon
                 sx={{
-                  minWidth: '24px', 
+                  minWidth: '24px',
                 }}
               >
                 {feature.available ? (
@@ -101,9 +122,9 @@ const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({
             color="primary"
             onClick={onSubscribe}
             fullWidth
-            disabled={isActive} 
+            disabled={!isActive || disabled}  
           >
-            {isActive ? 'Current Plan' : 'Subscribe'}
+            {buttonText}
           </Button>
         </Box>
       </CardContent>
