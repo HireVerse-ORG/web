@@ -19,7 +19,7 @@ export default function useCompany(currentPage: number, searchQuery: string, sta
         setTotalPages(totalPages);
         setRows(data.map((user: any) => ({
           id: user.id,
-          profile: user.profile.name || "N/A",
+          profile: user.profile?.name || "N/A",
           name: user.fullname || "N/A",
           email: user.email,
           joined: dateFormatter(user.createAt),
