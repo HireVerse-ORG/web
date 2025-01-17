@@ -65,7 +65,7 @@ const CompaniesPage = () => {
                                     fontSize: "14px"
                                 }}
                             >
-                                {row.profileData.name}
+                                {row.profileData?.name || ""}
                             </Typography>
                         </Box>
                     );

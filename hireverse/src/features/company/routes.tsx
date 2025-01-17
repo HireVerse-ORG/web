@@ -12,27 +12,32 @@ import CompanyProfilePage from "./pages/CompanyProfilePage";
 import PostJobPage from "./pages/PostJobPage";
 import MyJobsPage from "./pages/MyJobsPage";
 import CompanyPublicViewPage from "../landing/pages/CompanyPublicViewPage";
+import PricingPlansPage from "./pages/PricingPlansPage";
+import { CompanySubscriptionProvider } from "@core/contexts/CompanySubscriptionContext";
 
 
 const CompanyRoutes = () => {
   return (
     <CompanyProvider>
-      <Routes>
-        <Route element={<DashboardLayout ContentLayout={DashboardContentLayout} Sidebar={<Sidebar sections={CompanySidebarSections} />} />}>
-          {/* Protected Routes */}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<CompanyDashboard />} />
-            <Route path="/profile" element={<CompanyProfilePage/>} />
-            <Route path="/post-job" element={<PostJobPage />} />
-            <Route path="/jobs" element={<MyJobsPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-          </Route>
+      <CompanySubscriptionProvider>
+        <Routes>
+          <Route element={<DashboardLayout ContentLayout={DashboardContentLayout} Sidebar={<Sidebar sections={CompanySidebarSections} />} />}>
+            {/* Protected Routes */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/" element={<CompanyDashboard />} />
+              <Route path="/profile" element={<CompanyProfilePage/>} />
+              <Route path="/post-job" element={<PostJobPage />} />
+              <Route path="/jobs" element={<MyJobsPage />} />
+              <Route path="/pricing-plans" element={<PricingPlansPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+            </Route>
 
-          <Route path="/*" element={<Navigate to="/company" />} />
-        </Route>
-        <Route path="/profile-creation" element={<ProfileCreationPage />} />
-        <Route path=":companyId" element={<CompanyPublicViewPage />} />
-      </Routes>
+            <Route path="/*" element={<Navigate to="/company" />} />
+          </Route>
+          <Route path="/profile-creation" element={<ProfileCreationPage />} />
+          <Route path=":companyId" element={<CompanyPublicViewPage />} />
+        </Routes>
+      </CompanySubscriptionProvider>
     </CompanyProvider>
   );
 }

@@ -60,7 +60,7 @@ const ProfilePage = ({mode, username}: ProfilePageProps) => {
                 }}
             >
                 <ProfileUrlCard editable={editable} username={username} />
-                <AdditionalDetailCard editable={editable} username={username} />
+                {/* <AdditionalDetailCard editable={editable} username={username} /> */}
             </Box>
 
             {/* Left Side Content */}
@@ -84,7 +84,7 @@ const ProfilePage = ({mode, username}: ProfilePageProps) => {
                     overflow: "hidden",
                 }}
             >
-                <ExperiencesCard editable={editable} username={username} />
+                {/* <ExperiencesCard editable={editable} username={username} /> */}
             </Box>
             <Box
                 sx={{

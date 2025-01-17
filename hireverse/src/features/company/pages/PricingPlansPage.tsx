@@ -1,10 +1,10 @@
-import { cancelSeekerSubscription, getSeekerPaymentLink } from "@core/api/subscription/seekerSubscriptionApi";
+import { cancelCompanySubscription, getCompanyPaymentLink } from "@core/api/subscription/companySubscriptionApi";
 import PaymentPlanCard from "@core/components/ui/PaymentPlanCard";
-import { useSeekerSubscription } from "@core/contexts/SeekerSubscriptionContext";
-import { SeekerSubscriptioPlan } from "@core/types/subscription.interface";
+import { useCompanySubscription } from "@core/contexts/CompanySubscriptionContext";
+import { CompanySubscriptioPlan } from "@core/types/subscription.interface";
 import { Box, Skeleton, Typography } from "@mui/material";
-import { toast } from "sonner";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const plans: {
     planName: string;
@@ -12,60 +12,60 @@ const plans: {
     duration: string;
     features: { name: string; available: boolean }[]; 
     isPopular?: boolean;
-    paymentPlan: SeekerSubscriptioPlan; 
+    paymentPlan: CompanySubscriptioPlan; 
 }[] = [
     {
         planName: "Free",
         rate: "$0",
         duration: "month",
         features: [
-            { name: "Profile Creation", available: true },
-            { name: "5 Job applications/month", available: true },
-            { name: "Limited Messaging", available: true },
+            { name: "1 Job Posting per month", available: true },
+            { name: "Limited Resume Access", available: true },
+            { name: "Limited Profile Access", available: true },
         ],
         paymentPlan: "free",
     },
     {
         planName: "Basic Plan",
-        rate: "$5",
+        rate: "$10",
         duration: "month",
         features: [
-            { name: "Profile Creation", available: true },
-            { name: "30 Job applications/month", available: true },
-            { name: "Message Anyone", available: true },
+            { name: "5 Job Postings per month", available: true },
+            { name: "Access 20 Resumes", available: true },
+            { name: "Access 20 Profiles", available: true },
         ],
         isPopular: true,
         paymentPlan: "basic", 
     },
     {
         planName: "Premium Plan",
-        rate: "$15",
+        rate: "$20",
         duration: "month",
         features: [
-            { name: "Profile Creation", available: true },
-            { name: "Unlimited Job applications", available: true },
-            { name: "Message Anyone", available: true },
+            { name: "Unlimited Job Postings", available: true },
+            { name: "Unlimited Resume Access", available: true },
+            { name: "Unlimited Profile Access", available: true },
         ],
         paymentPlan: "premium", 
     },
 ];
 
-function PricingPage() {
-    const { subscription, loading: planLoading, refetch } = useSeekerSubscription();
-    const [loadingPlans, setLoadingPlans] = useState<Record<SeekerSubscriptioPlan, boolean>>({
+const PricingPlansPage = () => {
+    const { subscription, loading: planLoading, refetch } = useCompanySubscription();
+    const [loadingPlans, setLoadingPlans] = useState<Record<CompanySubscriptioPlan, boolean>>({
         free: false,
         basic: false,
         premium: false,
     });
 
-    const handleSubscribe = async (plan: SeekerSubscriptioPlan) => {
+    const handleSubscribe = async (plan: CompanySubscriptioPlan) => {
         if (plan === "free") {
             return;
         }
     
         try {
             setLoadingPlans((prev) => ({ ...prev, [plan]: true }));
-            const { url } = await getSeekerPaymentLink(plan);
+            const { url } = await getCompanyPaymentLink(plan);
     
             if (url) {
                 window.location.href = url;
@@ -79,13 +79,13 @@ function PricingPage() {
         }
     };
 
-    const handleCancel = async (plan: SeekerSubscriptioPlan) => {
+    const handleCancel = async (plan: CompanySubscriptioPlan) => {
         if (plan === "free") {
             return;
         }
         try {
             setLoadingPlans((prev) => ({ ...prev, [plan]: true }));
-            await cancelSeekerSubscription();
+            await cancelCompanySubscription();
             refetch();
         } catch (error: any) {
             toast.error(error || "Failed to cancel the subscription. Please try again later.");
@@ -189,4 +189,4 @@ function PricingPage() {
     );
 }
 
-export default PricingPage;
+export default PricingPlansPage;
