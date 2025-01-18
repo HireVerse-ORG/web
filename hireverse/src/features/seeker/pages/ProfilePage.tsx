@@ -84,7 +84,7 @@ const ProfilePage = ({mode, username}: ProfilePageProps) => {
                     overflow: "hidden",
                 }}
             >
-                {/* <ExperiencesCard editable={editable} username={username} /> */}
+                <ExperiencesCard editable={editable} username={username} />
             </Box>
             <Box
                 sx={{

@@ -1,25 +1,16 @@
-import { getCompanyProfile } from "@core/api/company/profileApi";
 import PageLoader from "@core/components/ui/PageLoader";
 import { useCompanyContext } from "@core/contexts/CompanyContext";
-import useGet from "@core/hooks/useGet";
-import { ICompanyProfile } from "@core/types/company.interface";
 import { Box, Typography } from "@mui/material";
-import { useEffect } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 const ProtectedRoute = () => {
-    const { data: profile, loading } = useGet<ICompanyProfile | null>(getCompanyProfile);
-    const { companyProfile, setCompanyProfile } = useCompanyContext();
+    const { companyProfile, loading } = useCompanyContext();
     const location = useLocation();
 
     const excludedPaths = ["/company/settings", "/company/profile"];
     const isExcludedPath = excludedPaths.includes(location.pathname);
 
-    useEffect(() => {
-        if (profile) {
-            setCompanyProfile(profile);
-        }
-    }, [profile, setCompanyProfile]);
+    console.log("Profile: ", companyProfile);
 
     const renderStatusMessage = (title: string, message: string) => (
         <Box sx={{ textAlign: "center", py: 4 }}>

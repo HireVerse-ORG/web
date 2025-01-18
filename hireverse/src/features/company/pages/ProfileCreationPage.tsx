@@ -16,8 +16,7 @@ import { uploadToCloudinary } from "@core/api/external/cloudinaryApi";
 import PageLoader from "@core/components/ui/PageLoader";
 
 const ProfileCreationPage = () => {
-    const { companyProfile, setCompanyProfile } = useCompanyContext();
-    const [loading, setLoading] = useState(true);
+    const { companyProfile, setCompanyProfile, loading } = useCompanyContext();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -25,8 +24,8 @@ const ProfileCreationPage = () => {
         if (companyProfile) {
             navigate(location.state.from || getUserDashboardPath("company"));
         }
-        setLoading(false);
-    }, []);
+    }, [companyProfile]);
+
 
     const [activeStep, setActiveStep] = useState(0);
     const [finishing, setFinishing] = useState(false);

@@ -30,6 +30,28 @@ export interface SeekerEducation {
     description: string;
 }
 
+export interface SeekerExperience {
+    id: string,
+    profileId: string;
+    title: string;
+    startMonth: number;
+    startYear: number;
+    endMonth: number;
+    endYear: number;
+    currentlyWorking: boolean;
+    employmentType: string;
+    location: {
+        city: string;
+        country: string;
+    };
+    company: {
+        companyId: string | null,
+        name: string;
+        image: string | null;
+    };
+    description: string;
+}
+
 export interface SeekerPortfolio {
     id: string,
     userId: string,
