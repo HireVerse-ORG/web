@@ -23,12 +23,12 @@ const ContactCard = ({ mode, data }: ContactCardProps) => {
     const { email, facebook, twitter, instagram, linkedin, phone } = data || {};
     
     const contactLinks = [
-        { icon: <Email />, label: "Email", href: email },
-        { icon: <Phone />, label: "LinkedIn", href: phone },
-        { icon: <Twitter />, label: "Twitter", href: twitter },
-        { icon: <Facebook />, label: "Facebook", href: facebook },
-        { icon: <Instagram />, label: "Instagram", href: instagram },
-        { icon: <LinkedIn />, label: "LinkedIn", href: linkedin },
+        { icon: <Email />, label: email, href: `mailto:${email}` },
+        { icon: <Phone />, label: phone, href: `tel:${phone}` },
+        { icon: <Twitter />, label: twitter, href: twitter },
+        { icon: <Facebook />, label: facebook, href: facebook },
+        { icon: <Instagram />, label: instagram, href: instagram },
+        { icon: <LinkedIn />, label: linkedin, href: linkedin },
     ];
 
     const isLoading = !data;
@@ -92,7 +92,7 @@ const ContactCard = ({ mode, data }: ContactCardProps) => {
                                         width: "max-content",
                                     }}
                                 >
-                                    {link.href}
+                                    {link.label}
                                 </Button>
                             )
                     )}

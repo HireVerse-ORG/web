@@ -125,7 +125,7 @@ const CompaniesPage = () => {
                             {row.status === "Active" ? "Block" : "Unblock"}
                         </Button>
                     );
-                } else if (tabValue === "requested") {
+                } else if (tabValue === "pending") {
                     return (
                         <Box display="flex" gap={1} justifyContent="center">
                             <Button
@@ -200,7 +200,7 @@ const CompaniesPage = () => {
                 sx={{ marginBottom: 2 }}
             >
                 <Tab label="All" value="all" />
-                <Tab label="Requests" value="requested" />
+                <Tab label="Requests" value="pending" />
                 <Tab label="Rejected" value="rejected" />
             </Tabs>
 
