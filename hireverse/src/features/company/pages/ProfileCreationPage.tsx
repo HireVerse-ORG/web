@@ -41,7 +41,7 @@ const ProfileCreationPage = () => {
     const contactFormRef = useRef<any>(null);
     const companyProfileFormRef = useRef<any>(null);
 
-    if(loading){
+    if (loading) {
         return <PageLoader />;
     }
 
@@ -76,7 +76,7 @@ const ProfileCreationPage = () => {
 
     const handleCompanyProfileFormSubmit = (values: CompanyProfileValues) => {
         setFormValues((prev) => ({ ...prev, companyProfile: values }));
-        handleFinish({...formValues, companyProfile: values});
+        handleFinish({ ...formValues, companyProfile: values });
     };
 
     const handleFinish = async (values: {
@@ -152,37 +152,39 @@ const ProfileCreationPage = () => {
     ];
 
     return (
-        <BlankLayout>
-            <Box sx={{ width: "100%", pb: 5 }}>
-                <CustomStepper
-                    steps={steps}
-                    activeStep={activeStep}
-                    finishing={finishing}
-                    onNext={handleNext}
-                    onBack={handleBack}
-                    onReset={handleReset}
-                    ContentLayout={ProfileCreationSteppperLayout}
-                    renderCompletion={() => (
-                        <Box sx={{ textAlign: 'center', padding: 3 }}>
-                            <Typography variant="h5" fontWeight={500} gutterBottom>
-                                Profile Created Successfully!
-                            </Typography>
-                            <Typography variant="body1" >
-                                Your profile is now created. Our team will verify it shortly.
-                            </Typography>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={() => navigate(getUserDashboardPath("company"))}
-                                sx={{ marginTop: 2 }}
-                            >
-                                Go to Dashboard
-                            </Button>
-                        </Box>
-                    )}
-                />
-            </Box>
-        </BlankLayout>
+        companyProfile ? null : (
+            <BlankLayout>
+                <Box sx={{ width: "100%", pb: 5 }}>
+                    <CustomStepper
+                        steps={steps}
+                        activeStep={activeStep}
+                        finishing={finishing}
+                        onNext={handleNext}
+                        onBack={handleBack}
+                        onReset={handleReset}
+                        ContentLayout={ProfileCreationSteppperLayout}
+                        renderCompletion={() => (
+                            <Box sx={{ textAlign: 'center', padding: 3 }}>
+                                <Typography variant="h5" fontWeight={500} gutterBottom>
+                                    Profile Created Successfully!
+                                </Typography>
+                                <Typography variant="body1" >
+                                    Your profile is now created. Our team will verify it shortly.
+                                </Typography>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={() => navigate(getUserDashboardPath("company"))}
+                                    sx={{ marginTop: 2 }}
+                                >
+                                    Go to Dashboard
+                                </Button>
+                            </Box>
+                        )}
+                    />
+                </Box>
+            </BlankLayout>
+        )
     );
 };
 
