@@ -20,10 +20,10 @@ interface PaymentPlanCardProps {
   duration: string;
   features: { name: string; available: boolean }[];
   isPopular?: boolean;
-  isActive?: boolean;  
+  isActive?: boolean;
   isCurrentPlan?: boolean;
   buttonText?: string;
-  disabled?: boolean;  
+  disabled?: boolean;
   onSubscribe: () => void;
 }
 
@@ -34,45 +34,50 @@ const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({
   features,
   isPopular = false,
   isActive = true,
-  isCurrentPlan = false, 
+  isCurrentPlan = false,
   onSubscribe,
-  buttonText="Subscribe",
-  disabled= false
+  buttonText = "Subscribe",
+  disabled = false
 }) => {
   return (
     <Card
       sx={{
-        border: isPopular ? '2px solid #1976d2' : '1px solid #ddd',
-        boxShadow: isPopular ? '0px 4px 10px rgba(0, 0, 0, 0.2)' : undefined,
+        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
         position: 'relative',
         overflow: 'visible',
-        borderRadius: 2,
-        opacity: isActive ? 1 : 0.5, 
-        pointerEvents: isActive ? 'auto' : 'none', 
-        backgroundColor: isCurrentPlan ? '#f5f5f5' : 'transparent', 
+        borderRadius: 1,
+        opacity: isActive ? 1 : 0.5,
+        pointerEvents: isActive ? 'auto' : 'none',
+        backgroundColor: isPopular ? 'primary.main' : 'white',
+        color: isPopular ? 'white' : 'text.primary',
       }}
     >
       {isPopular && (
         <Chip
           label="Popular"
-          color="primary"
+          size='small'
           sx={{
             position: 'absolute',
-            top: -10,
+            top: 10,
             right: 10,
             fontWeight: 'bold',
+            color: "primary",
+            backgroundColor: "white"
           }}
         />
       )}
       {isCurrentPlan && (
         <Chip
-          label="Current Plan"
-          color="secondary"
+          label="Active"
+          color="success"
+          size='small'
           sx={{
             position: 'absolute',
-            top: -10,
+            top: 10,
             left: 10,
             fontWeight: 'bold',
+            color: (theme) => theme.palette.success.contrastText,
+            backgroundColor: (theme) => theme.palette.success.main, 
           }}
         />
       )}
@@ -81,7 +86,6 @@ const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({
           variant="h5"
           fontWeight="bold"
           align="center"
-          color={isPopular ? 'primary' : 'text.primary'}
           gutterBottom
         >
           {planName}
@@ -107,7 +111,7 @@ const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({
                 }}
               >
                 {feature.available ? (
-                  <CheckCircleIcon color="primary" sx={{ fontSize: '18px' }} />
+                  <CheckCircleIcon sx={{ fontSize: '18px', color: isPopular ? "white" : "primary.main" }} />
                 ) : (
                   <CancelIcon color="error" sx={{ fontSize: '18px' }} />
                 )}
@@ -122,7 +126,11 @@ const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({
             color="primary"
             onClick={onSubscribe}
             fullWidth
-            disabled={!isActive || disabled}  
+            disabled={!isActive || disabled}
+            sx={{
+              background: isPopular ? "white" : "primary",
+              color: isPopular ? "black" : "white",
+            }}
           >
             {buttonText}
           </Button>

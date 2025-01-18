@@ -12,8 +12,8 @@ export const getSeekerUsage = async (): Promise<ISeekerSubscriptionUsage> => {
     return (await apiWrapper(axios.get<ISeekerSubscriptionUsage>(`${baseUrl}/usage`))).data;
 };
 
-export const getSeekerPaymentLink = async (plan: SeekerSubscriptioPlan): Promise<{url: string}> => {
-    return (await apiWrapper(axios.post<{url: string}>(`${baseUrl}/paymentlink`, {plan}))).data;
+export const getSeekerPaymentLink = async (data: {plan: SeekerSubscriptioPlan, successUrl: string, cancelUrl: string}): Promise<{url: string}> => {
+    return (await apiWrapper(axios.post<{url: string}>(`${baseUrl}/paymentlink`, data))).data;
 };
 
 export const cancelSeekerSubscription = async (): Promise<{message: string}> => {
