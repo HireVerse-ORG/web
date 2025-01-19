@@ -4,8 +4,8 @@ import { useState } from "react";
 import MenuButton from "@core/components/ui/MenuButton";
 import { HomeOutlined } from "@mui/icons-material";
 import Sidebar from "@core/components/ui/Sidebar";
-import { sections } from "../../routes";
 import { getTitle } from "./helper";
+import { AdminSideBarSections } from "../SideBarSections";
 
 const Header = () => {
     const [openMenu, setOpenMenu] = useState(false);
@@ -44,7 +44,7 @@ const Header = () => {
                 open={openMenu}
                 onClose={toggleMenu}
             >
-                <Sidebar sections={sections} onMenuItemClick={toggleMenu}/>
+                <Sidebar sections={AdminSideBarSections} onMenuItemClick={toggleMenu}/>
             </Drawer>
         </Box>
     );

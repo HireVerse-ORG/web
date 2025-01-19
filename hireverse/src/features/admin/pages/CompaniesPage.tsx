@@ -180,7 +180,9 @@ const CompaniesPage = () => {
             <Box
                 display={"flex"}
                 justifyContent={"space-between"}
-                alignItems={"center"}
+                flexWrap={{xs: "wrap-reverse", sm: "nowrap"}}
+                alignItems={{xs: "start", sm: "center"}}
+                gap={2}
                 sx={{ paddingBlock: 2, mb: 2, backgroundColor: "white", position: "sticky", top: 0, zIndex: 1 }}
             >
                 <Typography variant="h6" fontWeight={"bold"}>

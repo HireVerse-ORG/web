@@ -4,40 +4,40 @@ import TableComponent, { TableColumn } from "@core/components/ui/TableComponent"
 import { Add, Edit, Delete } from "@mui/icons-material";
 import { Box, Button, Chip, CircularProgress, debounce, IconButton, Pagination, Typography } from "@mui/material";
 import { useState } from "react";
-import useSkills from "../hooks/useSkill";
-import SkillForm from "../components/forms/SkillForm";
-import { ISkill } from "@core/types/skill.interface";
-import { deactivateSkill, restoreSkill } from "@core/api/admin/skillapi";
 import { toast } from "sonner";
+import { IJobCategory } from "@core/types/jobCategory.interface";
+import useJobCategory from "../hooks/useJobCategory";
+import { deactivateJobCategory, restoreJobCategory } from "@core/api/admin/jobCategoryApi";
+import JobCategoryForm from "../components/forms/JobCategoryForm";
 
-const SkillsPage = () => {
+const JobCategoryPage = () => {
     const [modelOpen, setModelOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const [editableSkill, setEditableSkill] = useState<ISkill | null>(null);
-    const { skills, setSkills, totalSkills, totalPages, loading, refetch } = useSkills(currentPage, 10, searchQuery);
+    const [editableJobCategory, setEditableJobCategory] = useState<IJobCategory | null>(null);
+    const { jobCategories, setJobCategories, totalJobCategory, totalPages, loading, refetch } = useJobCategory(currentPage, 10, searchQuery);
 
     const handleSearch = debounce((value: string) => {
         setCurrentPage(1);
         setSearchQuery(value);
     }, 500);
 
-    const handleEdit = (row: ISkill) => {
-        setEditableSkill(row)
+    const handleEdit = (row: IJobCategory) => {
+        setEditableJobCategory(row)
         setModelOpen(true);
     };
 
-    const handleSkillStatus = async (row: ISkill) => {
+    const handleJobCategoriestatus = async (row: IJobCategory) => {
         try {
             if(row.isActive){
-                await deactivateSkill(row.id);
+                await deactivateJobCategory(row.id);
             } else {
-                await restoreSkill(row.id);
+                await restoreJobCategory(row.id);
             }
-            toast.success(`Skill ${row.isActive ? "deactivated" : "restored"} successfully`);
-            setSkills((prevSkills) => prevSkills.map((skill) => (skill.id === row.id ? { ...skill, isActive: !skill.isActive } : skill)));
+            toast.success(`Category ${row.isActive ? "deactivated" : "restored"} successfully`);
+            setJobCategories((prevJobCategories) => prevJobCategories.map((category) => (category.id === row.id ? { ...category, isActive: !category.isActive } : category)));
         } catch (error: any) {
-            toast.error(error.message || "Failed to delete skill");
+            toast.error(error.message || "Failed to delete category");
         }
     };
 
@@ -47,7 +47,7 @@ const SkillsPage = () => {
 
     const handleCloseModel = () => {
         setModelOpen(false);
-        setEditableSkill(null);
+        setEditableJobCategory(null);
     };
 
     const handleFormSuccess = () => {
@@ -60,14 +60,14 @@ const SkillsPage = () => {
     };
 
     const columns: TableColumn[] = [
-        { id: "name", label: "Skill Name", minWidth: 170 },
+        { id: "name", label: "Category", minWidth: 170 },
         { id: "createdAt", label: "Created", minWidth: 100 },
         {
             id: "isActive",
             label: "Status",
             minWidth: 100,
             align: "center",
-            render: (row: ISkill) => (
+            render: (row: IJobCategory) => (
                 <Chip
                     label={row.isActive ? "Active" : "Inactive"}
                     color={row.isActive ? "success" : "error"}
@@ -80,14 +80,14 @@ const SkillsPage = () => {
             label: "Actions",
             minWidth: 150,
             align: "center",
-            render: (row: ISkill) => (
+            render: (row: IJobCategory) => (
                 <>
                     {row.isActive ? (
                         <Box display="flex" gap={1} justifyContent="center">
                             <IconButton size="small" onClick={() => handleEdit(row)} color="primary">
                                 <Edit />
                             </IconButton>
-                            <IconButton size="small" onClick={() => handleSkillStatus(row)} color="error">
+                            <IconButton size="small" onClick={() => handleJobCategoriestatus(row)} color="error">
                                 <Delete />
                             </IconButton>
                         </Box>
@@ -97,7 +97,7 @@ const SkillsPage = () => {
                             variant="contained"
                             color="inherit"
                             sx={{ minWidth: "90px" }}
-                            onClick={() => handleSkillStatus(row)}
+                            onClick={() => handleJobCategoriestatus(row)}
                         >
                             Restore
                         </Button>
@@ -112,8 +112,8 @@ const SkillsPage = () => {
             <Box
                 display={"flex"}
                 justifyContent={"space-between"}
-                flexWrap={{xs: "wrap-reverse", sm: "nowrap"}}
                 alignItems={{xs: "start", sm: "center"}}
+                flexWrap={{xs: "wrap-reverse", sm: "nowrap"}}
                 gap={2}
                 sx={{
                     paddingBlock: 2,
@@ -125,15 +125,15 @@ const SkillsPage = () => {
                 }}
             >
                 <Typography variant="h6" fontWeight={"bold"}>
-                    Total Skills: {loading ? <CircularProgress size={20} /> : totalSkills}
+                    Total Job Categories: {loading ? <CircularProgress size={20} /> : totalJobCategory}
                 </Typography>
 
-                <Box display={"flex"}
+                <Box display={"flex"} 
                     justifyContent={"space-between"} 
                     flexDirection={{xs: "column", sm: "row"}}
                     alignItems={{sm: "center"}}
                     gap={2}>
-                    <SearchBox placeholder="Search skills" onSearch={handleSearch} />
+                    <SearchBox placeholder="Search categories" onSearch={handleSearch}/>
                     <Button
                         onClick={handleAdd}
                         variant="contained"
@@ -144,7 +144,7 @@ const SkillsPage = () => {
                             paddingX: 2,
                         }}
                     >
-                        Add Skill
+                        Add Category
                     </Button>
                 </Box>
             </Box>
@@ -153,24 +153,24 @@ const SkillsPage = () => {
                 <Box display="flex" justifyContent="center" alignItems="center" height="300px">
                     <CircularProgress />
                 </Box>
-            ) : skills.length === 0 ? (
+            ) : jobCategories.length === 0 ? (
                 <Typography variant="h6" fontWeight={"bold"} sx={{ textAlign: "center", color: "gray", fontSize: "1.2rem", marginTop: 4, padding: 2 }}>
-                    No Skills found
+                    No Job Categories found
                 </Typography>
             ) : (
                 <>
-                    <TableComponent columns={columns} rows={skills} />
+                    <TableComponent columns={columns} rows={jobCategories} />
                     <Box display="flex" justifyContent="center" py={3}>
                         <Pagination count={totalPages} page={currentPage} onChange={handlePageChange} color="primary" />
                     </Box>
                 </>
             )}
 
-            <CustomDialog open={modelOpen} onClose={handleCloseModel} title="Add/Edit Skill">
-                <SkillForm skill={editableSkill} onSuccess={handleFormSuccess} />
+            <CustomDialog open={modelOpen} onClose={handleCloseModel} title="Add/Edit Category">
+                <JobCategoryForm category={editableJobCategory} onSuccess={handleFormSuccess} />
             </CustomDialog>
         </>
     );
 };
 
-export default SkillsPage;
+export default JobCategoryPage;

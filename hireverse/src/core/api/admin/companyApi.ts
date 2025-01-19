@@ -4,8 +4,8 @@ import { IPaginationResponse } from "@core/types/pagination.interface";
 import { ICompanyUser } from "@core/types/user.interface";
 import { apiWrapper } from "@core/utils/helper";
 
-export const listCompanies = async (page=1, limit=10, query='', status='all'): Promise<IPaginationResponse<ICompanyUser>> => {
-    return (await apiWrapper(axios.get<IPaginationResponse<ICompanyUser>>(`/user/list/companies?page=${page}&limit=${limit}&query=${query}&status=${status}`))).data;
+export const listCompanies = async (page=1, limit=10, query=''): Promise<IPaginationResponse<ICompanyUser>> => {
+    return (await apiWrapper(axios.get<IPaginationResponse<ICompanyUser>>(`/user/list/companies?page=${page}&limit=${limit}&query=${query}`))).data;
 };
 
 export const listCompanyProfile = async (page=1, limit=10, status?:CompanyProfileStatus ): Promise<IPaginationResponse<ICompanyProfile>> => {

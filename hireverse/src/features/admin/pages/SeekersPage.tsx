@@ -45,11 +45,11 @@ const SeekersPage = () => {
             minWidth: 150,
             align: "center",
             render: (row: any) => (
-                <Button    
+                <Button
                     size="small"
                     variant="contained"
                     color={row.status === "Active" ? "error" : "inherit"}
-                    sx={{minWidth: '90px'}}
+                    sx={{ minWidth: '90px' }}
                     onClick={() => toggleBlockStatus(row.id, row.status === "Blocked", (id: string, isBlocked: boolean) => {
                         setRows((prevRows) =>
                             prevRows.map((row) =>
@@ -69,7 +69,11 @@ const SeekersPage = () => {
 
     return (
         <>
-            <Box display={"flex"} justifyContent={"space-between"} alignItems={"center"} sx={{ paddingBlock: 2, mb: 2, backgroundColor: "white", position: "sticky", top: 0, zIndex: 1 }}>  
+            <Box display={"flex"} justifyContent={"space-between"}
+                flexWrap={{ xs: "wrap-reverse", sm: "nowrap" }}
+                alignItems={{ xs: "start", sm: "center" }}
+                gap={2}
+                sx={{ paddingBlock: 2, mb: 2, backgroundColor: "white", position: "sticky", top: 0, zIndex: 1 }}>
                 <Typography variant="h6" fontWeight={"bold"}>
                     Total Seekers: {loading ? <CircularProgress size={20} /> : totalUsers}
                 </Typography>
