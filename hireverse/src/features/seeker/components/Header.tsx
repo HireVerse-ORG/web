@@ -4,6 +4,7 @@ import { useState } from "react";
 import MenuButton from "@core/components/ui/MenuButton";
 import { Link, useLocation } from "react-router-dom";
 import { SeekerSidebarSections } from "./SidebarSection";
+import { HomeOutlined } from "@mui/icons-material";
 
 const Header = () => {
     const [openMenu, setOpenMenu] = useState(false);
@@ -15,6 +16,7 @@ const Header = () => {
     const pathTitles: Record<string, string> = {
         "/seeker": "Dashboard",
         "/seeker/profile": "My Profile",
+        "/seeker/pricing-plans": "Pricing Plans",
         "/seeker/settings": "Settings",
     };
 
@@ -50,18 +52,25 @@ const Header = () => {
                 </Box>
 
                 {/* Link Button */}
-                <Button
-                    variant="outlined"
-                    component={Link}
-                    to="/"
-                >
-                    Back to homepage
-                </Button>
+                {isMobile ? (
+                    <Link to={'/admin/dashboard'}>
+                        <HomeOutlined />
+                    </Link>
+                ) : (
+
+                    <Button
+                        variant="outlined"
+                        component={Link}
+                        to="/"
+                    >
+                        Back to homepage
+                    </Button>
+                )}
             </Container>
 
             {isMobile && (
                 <Drawer anchor="left" open={openMenu} onClose={toggleMenu}>
-                    <Sidebar sections={SeekerSidebarSections} onMenuItemClick={toggleMenu}/>
+                    <Sidebar sections={SeekerSidebarSections} onMenuItemClick={toggleMenu} />
                 </Drawer>
             )}
         </Box>

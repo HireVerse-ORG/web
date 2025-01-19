@@ -53,7 +53,7 @@ const Header = () => {
                             sx={{
                                 height: 40,
                                 width: 40,
-                                objectFit: "cover",
+                                objectFit: "contain",
                             }}
                         />
                         <Typography

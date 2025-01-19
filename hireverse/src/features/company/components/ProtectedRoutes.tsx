@@ -10,8 +10,6 @@ const ProtectedRoute = () => {
     const excludedPaths = ["/company/settings", "/company/profile"];
     const isExcludedPath = excludedPaths.includes(location.pathname);
 
-    console.log("Profile: ", companyProfile);
-
     const renderStatusMessage = (title: string, message: string) => (
         <Box sx={{ textAlign: "center", py: 4 }}>
             <Typography variant="h5" fontWeight={500} gutterBottom>

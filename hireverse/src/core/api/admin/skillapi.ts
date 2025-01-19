@@ -5,8 +5,8 @@ import { apiWrapper} from "@core/utils/helper";
 
 const baseUrl = '/jobs/skills';
 
-export const createSkill = async (data: {name: string, isActive: boolean}): Promise<void> => {
-    return (await apiWrapper(axios.post(`${baseUrl}`, data))).data;
+export const createSkill = async (data: {name: string, isActive: boolean}): Promise<{ message: string, skill: ISkill }> => {
+    return (await apiWrapper(axios.post<{ message: string, skill: ISkill }>(`${baseUrl}`, data))).data;
 };
 export const updateSkill = async (data: {id: string, name: string, isActive: boolean}): Promise<void> => {
     return (await apiWrapper(axios.put(`${baseUrl}`, data))).data;

@@ -1,8 +1,131 @@
+import CustomStepper from "@core/components/ui/CustomStepper";
+import { ArrowBack, Business, Description } from "@mui/icons-material";
+import { Box, Button, IconButton, Typography } from "@mui/material";
+import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import JobBasicInfoForm, { JobBasicInfoFormValues } from "../components/forms/JobBasicInfoForm";
+import JobDescriptionForm, { JobDescriptionFormValues } from "../components/forms/JobDescriptionForm";
+
 const PostJobPage = () => {
+    const [activeStep, setActiveStep] = useState(0);
+    const [finishing, setFinishing] = useState(false);
+    const [formValues, setFormValues] = useState({
+        basicInfo: {} as JobBasicInfoFormValues,
+        descriptions: {} as JobDescriptionFormValues,
+    });
+
+    const basicInfoFormRef = useRef<any>(null);
+    const descriptionFormRef = useRef<any>(null);
+
+    const navigate = useNavigate();
+
+    const handleNext = () => {
+        if (activeStep === 0) {
+            basicInfoFormRef.current.submitForm();
+        } else {
+            descriptionFormRef.current.submitForm();
+        }
+    };
+
+    const handleBack = () => {
+        if (activeStep === 1) {
+            const values = descriptionFormRef.current.getValues() as JobDescriptionFormValues;
+            setFormValues((prev) => ({ ...prev, descriptions: values }));
+        }
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
+
+    const handleReset = () => {
+        setActiveStep(0);
+    };
+
+    const handleBasicInfoSubmit = (values: JobBasicInfoFormValues) => {
+        setFormValues((prev) => ({ ...prev, basicInfo: values }));
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    };
+
+    const handleDesciptionFormSubmit = (values: JobDescriptionFormValues) => {
+        setFormValues((prev) => ({ ...prev, descriptions: values }));
+        handleFinish({ ...formValues, descriptions: values })
+    };
+
+    const handleFinish = (values: typeof formValues) => {
+        setFinishing(true);
+        console.log("finish Values: ", values);
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
+
+    const steps = [
+        {
+            title: "Job Information",
+            icon: <Business />,
+            content: (
+                <JobBasicInfoForm
+                    ref={basicInfoFormRef}
+                    data={formValues.basicInfo}
+                    onSubmit={handleBasicInfoSubmit}
+                />
+            ),
+        },
+        {
+            title: "Job Description",
+            icon: <Description />,
+            content: (
+                <JobDescriptionForm
+                    ref={descriptionFormRef}
+                    data={formValues.descriptions}
+                    onSubmit={handleDesciptionFormSubmit}
+                />
+            ),
+        },
+    ];
+
     return (
-        <div>
-            <h1>Post job</h1>
-        </div>
+        <Box>
+            <Box display="flex" alignItems="center" sx={{ mb: { xs: 0.5, md: 1 } }}>
+                <IconButton onClick={() => navigate(-1)} aria-label="Go back">
+                    <ArrowBack />
+                </IconButton>
+                <Typography variant="h5" fontWeight={600}>
+                    Post a Job
+                </Typography>
+            </Box>
+
+            {/* stepper */}
+            <Box sx={{ width: "100%", pb: 5 }}>
+                <CustomStepper
+                    steps={steps}
+                    activeStep={activeStep}
+                    finishing={finishing}
+                    onNext={handleNext}
+                    onBack={handleBack}
+                    onReset={handleReset}
+                    renderCompletion={() => (
+                        <Box sx={{ textAlign: 'center', padding: 4}}>
+                            <Typography variant="h5" fontWeight={600} gutterBottom>
+                                🎉 Job Posted Successfully!
+                            </Typography>
+                            <Typography variant="body1" color="text.secondary" gutterBottom>
+                                Your job posting is now live. Candidates can start applying for this job.
+                            </Typography>
+                            <Typography variant="body2" color="text.disabled" sx={{ mt: 1 }}>
+                                You can always track and manage your job applications.
+                            </Typography>
+                            <Box sx={{ marginTop: 3 }}>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    sx={{ marginRight: 2 }}
+                                    onClick={() => navigate('/company/jobs')} 
+                                >
+                                    View Job
+                                </Button>
+                            </Box>
+                        </Box>
+                    )}
+                />
+            </Box>
+        </Box>
     );
 }
 
