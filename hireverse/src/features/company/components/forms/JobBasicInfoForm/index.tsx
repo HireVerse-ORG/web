@@ -31,7 +31,7 @@ const JobBasicInfoForm = forwardRef(({ data, onSubmit }: JobBasicInfoFormProps, 
     const [categoriesLoading, setCategoriesLoading] = useState(false);
     const [skills, setSkills] = useState<{ id: string; name: string }[]>([]);
     const [skillsLoading, setSkillsLoading] = useState(false);
-    const [salaryRange, setSalaryRange] = useState<number[] | null>(data?.salaryRange || [0, 0]);
+    const [salaryRange, setSalaryRange] = useState<number[] | null>(data?.salaryRange || null);
     const [modelOpen, setModelOpen] = useState(false);
 
 

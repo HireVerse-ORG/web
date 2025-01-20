@@ -17,6 +17,7 @@ interface CustomStepperProps {
     onReset: () => void;
     renderCompletion?: () => JSX.Element;
     ContentLayout?: React.ComponentType<{ children: React.ReactNode }>;
+    disabled?: boolean;
 }
 
 const CustomStepper = ({
@@ -27,7 +28,8 @@ const CustomStepper = ({
     onBack,
     onReset,
     renderCompletion,
-    ContentLayout
+    ContentLayout,
+    disabled = false
 }: CustomStepperProps) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -49,7 +51,7 @@ const CustomStepper = ({
                                 <Button
                                     size="small"
                                     onClick={onNext}
-                                    disabled={isLastStep || finishing}
+                                    disabled={isLastStep || finishing || disabled}
                                 >
                                     {finishing ? (
                                         <CircularProgress size={24} color="inherit" />
@@ -62,7 +64,7 @@ const CustomStepper = ({
                                 <Button
                                     size="small"
                                     onClick={onBack}
-                                    disabled={activeStep === 0 || finishing}
+                                    disabled={activeStep === 0 || finishing || disabled}
                                 >
                                     Back
                                 </Button>
@@ -125,7 +127,7 @@ const CustomStepper = ({
                             }}
                         >
                             <Button
-                                disabled={activeStep === 0 || finishing}
+                                disabled={activeStep === 0 || finishing || disabled}
                                 onClick={onBack}
                                 variant="outlined"
                             >
@@ -135,7 +137,7 @@ const CustomStepper = ({
                                 onClick={onNext}
                                 variant="contained"
                                 color={activeStep === steps.length - 1 ? "success" : "primary"}
-                                disabled={finishing}
+                                disabled={finishing || disabled}
                             >
                                 {finishing ? (
                                     <CircularProgress size={24} color="inherit" />
