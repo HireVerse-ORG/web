@@ -1,4 +1,7 @@
-export type JobStatus = 'active' | 'inactive' | 'draft';
+import { IJobCategory } from "./jobCategory.interface";
+import { ISkill } from "./skill.interface";
+
+export type JobStatus = 'pending' | 'failed' | 'live' | 'closed';
 
 export interface IJobCreate {
     title: string;
@@ -6,12 +9,25 @@ export interface IJobCreate {
     salaryRange: number[] | null;
     categories: string[];
     skills: string[];
-    status: JobStatus;
     description: string;
     responsibilities?: string;
     whoYouAre?: string;
     niceToHaves?: string;
     companyProfileId: string;
+}
+
+export interface IJobUpdate {
+    id: string;
+    userId: string;
+    title?: string;
+    employmentTypes?: string[];
+    salaryRange?: number[] | null;
+    categories?: string[];
+    skills?: string[];
+    description?: string;
+    responsibilities?: string;
+    whoYouAre?: string;
+    niceToHaves?: string;
 }
 
 export interface IJobUpdate {
@@ -32,8 +48,8 @@ export interface IJob {
     title: string;
     employmentTypes: string[];
     salaryRange: number[] | null;
-    categories: string[];
-    skills: string[];
+    categories: IJobCategory[] | string[];
+    skills: ISkill[] | string[];
     status: JobStatus;
     description: string;
     responsibilities: string;
@@ -41,6 +57,7 @@ export interface IJob {
     niceToHaves: string;
     companyProfileId: string;
     userId: string;
+    failedReson: string | null;
     createdAt: Date;
     updatedAt: Date;
 }

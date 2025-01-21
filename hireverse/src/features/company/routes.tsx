@@ -14,6 +14,7 @@ import MyJobsPage from "./pages/MyJobsPage";
 import CompanyPublicViewPage from "../landing/pages/CompanyPublicViewPage";
 import PricingPlansPage from "./pages/PricingPlansPage";
 import { CompanySubscriptionProvider } from "@core/contexts/CompanySubscriptionContext";
+import EditJobPage from "./pages/EditJobPage";
 
 
 const CompanyRoutes = () => {
@@ -27,6 +28,7 @@ const CompanyRoutes = () => {
               <Route path="/" element={<CompanyDashboard />} />
               <Route path="/profile" element={<CompanyProfilePage/>} />
               <Route path="/post-job" element={<PostJobPage />} />
+              <Route path="/edit-job" element={<EditJobPage />} />
               <Route path="/jobs" element={<MyJobsPage />} />
               <Route path="/pricing-plans" element={<PricingPlansPage />} />
               <Route path="/settings" element={<SettingsPage />} />

@@ -8,6 +8,7 @@ interface CompanySubscriptionContextType {
     setSubscription: (subscription: ICompanySubscription) => void;
     setUsage: (usage: ICompanySubscriptionUsage) => void;
     loading: boolean;
+    jobPostLimitExceeded: boolean;
     refetch: () => Promise<void>;
 }
 
@@ -29,6 +30,7 @@ export const CompanySubscriptionProvider = ({ children }: SubscriptionProviderPr
     const [subscription, setSubscription] = useState<ICompanySubscription | null>(null);
     const [usage, setUsage] = useState<ICompanySubscriptionUsage | null>(null);
     const [loading, setLoading] = useState(false);
+    const [jobPostLimitExceeded, setJobPostLimitExceeded] = useState(false);
 
     const fetchSubscriptionData = async () => {
         setLoading(true);
@@ -50,6 +52,15 @@ export const CompanySubscriptionProvider = ({ children }: SubscriptionProviderPr
         fetchSubscriptionData();
     }, []);
 
+    useEffect(() => {
+        if (usage && subscription) {
+            if(subscription.jobPostLimit !== -1 && usage.jobsPosted + 1 > subscription.jobPostLimit) {
+                setJobPostLimitExceeded(true);
+            } else {
+                setJobPostLimitExceeded(false);
+            }
+        }
+    }, [subscription, usage]);
 
     return (
         <CompanySubscriptionContext.Provider
@@ -59,6 +70,7 @@ export const CompanySubscriptionProvider = ({ children }: SubscriptionProviderPr
                 setSubscription,
                 setUsage,
                 loading,
+                jobPostLimitExceeded,
                 refetch: fetchSubscriptionData
             }}
         >

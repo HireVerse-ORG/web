@@ -50,7 +50,7 @@ const TableComponent = ({ columns, rows }: TableComponentProps) => {
                             }}
                         >
                             {columns.map((column) => (
-                                <TableCell key={column.id} align={column.align || "left"}>
+                                <TableCell key={column.id} align={column.align || "left"} sx={{maxWidth: 150, overflow: "hidden"}}>
                                     {column.render ? column.render(row) : row[column.id]}
                                 </TableCell>
                             ))}
