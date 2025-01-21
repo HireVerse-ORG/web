@@ -6,7 +6,7 @@ import useGet from "@core/hooks/useGet";
 import { IJob } from "@core/types/job.interface";
 import { IPaginationResponse } from "@core/types/pagination.interface";
 import { dateFormatter } from "@core/utils/helper";
-import { Box, Button, Chip, CircularProgress, debounce, Pagination, Typography } from "@mui/material";
+import { Box, Chip, CircularProgress, debounce, Pagination, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
