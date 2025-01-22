@@ -1,5 +1,5 @@
 import { Box, Container, Typography } from "@mui/material";
-import JobSeachBox from "../../components/JobSeachBox";
+import JobSeacrhBox from "../../../../core/components/ui/JobSearchBox";
 
 
 const HeroSection = () => {
@@ -64,9 +64,10 @@ const HeroSection = () => {
 
                     {/* Search Box */}
                     <Box sx={{
-                        maxWidth: { md: "70%" }
+                        maxWidth: { md: "70%" },
+                        boxShadow: 4,
                     }}>
-                        <JobSeachBox />
+                        <JobSeacrhBox onSearch={() => {}}/>
                     </Box>
                 </Box>
             </Box>

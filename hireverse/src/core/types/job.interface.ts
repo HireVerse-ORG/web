@@ -61,3 +61,16 @@ export interface IJob {
     createdAt: Date;
     updatedAt: Date;
 }
+
+export interface IJobWithCompanyProfile extends IJob {
+    companyProfile: null | {
+        id: string;
+        name: string;
+        companyId: string;
+        location: {
+            city: string;
+            country: string;
+        },
+        image: string | null;
+    }
+}

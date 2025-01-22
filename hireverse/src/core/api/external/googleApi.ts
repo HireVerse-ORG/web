@@ -17,10 +17,10 @@ export const getCountryCodeFromName = async (countryName: string): Promise<strin
         const country = response.data.results?.[0]?.address_components?.find((component: any) =>
             component.types.includes("country")
         );
-        
-        return country.short_name;  
+
+        return country.short_name;
     } catch (error) {
-        throw new Error("Failed to get country code");
+        return null;
     }
 };
 
@@ -32,7 +32,7 @@ export const getCountries = async (value: string) => {
                 baseURL: "https://maps.googleapis.com/maps/api",
                 params: {
                     input: value,
-                    types: "(regions)", 
+                    types: "(regions)",
                     key: googleApiKey,
                 },
             }
@@ -41,7 +41,7 @@ export const getCountries = async (value: string) => {
         const countries = response.data.predictions.map((prediction: any) => prediction.description);
         return countries as string[]
     } catch (error) {
-        throw new Error("Error fetching countries");
+        return [];
     }
 }
 
@@ -68,6 +68,40 @@ export const getCities = async (value: string, countryCode: string) => {
 
         return cities as string[];
     } catch (error) {
-        throw new Error("Error fetching cities");
+        return [];
     }
 }
+
+export const getCitiesAndCountries = async (
+    query: string
+): Promise<{ location: string; city: string; country: string }[]> => {
+    try {
+        const response = await axios.get("https://maps.googleapis.com/maps/api/place/autocomplete/json", {
+            params: {
+                input: query,
+                types: "(regions)", 
+                key: googleApiKey,
+            },
+        });
+
+        const results: { location: string; city: string; country: string }[] = response.data.predictions?.map((prediction: any) => {
+            const terms = prediction.terms || [];
+            const isCountry = prediction.types.includes("country");
+            const isCity = prediction.types.includes("locality") || prediction.types.includes("administrative_area_level_1");
+
+            const city = isCity ? terms[0]?.value || "" : "";
+            const country = isCity || isCountry ? terms[terms.length - 1]?.value || "" : "";
+
+            return {
+                location: prediction.description, 
+                city,
+                country,
+            };
+        });
+
+        return results.filter((item) => item.city || item.country);
+    } catch (error) {
+        console.error("Error fetching cities and countries:", error);
+        return [];
+    }
+};

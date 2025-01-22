@@ -1,0 +1,152 @@
+import { getCitiesAndCountries } from '@core/api/external/googleApi';
+import colors from '@core/theme/colors';
+import { Search, LocationOnOutlined } from '@mui/icons-material';
+import { Box, Button, CircularProgress, debounce, MenuItem, TextField } from '@mui/material';
+import { useState } from 'react';
+
+type JobSearchBoxProps = {
+    onSearch: (jobTitle: string, location: { location: string; city: string; country: string }) => void;
+    searching?: boolean;
+};
+const JobSearchBox = ({onSearch, searching=false}: JobSearchBoxProps) => {
+    const [jobTitle, setJobTitle] = useState('');
+    const [location, setLocation] = useState<{ location: string; city: string; country: string }>({ location: '', city: '', country: '' });
+    const [locationSuggestions, setLocationSuggestions] = useState<{ location: string; city: string; country: string }[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    const handleLocationInput = debounce(async (value: string) => {
+        if (value.trim() === '') {
+            setLocationSuggestions([]);
+            return;
+        }
+        setLoading(true);
+        try {
+            const suggestions = await getCitiesAndCountries(value);
+            setLocationSuggestions(suggestions);
+        } catch (error) {
+            setLocationSuggestions([])
+        } finally {
+            setLoading(false);
+        }
+    }, 500)
+
+    const handleSearch = () => {
+        onSearch(jobTitle, location)
+    };
+
+    return (
+        <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            sx={{
+                flexDirection: { xs: 'column', sm: 'row' },
+                gap: { xs: 3, sm: 2 },
+                paddingBlock: { xs: 5, sm: 3 },
+                paddingInline: 3,
+                backgroundColor: 'background.paper',
+                border: `1px solid ${colors.borderColour}`,
+            }}
+        >
+            {/* Job Title Input */}
+            <Box
+                sx={{
+                    width: '100%',
+                    flex: 1,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: 1,
+                }}
+            >
+                <Search />
+                <TextField
+                    size="small"
+                    fullWidth
+                    variant="standard"
+                    placeholder="Job Title or Keyword"
+                    value={jobTitle}
+                    onChange={(e) => setJobTitle(e.target.value)}
+                />
+            </Box>
+
+            {/* Location Auto-complete */}
+            <Box
+                sx={{
+                    width: '100%',
+                    flex: 1,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: 1,
+                }}
+            >
+                <LocationOnOutlined />
+                <Box sx={{ position: 'relative', width: '100%' }}>
+                    <TextField
+                        size="small"
+                        fullWidth
+                        variant="standard"
+                        placeholder="Enter city or country"
+                        value={location.location}
+                        onChange={(e) => {
+                            setLocation({ location: e.target.value, city: '', country: '' });
+                            handleLocationInput(e.target.value)
+                        }}
+                    />
+                    {loading && (
+                        <CircularProgress
+                            size={20}
+                            sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                right: 10,
+                                transform: 'translateY(-50%)',
+                            }}
+                        />
+                    )}
+                    {locationSuggestions.length > 0 && (
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                top: '100%',
+                                left: 0,
+                                right: 0,
+                                background: 'white',
+                                boxShadow: 3,
+                                zIndex: 10,
+                                maxHeight: 200,
+                                overflowY: 'auto',
+                            }}
+                        >
+                            {locationSuggestions.map((loc, index) => (
+                                <MenuItem
+                                    key={index}
+                                    onClick={() => {
+                                        setLocation(loc);
+                                        setLocationSuggestions([]); 
+                                    }}
+                                >
+                                    {loc.location} 
+                                </MenuItem>
+                            ))}
+                        </Box>
+                    )}
+                </Box>
+            </Box>
+
+            {/* Search Button */}
+            <Button
+                variant="contained"
+                color="primary"
+                sx={{ width: { xs: '100%', sm: 'auto' } }}
+                onClick={handleSearch}
+                disabled={searching}
+            >
+                {searching ? <CircularProgress size={20} color="inherit" /> : 'Search'}
+            </Button>
+        </Box>
+    );
+};
+
+export default JobSearchBox;

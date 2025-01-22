@@ -32,8 +32,8 @@ const JobActionMenu = ({ row, handleRepost, handleClose, navigate }: {
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 transformOrigin={{ vertical: "top", horizontal: "right" }}
             >
-                {row.status === "failed" && (
-                    <MenuItem onClick={() => {
+                {(row.status === "failed" || row.status === "pending") && (
+                    <MenuItem sx={{color: "primary.main"}} onClick={() => {
                         handleRepost(row.id);
                         handleMenuClose();
                     }}>
@@ -41,7 +41,7 @@ const JobActionMenu = ({ row, handleRepost, handleClose, navigate }: {
                     </MenuItem>
                 )}
                 {row.status === "live" && (
-                    <MenuItem onClick={() => {
+                    <MenuItem sx={{color: "red"}} onClick={() => {
                         handleClose(row.id);
                         handleMenuClose();
                     }}>

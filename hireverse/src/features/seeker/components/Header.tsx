@@ -12,9 +12,9 @@ const Header = () => {
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const location = useLocation();
 
-    // Map paths to titles
     const pathTitles: Record<string, string> = {
         "/seeker": "Dashboard",
+        "/seeker/find-jobs": "Find Jobs",
         "/seeker/profile": "My Profile",
         "/seeker/pricing-plans": "Pricing Plans",
         "/seeker/settings": "Settings",
