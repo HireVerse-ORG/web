@@ -93,6 +93,9 @@ const JobSearchBox = ({onSearch, searching=false}: JobSearchBoxProps) => {
                             setLocation({ location: e.target.value, city: '', country: '' });
                             handleLocationInput(e.target.value)
                         }}
+                        onBlur={() => {
+                            setLocationSuggestions([])
+                        }}
                     />
                     {loading && (
                         <CircularProgress

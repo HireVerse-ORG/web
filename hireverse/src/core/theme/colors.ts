@@ -1,5 +1,8 @@
 const colors = {
-    borderColour: "#D6DDEB"
+    borderColour: "#D6DDEB",
+    secondory: {
+        veryLight: "#f7f7fd",
+    }
 };
 
 export const getColorByIndex = (index: number): "primary" | "secondary" | "success" | "error" | "warning" | "info" => {

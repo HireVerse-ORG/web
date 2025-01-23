@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { lazy, Suspense, useEffect } from 'react';
 import ProtectedRoute from './ProtectedRoute';
-import NotFoundPage from '../pages/NotFoundPage';
+import NotFoundPage from '../features/shared/NotFoundPage';
 import { getUser } from '@core/api/auth/authapi';
 import useAppDispatch from '@core/hooks/useDispatch';
 import { setUser } from '@core/store/authslice';

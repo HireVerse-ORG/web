@@ -3,7 +3,6 @@ import colors from "@core/theme/colors";
 import { Autocomplete, Box, Button, Checkbox, debounce, FormControlLabel, Slider, TextField, Typography } from "@mui/material";
 import { Field, Form, Formik, FormikProps } from "formik";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
-import { EMPLOYMENT_TYPES } from "./data";
 import { JobBasicInfoFormSchema } from "./schema";
 import { Add } from "@mui/icons-material";
 import { searchJobCategories } from "@core/api/shared/jobCategoryApi";
@@ -11,6 +10,7 @@ import { searchSkills } from "@core/api/shared/skillApi";
 import CustomDialog from "@core/components/ui/CustomDialog";
 import JobSkillForm from "../JobSkillForm";
 import { ISkill } from "@core/types/skill.interface";
+import { EMPLOYMENT_TYPES } from "@core/data/companyFormData";
 
 export interface JobBasicInfoFormValues {
     title: string;

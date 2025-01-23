@@ -14,7 +14,7 @@ export const searchJobs = async (filter:{
         page: number;
         limit: number;
     }): Promise<IPaginationResponse<IJobWithCompanyProfile>> => {
-    const {keyword, location, city, country, page, limit, categories, employmentTypes, salaryRange} = filter;
+    const {keyword="", location="", city="", country="", page, limit, categories="", employmentTypes="", salaryRange=""} = filter;
     const url = `/jobs/search?keyword=${keyword}&location=${location}&country=${country}&city=${city}&categories=${categories}&employmentTypes=${employmentTypes}&salaryRange=${salaryRange}&page=${page}&limit=${limit}`;
     return (await apiWrapper(axios.get<Promise<IPaginationResponse<IJobWithCompanyProfile>>>(url))).data;
 };
