@@ -1,0 +1,39 @@
+.job-desc ul,
+.job-desc ol {
+  list-style-type: none; 
+  padding-left: 0;
+}
+
+.job-desc ul li,
+.job-desc ol li {
+  position: relative;
+  padding-left: 40px; 
+  font-size: 14px; 
+  color: #6c757d; 
+  margin-bottom: 8px;
+}
+
+.job-desc ul li::before,
+.job-desc ol li::before {
+  content: "\2713"; 
+  color: green; 
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  border: 1px solid green; 
+  border-radius: 50%; 
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0fdf4;
+}
+
+.job-desc p {
+  font-size: 14px;
+  color: #6c757d;
+  margin-bottom: 1em;
+}

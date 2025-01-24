@@ -18,12 +18,15 @@ type JobCardProps = {
     };
     canApply?: boolean;
     onApply: (jobId: string) => void;
+    onCardClick?: (jobId: string) => void;
 };
 
-const JobCard = ({ job, company, onApply, canApply = false }: JobCardProps) => {
+const JobCard = ({ job, company, onApply, canApply = false, onCardClick }: JobCardProps) => {
     return (
         <Box
+            onClick={() => onCardClick?.(job.id)}
             sx={{
+                cursor: "pointer",
                 border: `1px solid ${colors.borderColour}`,
                 overflow: "hidden",
                 display: "flex",
@@ -45,7 +48,6 @@ const JobCard = ({ job, company, onApply, canApply = false }: JobCardProps) => {
                     backgroundSize: "contain",
                     backgroundPosition: "center",
                     backgroundRepeat: "no-repeat",
-                    borderRadius: "8px",
                     mr: { xs: 0, sm: 2 },
                     mb: { xs: 2, sm: 0 },
                 }}

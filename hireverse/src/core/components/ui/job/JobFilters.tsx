@@ -11,7 +11,7 @@ import {
     useMediaQuery,
 } from "@mui/material";
 import { ExpandMore, FilterList } from "@mui/icons-material";
-import CustomDialog from "./CustomDialog";
+import CustomDialog from "../CustomDialog";
 import { EMPLOYMENT_TYPES } from "@core/data/companyFormData";
 import { jobCategoryListByJobKeyword } from "@core/api/shared/jobCategoryApi";
 

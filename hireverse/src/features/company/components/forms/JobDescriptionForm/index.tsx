@@ -33,7 +33,7 @@ const JobDescriptionForm = forwardRef(
 
     // Quill toolbar options
     const toolbarOptions = [
-      [{ header: "2" }],
+      // [{ header: "2" }],
       ["bold", "italic", "underline"],
       [{ list: "bullet" }],
     ];

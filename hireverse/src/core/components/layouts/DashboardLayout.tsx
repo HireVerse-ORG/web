@@ -7,7 +7,7 @@ type DashboardLayoutProps = {
     ContentLayout?: React.ComponentType<{ children: React.ReactNode }>;
 };
 
-const DashboardLayout = ({ Sidebar, ContentLayout }: DashboardLayoutProps) => {
+const DashboardLayout = ({ Sidebar, ContentLayout}: DashboardLayoutProps) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 

@@ -19,3 +19,8 @@ export const searchJobs = async (filter:{
     return (await apiWrapper(axios.get<Promise<IPaginationResponse<IJobWithCompanyProfile>>>(url))).data;
 };
 
+export const getJob = async (id: string): Promise<IJobWithCompanyProfile> => {
+    const url = `/jobs/${id}`;
+    return (await apiWrapper(axios.get<Promise<IJobWithCompanyProfile>>(url))).data;
+};
+

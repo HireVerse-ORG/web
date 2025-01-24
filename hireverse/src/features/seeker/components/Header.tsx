@@ -15,12 +15,23 @@ const Header = () => {
     const pathTitles: Record<string, string> = {
         "/seeker": "Dashboard",
         "/seeker/find-jobs": "Find Jobs",
+        "/seeker/view-job/:id": "Job Description",
         "/seeker/profile": "My Profile",
         "/seeker/pricing-plans": "Pricing Plans",
         "/seeker/settings": "Settings",
     };
 
-    const currentTitle = pathTitles[location.pathname] || " ";
+    const resolveTitle = (pathname: string) => {
+        for (const [path, title] of Object.entries(pathTitles)) {
+            const pathRegex = new RegExp(`^${path.replace(/:\w+/g, "\\w+")}$`);
+            if (pathRegex.test(pathname)) {
+                return title;
+            }
+        }
+        return " "; 
+    };
+
+    const currentTitle = resolveTitle(location.pathname);
 
     const toggleMenu = () => {
         setOpenMenu(!openMenu);

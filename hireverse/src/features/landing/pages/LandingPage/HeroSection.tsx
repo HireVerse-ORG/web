@@ -1,5 +1,5 @@
 import { Box, Container, Typography } from "@mui/material";
-import JobSeacrhBox from "../../../../core/components/ui/JobSearchBox";
+import JobSeacrhBox from "../../../../core/components/ui/job/JobSearchBox";
 
 
 const HeroSection = () => {

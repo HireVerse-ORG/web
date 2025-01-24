@@ -1,14 +1,22 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { searchJobs } from "@core/api/shared/jobsApi";
-import JobSearchBox from "@core/components/ui/JobSearchBox";
+import JobSearchBox from "@core/components/ui/job/JobSearchBox";
 import { Box, Pagination, Skeleton, Stack, Typography } from "@mui/material";
-import JobCard from "../../core/components/ui/JobCard";
+import JobCard from "../../core/components/ui/job/JobCard";
 import { DEAFULT_COMPANY_IMAGE_URL } from "@core/utils/constants";
 import { IJobWithCompanyProfile } from "@core/types/job.interface";
-import JobFilters, { IJobFilter } from "@core/components/ui/JobFilters";
+import JobFilters, { IJobFilter } from "@core/components/ui/job/JobFilters";
 import SecondaryLightLayout from "@core/components/layouts/SecondoryLightLayout";
+import useAppSelector from "@core/hooks/useSelector";
+import { useNavigate } from "react-router-dom";
 
-const FindJobs = () => {
+type FindJobsProps = {
+    viewJobBaseUrl: string;
+};
+
+const FindJobs = ({ viewJobBaseUrl }: FindJobsProps) => {
+    const user = useAppSelector((state) => state.auth.user);
     const [loading, setLoading] = useState(false);
     const [jobs, setJobs] = useState<IJobWithCompanyProfile[]>([]);
     const [page, setPage] = useState(1);
@@ -21,6 +29,20 @@ const FindJobs = () => {
         categories: [],
         salaryRange: "",
     });
+
+    const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    // Initialize search params
+    useEffect(() => {
+        const keyword = searchParams.get("keyword") || "";
+        const location = searchParams.get("location") || "";
+        const city = searchParams.get("city") || "";
+        const country = searchParams.get("country") || "";
+
+        setJobTitle(keyword);
+        setLocation({ location, city, country });
+    }, [searchParams]);
 
     const fetchJobs = async () => {
         setLoading(true);
@@ -45,18 +67,22 @@ const FindJobs = () => {
             employmentTypes: [],
             categories: [],
             salaryRange: "",
-        })
+        });
         setPage(1);
+
+        // Update query params in the URL
+        setSearchParams({ keyword: title, location: loc.location, city: loc.city, country: loc.country });
     };
 
     const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
         setPage(value);
+        setSearchParams({ ...searchParams, page: value.toString() });
     };
 
     const handleJobFilterChange = (filter: IJobFilter) => {
         setFilters(filter);
         setPage(1);
-    }
+    };
 
     useEffect(() => {
         if (jobTitle || location.location || location.city || location.country) {
@@ -64,36 +90,42 @@ const FindJobs = () => {
         }
     }, [page, jobTitle, location, filters.employmentTypes, filters.categories, filters.salaryRange]);
 
+    const handleCardClick = (jobId: string) => {
+        navigate(`${viewJobBaseUrl}/${jobId}`);
+    };
+
     return (
-        <SecondaryLightLayout header={
-            <Box sx={{width: "100%", maxWidth: "1000px", mx: "auto"}}>
-                <JobSearchBox onSearch={handleSearch} searching={loading} />
-            </Box>
-        }>
+        <SecondaryLightLayout
+            header={
+                <Box sx={{ width: "100%", maxWidth: "1000px", mx: "auto" }}>
+                    <JobSearchBox onSearch={handleSearch} searching={loading} />
+                </Box>
+            }
+        >
             <Box sx={{ display: "flex", gap: 2, flexDirection: { xs: "column", sm: "row" } }}>
-                {/* filters */}
-                <Box sx={{
-                    display: { xs: "flex", sm: "block" },
-                    justifyContent: "end",
-                    width: "100%",
-                    maxWidth: { xs: "auto", sm: "250px" }
-                }
-                }>
+                {/* Filters */}
+                <Box
+                    sx={{
+                        display: { xs: "flex", sm: "block" },
+                        justifyContent: "end",
+                        width: "100%",
+                        maxWidth: { xs: "auto", sm: "250px" },
+                    }}
+                >
                     <JobFilters onApplyFilters={handleJobFilterChange} jobKeyword={jobTitle} />
                 </Box>
 
                 {/* Jobs List */}
                 <Box flexGrow={1}>
                     <Box sx={{ mb: 2 }}>
-                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                             All Jobs
                         </Typography>
 
                         <Typography variant="body2" color="text.secondary">
-                            Showing {totalJobs} {totalJobs === 1 ? 'result' : 'results'}
+                            Showing {totalJobs} {totalJobs === 1 ? "result" : "results"}
                         </Typography>
                     </Box>
-
 
                     {/* Show Skeleton Loading while Fetching Jobs */}
                     {loading ? (
@@ -105,11 +137,10 @@ const FindJobs = () => {
                     ) : (
                         <>
                             {/* Show Jobs if Available */}
-                            {jobs.length > 0 && (
+                            {jobs.length > 0 &&
                                 jobs.map((job) => (
-                                    <Box mb={1}>
+                                    <Box mb={1} key={job.id}>
                                         <JobCard
-                                            key={job.id}
                                             job={{
                                                 id: job.id,
                                                 title: job.title,
@@ -124,11 +155,11 @@ const FindJobs = () => {
                                                 location: job.companyProfile?.location || { city: "", country: "" },
                                             }}
                                             onApply={(jobId) => console.log("Applied to job:", jobId)}
-                                            canApply
+                                            canApply={user ? true : false}
+                                            onCardClick={handleCardClick}
                                         />
                                     </Box>
-                                ))
-                            )}
+                                ))}
                         </>
                     )}
 
