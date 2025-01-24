@@ -22,7 +22,7 @@ type FormValues = {
 
 const JobStepper = ({ job }: JobStepperProps) => {
     const { companyProfile } = useCompanyContext();
-    const { usage, setUsage, jobPostLimitExceeded } = useCompanySubscription()
+    const { jobPostLimitExceeded } = useCompanySubscription()
     const [activeStep, setActiveStep] = useState(0);
     const [finishing, setFinishing] = useState(false);
     const [formValues, setFormValues] = useState<FormValues>({
@@ -109,9 +109,6 @@ const JobStepper = ({ job }: JobStepperProps) => {
                     ...data,
                     companyProfileId: companyProfile!.id,
                 })
-                if (usage) {
-                    setUsage({ ...usage, jobsPosted: usage.jobsPosted + 1 });
-                }
             }
             setActiveStep((prevActiveStep) => prevActiveStep + 1);
         } catch (error: any) {

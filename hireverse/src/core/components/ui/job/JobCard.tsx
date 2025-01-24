@@ -133,7 +133,10 @@ const JobCard = ({ job, company, onApply, canApply = false, onCardClick }: JobCa
                             fullWidth
                             variant="contained"
                             color="primary"
-                            onClick={() => onApply(job.id)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onApply(job.id)
+                            }}
                         >
                             Apply
                         </Button>

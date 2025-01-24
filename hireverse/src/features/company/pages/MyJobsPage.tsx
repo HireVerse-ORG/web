@@ -19,9 +19,7 @@ const MyJobsPage = () => {
     const [jobs, setJobs] = useState<IJob[]>([]);
 
     const { jobPostLimitExceeded } = useCompanySubscription();
-
-    const { usage, setUsage } = useCompanySubscription();
-
+    
     const navigate = useNavigate();
 
 
@@ -50,9 +48,6 @@ const MyJobsPage = () => {
         try {
             await retryJobPosting(id);
             setJobs(jobs.map(job => job.id === id ? { ...job, status: "pending" } : job));
-            if (usage) {
-                setUsage({ ...usage, jobsPosted: usage.jobsPosted + 1 });
-            }
         } catch (error: any) {
             toast.error(error.message || "Failed to repost job");
         }

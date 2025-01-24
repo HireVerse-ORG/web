@@ -10,6 +10,11 @@ export const getSeekerProfile = async (username?: string): Promise<SeekerProfile
     return (await apiWrapper(axios.get<SeekerProfile>(url))).data;
 };
 
+export const createSeekerProfile = async (username?: string): Promise<SeekerProfile> => {
+    const url = (username ? `${baseUrl}/${username}` : `${baseUrl}`) + "?field=profile";
+    return (await apiWrapper(axios.get<SeekerProfile>(url))).data;
+};
+
 export const getSeekerBio = async (username?: string): Promise<string> => {
     const url = (username ? `${baseUrl}/${username}` : `${baseUrl}`) + "?field=bio";
     return (await apiWrapper(axios.get<string>(url))).data;

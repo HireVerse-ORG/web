@@ -10,6 +10,8 @@ import JobFilters, { IJobFilter } from "@core/components/ui/job/JobFilters";
 import SecondaryLightLayout from "@core/components/layouts/SecondoryLightLayout";
 import useAppSelector from "@core/hooks/useSelector";
 import { useNavigate } from "react-router-dom";
+import CustomDialog from "@core/components/ui/CustomDialog";
+import JobApplicationForm from "../seeker/components/forms/JobApplicationForm";
 
 type FindJobsProps = {
     viewJobBaseUrl: string;
@@ -19,6 +21,8 @@ const FindJobs = ({ viewJobBaseUrl }: FindJobsProps) => {
     const user = useAppSelector((state) => state.auth.user);
     const [loading, setLoading] = useState(false);
     const [jobs, setJobs] = useState<IJobWithCompanyProfile[]>([]);
+    const [selectedJob, setSelectedJob] = useState<IJobWithCompanyProfile | null>(null);
+    const [modelOpen, setModelOpen] = useState(false);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [totalJobs, setTotaljobs] = useState(0);
@@ -33,7 +37,6 @@ const FindJobs = ({ viewJobBaseUrl }: FindJobsProps) => {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
 
-    // Initialize search params
     useEffect(() => {
         const keyword = searchParams.get("keyword") || "";
         const location = searchParams.get("location") || "";
@@ -94,90 +97,112 @@ const FindJobs = ({ viewJobBaseUrl }: FindJobsProps) => {
         navigate(`${viewJobBaseUrl}/${jobId}`);
     };
 
+    const handleModelClose = () => {
+        setModelOpen(false);
+        setSelectedJob(null);
+    }
+
     return (
-        <SecondaryLightLayout
-            header={
-                <Box sx={{ width: "100%", maxWidth: "1000px", mx: "auto" }}>
-                    <JobSearchBox onSearch={handleSearch} searching={loading} />
-                </Box>
-            }
-        >
-            <Box sx={{ display: "flex", gap: 2, flexDirection: { xs: "column", sm: "row" } }}>
-                {/* Filters */}
-                <Box
-                    sx={{
-                        display: { xs: "flex", sm: "block" },
-                        justifyContent: "end",
-                        width: "100%",
-                        maxWidth: { xs: "auto", sm: "250px" },
-                    }}
-                >
-                    <JobFilters onApplyFilters={handleJobFilterChange} jobKeyword={jobTitle} />
-                </Box>
-
-                {/* Jobs List */}
-                <Box flexGrow={1}>
-                    <Box sx={{ mb: 2 }}>
-                        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                            All Jobs
-                        </Typography>
-
-                        <Typography variant="body2" color="text.secondary">
-                            Showing {totalJobs} {totalJobs === 1 ? "result" : "results"}
-                        </Typography>
+        <>
+            <SecondaryLightLayout
+                header={
+                    <Box sx={{ width: "100%", maxWidth: "1000px", mx: "auto" }}>
+                        <JobSearchBox onSearch={handleSearch} searching={loading} />
+                    </Box>
+                }
+            >
+                <Box sx={{ display: "flex", gap: 2, flexDirection: { xs: "column", sm: "row" } }}>
+                    {/* Filters */}
+                    <Box
+                        sx={{
+                            display: { xs: "flex", sm: "block" },
+                            justifyContent: "end",
+                            width: "100%",
+                            maxWidth: { xs: "auto", sm: "250px" },
+                        }}
+                    >
+                        <JobFilters onApplyFilters={handleJobFilterChange} jobKeyword={jobTitle} />
                     </Box>
 
-                    {/* Show Skeleton Loading while Fetching Jobs */}
-                    {loading ? (
-                        <Stack spacing={2}>
-                            {[...Array(5)].map((_, index) => (
-                                <Skeleton variant="rectangular" width="100%" height={120} key={index} />
-                            ))}
-                        </Stack>
-                    ) : (
-                        <>
-                            {/* Show Jobs if Available */}
-                            {jobs.length > 0 &&
-                                jobs.map((job) => (
-                                    <Box mb={1} key={job.id}>
-                                        <JobCard
-                                            job={{
-                                                id: job.id,
-                                                title: job.title,
-                                                categories: job.categories
-                                                    .filter((skill) => typeof skill !== "string")
-                                                    .map((cat) => cat.name),
-                                                employmentType: job.employmentTypes,
-                                            }}
-                                            company={{
-                                                imageUrl: job.companyProfile?.image || DEAFULT_COMPANY_IMAGE_URL,
-                                                name: job.companyProfile?.name || "",
-                                                location: job.companyProfile?.location || { city: "", country: "" },
-                                            }}
-                                            onApply={(jobId) => console.log("Applied to job:", jobId)}
-                                            canApply={user ? true : false}
-                                            onCardClick={handleCardClick}
-                                        />
-                                    </Box>
-                                ))}
-                        </>
-                    )}
+                    {/* Jobs List */}
+                    <Box flexGrow={1}>
+                        <Box sx={{ mb: 2 }}>
+                            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                                All Jobs
+                            </Typography>
 
-                    {/* Pagination */}
-                    {jobs.length > 0 && (
-                        <Box display="flex" justifyContent="center" py={3}>
-                            <Pagination
-                                count={totalPages}
-                                page={page}
-                                onChange={handlePageChange}
-                                color="primary"
-                                sx={{ mt: 3 }}
-                            />
+                            <Typography variant="body2" color="text.secondary">
+                                Showing {totalJobs} {totalJobs === 1 ? "result" : "results"}
+                            </Typography>
                         </Box>
-                    )}
+
+                        {/* Show Skeleton Loading while Fetching Jobs */}
+                        {loading ? (
+                            <Stack spacing={2}>
+                                {[...Array(5)].map((_, index) => (
+                                    <Skeleton variant="rectangular" width="100%" height={120} key={index} />
+                                ))}
+                            </Stack>
+                        ) : (
+                            <>
+                                {/* Show Jobs if Available */}
+                                {jobs.length > 0 &&
+                                    jobs.map((job) => (
+                                        <Box mb={1} key={job.id}>
+                                            <JobCard
+                                                job={{
+                                                    id: job.id,
+                                                    title: job.title,
+                                                    categories: job.categories
+                                                        .filter((skill) => typeof skill !== "string")
+                                                        .map((cat) => cat.name),
+                                                    employmentType: job.employmentTypes,
+                                                }}
+                                                company={{
+                                                    imageUrl: job.companyProfile?.image || DEAFULT_COMPANY_IMAGE_URL,
+                                                    name: job.companyProfile?.name || "",
+                                                    location: job.companyProfile?.location || { city: "", country: "" },
+                                                }}
+                                                onApply={() => {
+                                                    setSelectedJob(job);
+                                                    setModelOpen(true);
+                                                }}
+                                                canApply={user ? true : false}
+                                                onCardClick={handleCardClick}
+                                            />
+                                        </Box>
+                                    ))}
+                            </>
+                        )}
+
+                        {/* Pagination */}
+                        {jobs.length > 0 && (
+                            <Box display="flex" justifyContent="center" py={3}>
+                                <Pagination
+                                    count={totalPages}
+                                    page={page}
+                                    onChange={handlePageChange}
+                                    color="primary"
+                                    sx={{ mt: 3 }}
+                                />
+                            </Box>
+                        )}
+                    </Box>
                 </Box>
-            </Box>
-        </SecondaryLightLayout>
+            </SecondaryLightLayout>
+
+            <CustomDialog open={modelOpen} onClose={handleModelClose}>
+                {selectedJob && (
+                    <JobApplicationForm jobData={{
+                        jobid: selectedJob.id,
+                        jobTitle: selectedJob.title,
+                        companyName: selectedJob.companyProfile?.name || "",
+                        companyLogo: selectedJob.companyProfile?.image || DEAFULT_COMPANY_IMAGE_URL,
+                        location: selectedJob.companyProfile?.location || {city: "", country: ""}
+                    }}/>
+                )}
+            </CustomDialog>
+        </>
     );
 };
 
