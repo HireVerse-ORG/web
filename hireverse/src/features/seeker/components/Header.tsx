@@ -14,7 +14,9 @@ const Header = () => {
 
     const pathTitles: Record<string, string> = {
         "/seeker": "Dashboard",
-        "/seeker/find-jobs": "Find Jobs",
+        "/seeker/messages": "Messages", 
+        "/seeker/my-applications": "My Applications", 
+        "/seeker/find-jobs": "Find Jobs", 
         "/seeker/view-job/:id": "Job Description",
         "/seeker/profile": "My Profile",
         "/seeker/pricing-plans": "Pricing Plans",
