@@ -2,17 +2,16 @@ import { useParams } from "react-router-dom";
 import SecondaryLightLayout from "@core/components/layouts/SecondoryLightLayout";
 import JobTitleCard from "@core/components/ui/job/JobTitleCard";
 import { DEAFULT_COMPANY_IMAGE_URL } from "@core/utils/constants";
-import { Box, Chip, Divider, Typography, Skeleton } from "@mui/material";
-import colors, { getColorByIndex } from "@core/theme/colors";
+import { Box, Typography, Skeleton } from "@mui/material";
 import useGet from "@core/hooks/useGet";
 import { getJob } from "@core/api/shared/jobsApi";
-import { dateFormatter } from "@core/utils/helper";
 import { useEffect, useState } from "react";
-import RenderJobDescription from "@core/components/ui/job/RenderJobDescription";
 import useAppSelector from "@core/hooks/useSelector";
 import { toast } from "sonner";
 import CustomDialog from "@core/components/ui/CustomDialog";
 import JobApplicationForm from "../seeker/components/forms/JobApplicationForm";
+import JobDescriptionSection from "@core/components/ui/job/JobDescriptionSection ";
+import JobDetailsSection from "@core/components/ui/job/JobDetailsSection";
 
 const ViewJobPage = () => {
     const { id: jobId } = useParams<{ id: string }>();
@@ -113,89 +112,20 @@ const ViewJobPage = () => {
                 <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 4, width: "100%", maxWidth: "1000px", mx: "auto", mt: 3 }}>
                     {/* Left Section */}
                     <Box flex={2}>
-                        <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                            Job Description
-                        </Typography>
-                        <Typography variant="body1" sx={{ mb: 3 }}>
-                            <RenderJobDescription htmlContent={job.description}></RenderJobDescription>
-                        </Typography>
-
-                        {job.responsibilities && (
-                            <>
-                                <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                                    Responsibilities
-                                </Typography>
-                                <Typography variant="body1" sx={{ mb: 3 }}>
-                                    <RenderJobDescription htmlContent={job.responsibilities}></RenderJobDescription>
-                                </Typography>
-                            </>
-                        )}
-
-                        {job.whoYouAre && (
-                            <>
-                                <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                                    Who You Are
-                                </Typography>
-                                <Typography variant="body1" sx={{ mb: 3 }}>
-                                    <RenderJobDescription htmlContent={job.whoYouAre}></RenderJobDescription>
-                                </Typography>
-                            </>
-                        )}
-
-                        {job.niceToHaves && (
-                            <>
-                                <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                                    Nice to Have
-                                </Typography>
-                                <Typography variant="body1" sx={{ mb: 3 }}>
-                                    <RenderJobDescription htmlContent={job.whoYouAre}></RenderJobDescription>
-                                </Typography>
-                            </>
-                        )}
+                        <JobDescriptionSection job={{
+                            description: job.description,
+                            responsibilities: job.responsibilities,
+                            whoYouAre: job.whoYouAre,
+                            niceToHaves: job.niceToHaves
+                        }} />
                     </Box>
 
                     {/* Right Section */}
                     <Box flex={1}>
-                        <Box>
-                            <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                                About This Role
-                            </Typography>
-                            <Typography variant="body1" sx={{ mb: 1 }}>
-                                <strong>Salary:</strong> {job.salaryRange?.length ? job.salaryRange.join(" - ") : "Not disclosed"}
-                            </Typography>
-
-                            <Typography variant="body1" sx={{ mb: 1 }}>
-                                <strong>Job Posted:</strong> {dateFormatter(job.createdAt)}
-                            </Typography>
-                        </Box>
-
-                        <Divider color="red" sx={{ my: 2, border: `1px solid ${colors.borderColour}` }} />
-
-                        {categories.length > 0 && (
-                            <Box>
-                                <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                                    Categories
-                                </Typography>
-                                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
-                                    {categories.map((category, index) => (
-                                        <Chip key={index} label={category} color={getColorByIndex(index)} variant="outlined" />
-                                    ))}
-                                </Box>
-                            </Box>
-                        )}
-
-                        {skills.length > 0 && (
-                            <Box>
-                                <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                                    Required Skills
-                                </Typography>
-                                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                                    {skills.map((skill, index) => (
-                                        <Chip key={index} label={skill} sx={{ backgroundColor: "secondary.light", color: "primary.main" }} />
-                                    ))}
-                                </Box>
-                            </Box>
-                        )}
+                        <JobDetailsSection job={{
+                            salaryRange: job.salaryRange || [],
+                            createdAt: job.createdAt,
+                        }} categories={categories} skills={skills} />
                     </Box>
                 </Box>
             </SecondaryLightLayout>
@@ -205,8 +135,8 @@ const ViewJobPage = () => {
                     jobTitle: job.title,
                     companyName: job.companyProfile?.name || "",
                     companyLogo: job.companyProfile?.image || DEAFULT_COMPANY_IMAGE_URL,
-                    location: job.companyProfile?.location || {city: "", country: ""}
-                }}/>
+                    location: job.companyProfile?.location || { city: "", country: "" }
+                }} />
             </CustomDialog>
         </>
     );

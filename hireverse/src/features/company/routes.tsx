@@ -15,6 +15,9 @@ import CompanyPublicViewPage from "../landing/pages/CompanyPublicViewPage";
 import PricingPlansPage from "./pages/PricingPlansPage";
 import { CompanySubscriptionProvider } from "@core/contexts/CompanySubscriptionContext";
 import EditJobPage from "./pages/EditJobPage";
+import CompanyJobViewPage from "./pages/CompanyJobViewPage";
+import ApplicantDetailsPage from "./pages/ApplicantDetailsPage";
+import ApplicationsListPage from "./pages/ApplicationsListPage";
 
 
 const CompanyRoutes = () => {
@@ -30,6 +33,9 @@ const CompanyRoutes = () => {
               <Route path="/post-job" element={<PostJobPage />} />
               <Route path="/edit-job" element={<EditJobPage />} />
               <Route path="/jobs" element={<MyJobsPage />} />
+              <Route path="/job/:id" element={<CompanyJobViewPage />} />
+              <Route path="/applicants" element={<ApplicationsListPage />} />
+              <Route path="/applicant/:id" element={<ApplicantDetailsPage />} />
               <Route path="/pricing-plans" element={<PricingPlansPage />} />
               <Route path="/settings" element={<SettingsPage />} />
             </Route>
