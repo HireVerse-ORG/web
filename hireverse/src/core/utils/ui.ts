@@ -15,6 +15,7 @@ export function getJobApplicationStatusDetails(
         interview: { label: "Interview Scheduled", color: "primary" },
         hired: { label: "Hired", color: "success" },
         declined: { label: "Unsuitable", color: "error" },
+        withdrawn: { label: "Withdrawn", color: "error" },
     };
 
     return statusDetails[status] ?? { label: "Unknown", color: "default" };

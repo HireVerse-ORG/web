@@ -1,4 +1,4 @@
-export type JobApplicationStatus = 'pending' | 'applied' | 'failed' | 'in-review' | 'shortlisted' | 'interview' | 'hired' |'declined'
+export type JobApplicationStatus = 'pending' | 'applied' | 'failed' | 'in-review' | 'shortlisted' | 'interview' | 'hired' |'declined' | 'withdrawn';
 
 
 export interface IJobApplication {

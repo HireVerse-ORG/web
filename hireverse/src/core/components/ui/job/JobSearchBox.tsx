@@ -1,18 +1,22 @@
+import { useEffect, useRef, useState } from 'react';
 import { getCitiesAndCountries } from '@core/api/external/googleApi';
 import colors from '@core/theme/colors';
 import { Search, LocationOnOutlined } from '@mui/icons-material';
 import { Box, Button, CircularProgress, debounce, MenuItem, TextField } from '@mui/material';
-import { useState } from 'react';
 
 type JobSearchBoxProps = {
     onSearch: (jobTitle: string, location: { location: string; city: string; country: string }) => void;
     searching?: boolean;
 };
-const JobSearchBox = ({onSearch, searching=false}: JobSearchBoxProps) => {
+
+const JobSearchBox = ({ onSearch, searching = false }: JobSearchBoxProps) => {
     const [jobTitle, setJobTitle] = useState('');
     const [location, setLocation] = useState<{ location: string; city: string; country: string }>({ location: '', city: '', country: '' });
     const [locationSuggestions, setLocationSuggestions] = useState<{ location: string; city: string; country: string }[]>([]);
     const [loading, setLoading] = useState(false);
+
+    const locationInputRef = useRef<HTMLInputElement>(null);
+    const suggestionsBoxRef = useRef<HTMLDivElement>(null);
 
     const handleLocationInput = debounce(async (value: string) => {
         if (value.trim() === '') {
@@ -24,15 +28,31 @@ const JobSearchBox = ({onSearch, searching=false}: JobSearchBoxProps) => {
             const suggestions = await getCitiesAndCountries(value);
             setLocationSuggestions(suggestions);
         } catch (error) {
-            setLocationSuggestions([])
+            setLocationSuggestions([]);
         } finally {
             setLoading(false);
         }
-    }, 500)
+    }, 500);
 
     const handleSearch = () => {
-        onSearch(jobTitle, location)
+        onSearch(jobTitle, location);
     };
+
+    const handleClickOutside = (event: MouseEvent) => {
+        if (
+            locationInputRef.current && !locationInputRef.current.contains(event.target as Node) &&
+            suggestionsBoxRef.current && !suggestionsBoxRef.current.contains(event.target as Node)
+        ) {
+            setLocationSuggestions([]);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     return (
         <Box
@@ -91,11 +111,9 @@ const JobSearchBox = ({onSearch, searching=false}: JobSearchBoxProps) => {
                         value={location.location}
                         onChange={(e) => {
                             setLocation({ location: e.target.value, city: '', country: '' });
-                            handleLocationInput(e.target.value)
+                            handleLocationInput(e.target.value);
                         }}
-                        onBlur={() => {
-                            setLocationSuggestions([])
-                        }}
+                        inputRef={locationInputRef}
                     />
                     {loading && (
                         <CircularProgress
@@ -121,16 +139,17 @@ const JobSearchBox = ({onSearch, searching=false}: JobSearchBoxProps) => {
                                 maxHeight: 200,
                                 overflowY: 'auto',
                             }}
+                            ref={suggestionsBoxRef}
                         >
                             {locationSuggestions.map((loc, index) => (
                                 <MenuItem
                                     key={index}
                                     onClick={() => {
                                         setLocation(loc);
-                                        setLocationSuggestions([]); 
+                                        setLocationSuggestions([]);
                                     }}
                                 >
-                                    {loc.location} 
+                                    {loc.location}
                                 </MenuItem>
                             ))}
                         </Box>

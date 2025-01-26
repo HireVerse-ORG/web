@@ -1,6 +1,7 @@
-import { getMyJobApplications, reApplyJob } from "@core/api/seeker/jobApplicationApi";
+import { getMyJobApplications, reApplyJob, withdrawJobApplication } from "@core/api/seeker/jobApplicationApi";
 import SearchBox from "@core/components/ui/SearchBox";
 import TableComponent, { TableColumn } from "@core/components/ui/TableComponent";
+import { useSeekerSubscription } from "@core/contexts/SeekerSubscriptionContext";
 import useGet from "@core/hooks/useGet";
 import { IJobApplicationWithCompanyProfile, JobApplicationStatus } from "@core/types/job.application.interface";
 import { IPaginationResponse } from "@core/types/pagination.interface";
@@ -12,6 +13,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const MyApplicationsPage = () => {
+    const { jobApplicationLimitExceeded } = useSeekerSubscription();
     const [searchQuery, setSearchQuery] = useState("");
     const [totalPages, setTotalPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
@@ -33,7 +35,10 @@ const MyApplicationsPage = () => {
     }, [data])
 
     useEffect(() => {
-        data && refetch();
+        if (data) {
+            setApplications([])
+            refetch();
+        }
     }, [currentPage, searchQuery, tabValue])
 
     const handleSearch = debounce((value: string) => {
@@ -128,24 +133,91 @@ const MyApplicationsPage = () => {
             minWidth: 150,
             align: "center",
             render: (row: IJobApplicationWithCompanyProfile) => {
-                const handleRepply = async () => {
+                const [loading, setLoading] = useState(false);
+
+                const handleReapply = async () => {
+                    if(jobApplicationLimitExceeded){
+                        toast.warning("Your job apply limited exceeded.", {description: "Upgrade your plan and retry."})
+                        return;
+                    }
+                    setLoading(true);
                     try {
                         await reApplyJob(row.id);
-                        setApplications(applications.map(dt => dt.id === row.id ? {...dt, status: "pending"}: dt))
+                        setApplications(applications.map((app) =>
+                            app.id === row.id ? { ...app, status: "pending" } : app
+                        ));
+                        toast.success("Successfully reapplied for the job!");
                     } catch (error: any) {
-                        toast.error(error || "Failed to repply")
+                        toast.error(error || "Failed to reapply");
+                    } finally {
+                        setLoading(false);
                     }
-                }
+                };
+
+                const handleWithdraw = async () => {
+                    setLoading(true);
+                    try {
+                        await withdrawJobApplication(row.id);
+                        setApplications(applications.filter((app) => app.id !== row.id));
+                        toast.success("Successfully withdrew the application!");
+                    } catch (error: any) {
+                        toast.error(error || "Failed to withdraw the application");
+                    } finally {
+                        setLoading(false);
+                    }
+                };
+
+                const viewInterviewDetails = () => {
+                    window.location.href = `/interview-details/${row.id}`;
+                };
+
+                const viewOfferLetter = () => {
+                    window.location.href = `/offer-letter/${row.id}`;
+                };
+
                 return (
                     <>
-                        {row.status === "failed" && (
-                            <Button variant="contained" size="small" onClick={handleRepply} >
-                                Re Apply
+                        {row.status === "failed" ? (
+                            <Button
+                                variant="contained"
+                                size="small"
+                                onClick={handleReapply}
+                                disabled={loading}
+                            >
+                                {loading ? <CircularProgress size={24} color="inherit" /> : "Reapply"}
                             </Button>
+                        ) : row.status === "pending" || row.status === "applied" ? (
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                color="error"
+                                onClick={handleWithdraw}
+                                disabled={loading}
+                            >
+                                {loading ? <CircularProgress size={24} color="inherit" /> : "Withdraw"}
+                            </Button>
+                        ) : row.status === "interview" ? (
+                            <Button
+                                variant="contained"
+                                size="small"
+                                onClick={viewInterviewDetails}
+                            >
+                                View Interview Details
+                            </Button>
+                        ) : row.status === "hired" ? (
+                            <Button
+                                variant="contained"
+                                size="small"
+                                onClick={viewOfferLetter}
+                            >
+                                View Offer Letter
+                            </Button>
+                        ) : (
+                            <Typography fontStyle={"italic"} color="textDisabled">No Actions</Typography>
                         )}
                     </>
-                )
-            }
+                );
+            },
         },
     ];
 
@@ -186,6 +258,7 @@ const MyApplicationsPage = () => {
                 <Tab label="shortlisted" value="shortlisted" />
                 <Tab label="Interviewing" value="interview" />
                 <Tab label="Hired" value="hired" />
+                <Tab label="Withdrawn" value="withdrawn" />
             </Tabs>
 
             {loading ? (

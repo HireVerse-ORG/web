@@ -9,6 +9,7 @@ interface SeekerSubscriptionContextType {
     setUsage: (usage: ISeekerSubscriptionUsage) => void;
     loading: boolean;
     refetch: () => Promise<void>;
+    jobApplicationLimitExceeded: boolean;
 }
 
 const SeekerSubscriptionContext = createContext<SeekerSubscriptionContextType | undefined>(undefined);
@@ -29,6 +30,8 @@ export const SubscriptionProvider = ({ children }: SubscriptionProviderProps) =>
     const [subscription, setSubscription] = useState<ISeekerSubscription | null>(null);
     const [usage, setUsage] = useState<ISeekerSubscriptionUsage | null>(null);
     const [loading, setLoading] = useState(false);
+    const [jobApplicationLimitExceeded, setJobApplicationLimitExceeded] = useState(false);
+
 
     const fetchSubscriptionData = async () => {
         setLoading(true);
@@ -50,6 +53,15 @@ export const SubscriptionProvider = ({ children }: SubscriptionProviderProps) =>
         fetchSubscriptionData();
     }, []);
 
+    useEffect(() => {
+        if (usage && subscription) {
+            if(subscription.jobApplicationsPerMonth !== -1 && usage.jobApplicationsUsed + 1 > subscription.jobApplicationsPerMonth) {
+                setJobApplicationLimitExceeded(true);
+            } else {
+                setJobApplicationLimitExceeded(false);
+            }
+        }
+    }, [subscription, usage]);
 
     return (
         <SeekerSubscriptionContext.Provider
@@ -59,7 +71,8 @@ export const SubscriptionProvider = ({ children }: SubscriptionProviderProps) =>
                 setSubscription,
                 setUsage,
                 loading,
-                refetch: fetchSubscriptionData
+                refetch: fetchSubscriptionData,
+                jobApplicationLimitExceeded,
             }}
         >
             {children}

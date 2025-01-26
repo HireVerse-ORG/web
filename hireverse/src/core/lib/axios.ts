@@ -32,7 +32,7 @@ axiosInstance.interceptors.response.use(
         const originalRequest = error.config
 
         if (!response) {
-            toast.error("Network Error: Unable to reach the server!");
+            toast.error("Unable to reach the server!", { description: "Please try again later." });
         } else if (response.status >= 500) {
             toast.error("Something went wrong!", { description: "Please try again later." });
         } else if (response.status === 401 && !originalRequest?._retry) {
