@@ -2,6 +2,13 @@ const colors = {
     borderColour: "#D6DDEB",
     secondory: {
         veryLight: "#f7f7fd",
+        accent: "#26A4FF"
+    },
+    success: {
+        main: '#56CDAD',
+    },
+    error: {
+        main: '#FF6550',
     }
 };
 

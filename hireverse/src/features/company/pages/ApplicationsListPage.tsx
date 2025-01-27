@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import ApplicantsTableContent from "../components/ApplicantsTableContent";
-import { CompanyJobApplicantTableData } from "../components/ApplicantsTable";
+import { CompanyJobApplicantTableData } from "../components/applicants/ApplicantsTable";
 import { IJobApplication, JobApplicationStatus } from "@core/types/job.application.interface";
 import { debounce } from "@mui/material";
 import useGet from "@core/hooks/useGet";

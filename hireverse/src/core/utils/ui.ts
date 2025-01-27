@@ -1,3 +1,4 @@
+import colors from "@core/theme/colors";
 import { JobApplicationStatus } from "@core/types/job.application.interface";
 import { JobStatus } from "@core/types/job.interface";
 
@@ -32,8 +33,31 @@ export function getJobPostStatusDetails(
         pending: { label: "Pending", color: "warning" },
         failed: { label: "Failed", color: "error" },
         closed: { label: "Closed", color: "error" },
-        live: {label: "Live", color: "success"}
+        live: { label: "Live", color: "success" }
     };
 
     return statusDetails[status] ?? { label: "Unknown", color: "default" };
-}  
+}
+
+
+export const applicantStagesOrder: JobApplicationStatus[] = [
+    "in-review",
+    "shortlisted",
+    "interview",
+    "hired",
+    "declined",
+];
+
+export const getApplicantStagesOrder = (stage: JobApplicationStatus) => {
+    const currentIndex = applicantStagesOrder.indexOf(stage);
+    const progress = (currentIndex / (applicantStagesOrder.length - 1)) * 100;
+
+    let color = colors.secondory.accent;
+    if (stage === "hired") {
+        return { progress: 100, color: colors.success.main };
+    } else if (stage === "declined") {
+        return { progress: 100, color: colors.error.main };
+    }
+
+    return { progress, color };
+};

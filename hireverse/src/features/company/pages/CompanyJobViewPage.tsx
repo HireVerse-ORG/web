@@ -1,21 +1,21 @@
 import { Box, Chip, Typography, Tab, Tabs, Skeleton, debounce } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
-import { getJob } from "@core/api/shared/jobsApi";
 import useGet from "@core/hooks/useGet";
-import { IJobWithCompanyProfile } from "@core/types/job.interface";
+import { IJob } from "@core/types/job.interface";
 import { getJobPostStatusDetails } from "@core/utils/ui";
 import JobDetailsSection from "@core/components/ui/job/JobDetailsSection";
-import { CompanyJobApplicantTableData } from "../components/ApplicantsTable";
+import { CompanyJobApplicantTableData } from "../components/applicants/ApplicantsTable";
 import { listCompanyApplicants } from "@core/api/company/jobApplicationApi";
 import JobDescriptionSection from "@core/components/ui/job/JobDescriptionSection ";
 import ApplicantsTableContent from "../components/ApplicantsTableContent";
 import { JobApplicationStatus } from "@core/types/job.application.interface";
 import GoBackTitleButton from "@core/components/ui/GoBackTitleButton";
+import { getJobDetailsforCompany } from "@core/api/company/jobApi";
 
 const CompanyJobViewPage = () => {
     const { id: jobId } = useParams<{ id: string }>();
-    const { data: job, loading: jobLoading, error: jobError } = useGet<IJobWithCompanyProfile>(() => getJob(jobId || ""));
+    const { data: job, loading: jobLoading, error: jobError } = useGet<IJob>(() => getJobDetailsforCompany(jobId || ""));
     const [categories, setCategories] = useState<string[]>([]);
     const [skills, setSkills] = useState<string[]>([]);
     const [jobStatus, setJobStatus] = useState<{ label: string; color: any } | null>(null);
@@ -116,13 +116,7 @@ const CompanyJobViewPage = () => {
         <Box>
             {/* header */}
             <Box display="flex" justifyContent="space-between" alignItems="center" gap={2}>
-                <GoBackTitleButton title={job.title}>
-                    {job.companyProfile?.location && (
-                        <Typography variant="body2" color="text.secondary">
-                            {job.companyProfile.location.city}, {job.companyProfile.location.country}
-                        </Typography>
-                    )}
-                </GoBackTitleButton>
+                <GoBackTitleButton title={job.title} />
                 {jobStatus && <Chip label={jobStatus.label} color={jobStatus.color} />}
             </Box>
 

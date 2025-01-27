@@ -68,7 +68,8 @@ const ApplicantsTable = ({ data, showRoleColumn }: ApplicantsTableProps) => {
         {
             id: "actions",
             label: "Actions",
-            minWidth: 150,
+            minWidth: 180,
+            align: "center",
             render: (row: CompanyJobApplicantTableData) => {
                 const handleViewApplication = () => {
                     navigate(`/company/applicant/${row.applicationId}`);

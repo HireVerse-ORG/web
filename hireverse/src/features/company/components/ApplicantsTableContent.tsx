@@ -2,9 +2,9 @@ import { FilterList } from "@mui/icons-material";
 import { Box, Button, Menu, MenuItem, Typography, CircularProgress, Pagination } from "@mui/material";
 import { useState } from "react";
 import SearchBox from "@core/components/ui/SearchBox";
-import ApplicantsTable from "../components/ApplicantsTable";
+import ApplicantsTable from "./applicants/ApplicantsTable";
 import { JobApplicationStatus } from "@core/types/job.application.interface";
-import { CompanyJobApplicantTableData } from "../components/ApplicantsTable";
+import { CompanyJobApplicantTableData } from "./applicants/ApplicantsTable";
 
 type ApplicantsTableContentProps = {
   applicants: CompanyJobApplicantTableData[];

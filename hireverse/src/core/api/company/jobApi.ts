@@ -13,6 +13,11 @@ export const updateJob= async (data: IJobUpdate): Promise<IJob> => {
     return (await apiWrapper(axios.put<IJob>(`${baseUrl}/${data.id}`, data))).data;
 };
 
+export const getJobDetailsforCompany = async (id: string): Promise<IJob> => {
+    const url = `/jobs/company/${id}`;
+    return (await apiWrapper(axios.get<Promise<IJob>>(url))).data;
+};
+
 export const retryJobPosting = async (id: string): Promise<IJob> => {
     return (await apiWrapper(axios.post<IJob>(`${baseUrl}/retry/${id}`))).data;
 };
