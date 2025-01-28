@@ -151,8 +151,7 @@ const PricingPlansPage = () => {
             {usage && (
                 <SubscriptionUsageCard title='Your Plan Usage' data={{
                     "Jobs Posted": usage.jobsPosted,
-                    "Resumes Accessed": usage.resumesAccessed,
-                    "Profiles Viewed": usage.profilesViewed,
+                    "Applications Accessed": usage.applicantionAccessed,
                 }} />      
             )}
         </Box>

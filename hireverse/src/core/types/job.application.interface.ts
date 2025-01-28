@@ -1,3 +1,5 @@
+import { SeekerProfile } from "./seeker.interface";
+
 export type JobApplicationStatus = 'pending' | 'applied' | 'failed' | 'in-review' | 'shortlisted' | 'interview' | 'hired' |'declined' | 'withdrawn';
 
 
@@ -14,6 +16,11 @@ export interface IJobApplication {
     resume: string;
     status: JobApplicationStatus;
     failedReason: string | null;
+    declinedReason?: string | null;
+    comment?: {
+      text: string,
+      date: Date,
+    }, 
     createdAt: Date;
     updatedAt: Date;
 }
@@ -29,4 +36,8 @@ export interface IJobApplicationWithCompanyProfile extends IJobApplication {
         },
         image: string | null;
     }
+}
+
+export interface IJobApplicationWithSeekerProfile extends IJobApplication {
+    profile: null | SeekerProfile
 }

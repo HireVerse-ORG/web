@@ -1,9 +1,25 @@
 import axios from "@core/lib/axios";
-import { IJobApplication, JobApplicationStatus } from "@core/types/job.application.interface";
+import { IJobApplication, IJobApplicationWithSeekerProfile, JobApplicationStatus } from "@core/types/job.application.interface";
 import { IPaginationResponse } from "@core/types/pagination.interface";
 import { apiWrapper } from "@core/utils/helper";
 
 const baseUrl = '/jobs/company';
+
+
+export const getApplicationDetailsforCompany= async (applicationId: string): Promise<IJobApplicationWithSeekerProfile> => {
+  const url = `${baseUrl}/application/${applicationId}`;
+  return (await apiWrapper(axios.get<IJobApplicationWithSeekerProfile>(url))).data;
+};
+
+export const addCommentToApplication= async (applicationId: string, comment: string): Promise<{message: string}> => {
+  const url = `${baseUrl}/application/${applicationId}/comment`;
+  return (await apiWrapper(axios.put<{message: string}>(url, {comment}))).data;
+};
+
+export const updateJobApplicationStatus= async (applicationId: string, data: {status: JobApplicationStatus, reason?: string}): Promise<{message: string}> => {
+  const url = `${baseUrl}/application/${applicationId}/status`;
+  return (await apiWrapper(axios.put<{message: string}>(url, data))).data;
+};
 
 export const listCompanyApplicants = async (filter: {
     jobId?: string,

@@ -1,10 +1,11 @@
 import { SidebarSection } from "@core/types/sidebar.interface"
-import { BusinessOutlined, CurrencyExchangeOutlined, GroupsOutlined, HomeOutlined, SettingsOutlined, WorkOutline } from "@mui/icons-material"
+import { BusinessOutlined, ChatOutlined, CurrencyExchangeOutlined, GroupsOutlined, HomeOutlined, SettingsOutlined, WorkOutline } from "@mui/icons-material"
 
 export const CompanySidebarSections: SidebarSection[] = [
     {
         items: [
             { name: "Dashboard", icon: <HomeOutlined />, path: "/company" },
+            { name: "Messages", icon: <ChatOutlined />, path: "/company/messages" },
             { name: "Company Profile", icon: <BusinessOutlined />, path: "/company/profile" },
             { name: "All applicants", icon: <GroupsOutlined />, path: "/company/applicants" },
             { name: "My Jobs", icon: <WorkOutline />, path: "/company/jobs" },

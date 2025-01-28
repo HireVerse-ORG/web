@@ -4,7 +4,7 @@ import SegmentedProgressBar from "@core/components/ui/SegmentedProgressBar";
 import { JobApplicationStatus } from "@core/types/job.application.interface";
 import { applicantStagesOrder, getApplicantStagesOrder } from "@core/utils/ui";
 import { ArrowOutward, EmailOutlined, Phone } from "@mui/icons-material";
-import moment from "moment";
+import { momentDateFormatter } from "@core/utils/helper";
 
 type ApplicantInfoCardProps = {
     data: {
@@ -95,7 +95,7 @@ const ApplicantInfoCard = ({
                         Applied Job
                     </Typography>
                     <Typography variant="body2">
-                        {moment(appliedDate).fromNow()}
+                        {momentDateFormatter(appliedDate)}
                     </Typography>
                 </Box>
                 <Typography variant="body2" fontWeight="bold" sx={{ pt: 1 }}>

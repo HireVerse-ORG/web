@@ -1,6 +1,7 @@
 import { UserRoles } from "@core/types/user.interface"
 import { AxiosError } from "axios";
 import DOMPurify from 'dompurify';
+import moment from "moment";
 
 export const getUserDashboardPath = (user: UserRoles) => {
     let dashboardPath = '/seeker';
@@ -39,6 +40,10 @@ export const apiWrapper = async <T>(fn: Promise<T>): Promise<T> => {
 
 export const dateFormatter = (date: Date) => {
     return new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });  
+} 
+
+export const momentDateFormatter = (date: Date) => {
+    return moment(date).fromNow();
 } 
 
 export const timeFormatter = (ms: number) => {

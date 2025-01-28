@@ -13,7 +13,7 @@ export default function useGet<T>(fetchData: () => Promise<T>) {
             const response = await fetchData();
             setData(response);
         } catch (err: any) {
-            setError(err.message || "Something went wrong");
+            setError(err.message || err || "Something went wrong");
         } finally {
             setLoading(false);
         }

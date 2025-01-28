@@ -14,8 +14,7 @@ export const CompanyPaymentPlans: {
         duration: "month",
         features: [
             { name: "1 Job Posting per month", available: true },
-            { name: "5 Resume Access", available: true },
-            { name: "5 Profile Access", available: true },
+            { name: "Access 5 Applications", available: true },
         ],
         paymentPlan: "free",
     },
@@ -25,8 +24,7 @@ export const CompanyPaymentPlans: {
         duration: "month",
         features: [
             { name: "5 Job Postings per month", available: true },
-            { name: "Access 20 Resumes", available: true },
-            { name: "Access 20 Profiles", available: true },
+            { name: "Access 20 Applications", available: true },
         ],
         isPopular: true,
         paymentPlan: "basic", 
@@ -37,8 +35,7 @@ export const CompanyPaymentPlans: {
         duration: "month",
         features: [
             { name: "Unlimited Job Postings", available: true },
-            { name: "Unlimited Resume Access", available: true },
-            { name: "Unlimited Profile Access", available: true },
+            { name: "Unlimited Application Access", available: true },
         ],
         paymentPlan: "premium", 
     },

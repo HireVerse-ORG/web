@@ -8,20 +8,21 @@ type HiringProgressProps = {
     hiringStage: JobApplicationStatus;
     onMoveToNextStep: (nextStage: JobApplicationStatus) => void;
     onDeclineApplication: (reason?: string) => void;
+    disabled?: boolean;
 };
 
-// Define stages and combine "Hired" and "Declined" into one box
 const stages: (JobApplicationStatus | "hired/declined")[] = [
     "in-review",
     "shortlisted",
     "interview",
-    "hired/declined", // Combined box for "Hired" and "Declined"
+    "hired/declined",
 ];
 
 const HiringProgress = ({
     hiringStage,
     onMoveToNextStep,
     onDeclineApplication,
+    disabled,
 }: HiringProgressProps) => {
     const [modelOpen, setModelOpen] = useState(false);
     const [declineReason, setDeclineReason] = useState<string>("");
@@ -150,6 +151,7 @@ const HiringProgress = ({
                                 onMoveToNextStep(nextStage);
                             }
                         }}
+                        disabled={disabled}
                     >
                         Move to{" "}
                         {nextStage === "in-review"
@@ -165,6 +167,7 @@ const HiringProgress = ({
                         variant="outlined"
                         color="error"
                         onClick={() => setModelOpen(true)}
+                        disabled={disabled}
                     >
                         Decline Application
                     </Button>

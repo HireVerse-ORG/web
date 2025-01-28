@@ -39,11 +39,10 @@ const CompanyRoutes = () => {
               <Route path="/pricing-plans" element={<PricingPlansPage />} />
               <Route path="/settings" element={<SettingsPage />} />
             </Route>
-
-            <Route path="/*" element={<Navigate to="/company" />} />
           </Route>
           <Route path="/profile-creation" element={<ProfileCreationPage />} />
           <Route path=":companyId" element={<CompanyPublicViewPage />} />
+          <Route path="/*" element={<Navigate to="/company" />} />
         </Routes>
       </CompanySubscriptionProvider>
     </CompanyProvider>
