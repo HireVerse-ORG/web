@@ -1,5 +1,5 @@
 import ScrollableContainer from "@core/components/ui/ScrollableContainer";
-import { Alert, Container, Link } from "@mui/material";
+import { Alert, Box, Link } from "@mui/material";
 import Header from "../Header";
 import { useCompanySubscription } from "@core/contexts/CompanySubscriptionContext";
 import { Link as RouterLink, useLocation } from "react-router-dom";
@@ -16,7 +16,7 @@ const DashboardContentLayout = ({ children }: DashboardContentLayoutProps) => {
     return (
         <ScrollableContainer height={"100%"} overflow={"auto"} display={"flex"} flexDirection={"column"}>
             <Header />
-            <Container component="section" sx={{ height: "100%", py: 3 }}>
+            <Box component="section" sx={{ height: "100%", p: 3 }}>
                 <>
                     {jobPostLimitExceeded && showJobPostAlertPaths.includes(location.pathname) && (
                         <Alert severity="warning" sx={{ mb: 2 }}>
@@ -34,7 +34,7 @@ const DashboardContentLayout = ({ children }: DashboardContentLayoutProps) => {
                     )}
                     {children}
                 </>
-            </Container>
+            </Box>
         </ScrollableContainer>
     );
 };

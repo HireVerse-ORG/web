@@ -1,5 +1,5 @@
 import ScrollableContainer from "@core/components/ui/ScrollableContainer";
-import { Container } from "@mui/material";
+import { Box } from "@mui/material";
 import Header from "../Header";
 
 type ContentLayoutProps = {
@@ -10,9 +10,9 @@ const ContentLayout = ({ children }: ContentLayoutProps) => {
     return (
         <ScrollableContainer height={"100%"} overflow={"auto"} display={"flex"} flexDirection={"column"}>
                 <Header/>
-                <Container component="section" sx={{height: "100%"}}>
+                <Box component="section" sx={{height: "100%", px: 3}}>
                     {children}
-                </Container>
+                </Box>
         </ScrollableContainer>
     );
 };

@@ -1,5 +1,5 @@
 import Sidebar from "@core/components/ui/Sidebar";
-import { Box, Button, Container, Drawer, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Button, Drawer, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useState } from "react";
 import MenuButton from "@core/components/ui/MenuButton";
 import { Link, useLocation } from "react-router-dom";
@@ -45,11 +45,12 @@ const Header = () => {
                 borderBottom: "1px solid #e0e0e0",
             }}
         >
-            <Container sx={{
+            <Box sx={{
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                py: 3
+                py: 3,
+                px: {xs: 2, sm: 3}
             }}>
                 <Box
                     sx={{
@@ -79,7 +80,7 @@ const Header = () => {
                         Back to homepage
                     </Button>
                 )}
-            </Container>
+            </Box>
 
             {isMobile && (
                 <Drawer anchor="left" open={openMenu} onClose={toggleMenu}>

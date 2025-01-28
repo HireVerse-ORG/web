@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from '../Header';
 import ScrollableContainer from '@core/components/ui/ScrollableContainer';
-import { Alert, Container, Link } from '@mui/material';
+import { Alert, Box, Link } from '@mui/material';
 import { useSeekerSubscription } from '@core/contexts/SeekerSubscriptionContext';
 import { Link as RouterLink, useLocation } from "react-router-dom";
 
@@ -16,7 +16,7 @@ const ContentLayout = ({ children }: ContentLayoutProps) => {
     return (
         <ScrollableContainer height={"100%"} overflow={"auto"} display={"flex"} flexDirection={"column"}>
             <Header />
-            <Container component="section" sx={{ height: "100%", py: 3 }}>
+            <Box component="section" sx={{ height: "100%", p: 3 }}>
                 <>
                     {jobApplicationLimitExceeded && showJobApplyAlertPaths.includes(location.pathname) && (
                         <Alert severity="warning" sx={{ mb: 2 }}>
@@ -34,7 +34,7 @@ const ContentLayout = ({ children }: ContentLayoutProps) => {
                     )}
                     {children}
                 </>
-            </Container>
+            </Box>
         </ScrollableContainer>
     );
 }

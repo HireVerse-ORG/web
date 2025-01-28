@@ -1,4 +1,4 @@
-import { Box, Container, useMediaQuery, useTheme } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import React from "react";
 import { Outlet } from "react-router-dom";
 
@@ -17,7 +17,7 @@ const DashboardLayout = ({ Sidebar, ContentLayout}: DashboardLayoutProps) => {
             {!isMobile && Sidebar}
 
             {/* Main Content */}
-            <Container
+            <Box
                 component="main"
                 sx={{
                     backgroundColor: "white",
@@ -34,7 +34,7 @@ const DashboardLayout = ({ Sidebar, ContentLayout}: DashboardLayoutProps) => {
                 ) : (
                     <Outlet />
                 )}
-            </Container>
+            </Box>
         </Box>
     );
 };
