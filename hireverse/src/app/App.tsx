@@ -10,6 +10,7 @@ import { PublicClientApplication } from "@azure/msal-browser";
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { NotificationProvider } from "@core/contexts/NotificationContext";
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -19,13 +20,15 @@ function App() {
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
         <MsalProvider instance={msalInstance}>
           <Provider store={store}>
-            <ThemeProvider theme={theme}>
-              <LocalizationProvider dateAdapter={AdapterMoment}>
-                <CssBaseline />
-                <AppRoutes />
-              </LocalizationProvider>
-            </ThemeProvider>
-            <Toaster richColors={true} visibleToasts={2} />
+            <NotificationProvider>
+              <ThemeProvider theme={theme}>
+                <LocalizationProvider dateAdapter={AdapterMoment}>
+                  <CssBaseline />
+                  <AppRoutes />
+                </LocalizationProvider>
+              </ThemeProvider>
+              <Toaster richColors={true} visibleToasts={2} />
+            </NotificationProvider>
           </Provider>
         </MsalProvider>
       </GoogleOAuthProvider>

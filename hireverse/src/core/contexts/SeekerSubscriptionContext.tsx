@@ -1,6 +1,7 @@
 import { getSeekerSubscription, getSeekerUsage } from '@core/api/subscription/seekerSubscriptionApi';
 import { ISeekerSubscription, ISeekerSubscriptionUsage } from '@core/types/subscription.interface';
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { useNotificationSocket } from './NotificationContext';
 
 interface SeekerSubscriptionContextType {
     subscription: ISeekerSubscription | null;
@@ -32,12 +33,29 @@ export const SubscriptionProvider = ({ children }: SubscriptionProviderProps) =>
     const [loading, setLoading] = useState(false);
     const [jobApplicationLimitExceeded, setJobApplicationLimitExceeded] = useState(false);
 
+    const socket = useNotificationSocket();
+
+    useEffect(() => {
+        if (!socket) return;
+
+        const handleJobApplied = () => {
+            if (usage) {
+                setUsage((prevUsage) => prevUsage ? { ...prevUsage, jobApplicationsUsed: prevUsage.jobApplicationsUsed + 1 } : prevUsage);
+            }
+        };
+
+        socket.on("job-applied", handleJobApplied);
+
+        return () => {
+            socket.off("job-applied");
+        };
+    }, [socket, usage]);
 
     const fetchSubscriptionData = async () => {
         setLoading(true);
         try {
-            const subscriptionData = await getSeekerSubscription();  
-            const usageData = await getSeekerUsage(); 
+            const subscriptionData = await getSeekerSubscription();
+            const usageData = await getSeekerUsage();
 
             setSubscription(subscriptionData);
             setUsage(usageData);
@@ -55,7 +73,7 @@ export const SubscriptionProvider = ({ children }: SubscriptionProviderProps) =>
 
     useEffect(() => {
         if (usage && subscription) {
-            if(subscription.jobApplicationsPerMonth !== -1 && usage.jobApplicationsUsed + 1 > subscription.jobApplicationsPerMonth) {
+            if (subscription.jobApplicationsPerMonth !== -1 && usage.jobApplicationsUsed + 1 > subscription.jobApplicationsPerMonth) {
                 setJobApplicationLimitExceeded(true);
             } else {
                 setJobApplicationLimitExceeded(false);

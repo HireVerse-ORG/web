@@ -1,6 +1,7 @@
 import { getCompanySubscription, getCompanyUsage } from '@core/api/subscription/companySubscriptionApi';
 import { ICompanySubscription, ICompanySubscriptionUsage } from '@core/types/subscription.interface';
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
+import { useNotificationSocket } from './NotificationContext';
 
 interface CompanySubscriptionContextType {
     subscription: ICompanySubscription | null;
@@ -9,6 +10,7 @@ interface CompanySubscriptionContextType {
     setUsage: (usage: ICompanySubscriptionUsage) => void;
     loading: boolean;
     jobPostLimitExceeded: boolean;
+    applicationViewLimitExceeded: boolean;
     refetch: () => Promise<void>;
 }
 
@@ -31,17 +33,56 @@ export const CompanySubscriptionProvider = ({ children }: SubscriptionProviderPr
     const [usage, setUsage] = useState<ICompanySubscriptionUsage | null>(null);
     const [loading, setLoading] = useState(false);
     const [jobPostLimitExceeded, setJobPostLimitExceeded] = useState(false);
+    const [applicationViewLimitExceeded, setApplicationViewLimitExceeded] = useState(false);
+
+    const socket = useNotificationSocket();
+
+    const handleJobPosted = useCallback(() => {
+        setUsage((prevUsage) => 
+            prevUsage ? { ...prevUsage, jobsPosted: prevUsage.jobsPosted + 1 } : prevUsage
+        );
+    }, []);
+
+    const handleJobApplicationViewed = useCallback((message: any) => {
+        const { job_application_id } = message;
+
+        setUsage((prevUsage) => {
+            if (!prevUsage) return prevUsage;
+
+            const updatedApplicationIds = prevUsage.applicationIdsAccessed
+                ? [...prevUsage.applicationIdsAccessed, job_application_id]
+                : [job_application_id];
+
+            return {
+                ...prevUsage,
+                applicantionAccessed: prevUsage.applicantionAccessed + 1,
+                applicationIdsAccessed: updatedApplicationIds,
+            };
+        });
+
+    }, []);
+
+    useEffect(() => {
+        if (!socket) return;
+
+        socket.on("job-posted", handleJobPosted);
+        socket.on("job-application-view-usage-updated", handleJobApplicationViewed);
+
+        return () => {
+            socket.off("job-posted", handleJobPosted);
+            socket.off("job-application-view-usage-updated", handleJobApplicationViewed);
+        };
+    }, [socket, handleJobPosted, handleJobApplicationViewed]);
 
     const fetchSubscriptionData = async () => {
         setLoading(true);
         try {
-            const subscriptionData = await getCompanySubscription();  
-            const usageData = await getCompanyUsage(); 
+            const subscriptionData = await getCompanySubscription();
+            const usageData = await getCompanyUsage();
 
             setSubscription(subscriptionData);
             setUsage(usageData);
         } catch (error) {
-            // Handle errors gracefully
             // console.error('Error fetching subscription data:', error);
         } finally {
             setLoading(false);
@@ -54,11 +95,13 @@ export const CompanySubscriptionProvider = ({ children }: SubscriptionProviderPr
 
     useEffect(() => {
         if (usage && subscription) {
-            if(subscription.jobPostLimit !== -1 && usage.jobsPosted + 1 > subscription.jobPostLimit) {
-                setJobPostLimitExceeded(true);
-            } else {
-                setJobPostLimitExceeded(false);
-            }
+            setJobPostLimitExceeded(
+                subscription.jobPostLimit !== -1 && usage.jobsPosted + 1 > subscription.jobPostLimit
+            );
+
+            setApplicationViewLimitExceeded(
+                subscription.applicantionAccessLimit !== -1 && usage.applicantionAccessed + 1 > subscription.applicantionAccessLimit
+            );
         }
     }, [subscription, usage]);
 
@@ -71,7 +114,8 @@ export const CompanySubscriptionProvider = ({ children }: SubscriptionProviderPr
                 setUsage,
                 loading,
                 jobPostLimitExceeded,
-                refetch: fetchSubscriptionData
+                applicationViewLimitExceeded,
+                refetch: fetchSubscriptionData,
             }}
         >
             {children}

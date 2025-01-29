@@ -1,10 +1,10 @@
 import Sidebar from "@core/components/ui/Sidebar";
-import { Box, Button, Drawer, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Badge, Box, Button, Drawer, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useState } from "react";
 import MenuButton from "@core/components/ui/MenuButton";
 import { Link, useLocation } from "react-router-dom";
 import { SeekerSidebarSections } from "./SidebarSection";
-import { HomeOutlined } from "@mui/icons-material";
+import { HomeOutlined, NotificationsOutlined } from "@mui/icons-material";
 
 const Header = () => {
     const [openMenu, setOpenMenu] = useState(false);
@@ -14,12 +14,13 @@ const Header = () => {
 
     const pathTitles: Record<string, string> = {
         "/seeker": "Dashboard",
-        "/seeker/messages": "Messages", 
-        "/seeker/my-applications": "My Applications", 
-        "/seeker/find-jobs": "Find Jobs", 
+        "/seeker/messages": "Messages",
+        "/seeker/my-applications": "My Applications",
+        "/seeker/find-jobs": "Find Jobs",
         "/seeker/view-job/:id": "Job Description",
         "/seeker/profile": "My Profile",
         "/seeker/pricing-plans": "Pricing Plans",
+        "/seeker/notifications": "Notifications",
         "/seeker/settings": "Settings",
     };
 
@@ -30,7 +31,7 @@ const Header = () => {
                 return title;
             }
         }
-        return " "; 
+        return " ";
     };
 
     const currentTitle = resolveTitle(location.pathname);
@@ -50,7 +51,7 @@ const Header = () => {
                 justifyContent: "space-between",
                 alignItems: "center",
                 py: 3,
-                px: {xs: 2, sm: 3}
+                px: { xs: 2, sm: 3 }
             }}>
                 <Box
                     sx={{
@@ -66,20 +67,42 @@ const Header = () => {
                 </Box>
 
                 {/* Link Button */}
-                {isMobile ? (
-                    <Link to={'/admin/dashboard'}>
-                        <HomeOutlined />
-                    </Link>
-                ) : (
+                <Box sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 2,
+                }}>
+                    {isMobile ? (
+                        <Link to={'/admin/dashboard'}>
+                            <HomeOutlined />
+                        </Link>
+                    ) : (
 
-                    <Button
-                        variant="outlined"
-                        component={Link}
-                        to="/"
-                    >
-                        Back to homepage
-                    </Button>
-                )}
+                        <Button
+                            variant="outlined"
+                            component={Link}
+                            to="/"
+                        >
+                            Back to homepage
+                        </Button>
+                    )}
+
+                    {/* Notifications Button with Count */}
+                    <Link to="/seeker/notifications">
+                        <Badge
+                            badgeContent={1}
+                            color="error"
+                            overlap="circular"
+                            sx={{
+                                "& .MuiBadge-dot": {
+                                    backgroundColor: "red",
+                                },
+                            }}
+                        >
+                            <NotificationsOutlined />
+                        </Badge>
+                    </Link>
+                </Box>
             </Box>
 
             {isMobile && (

@@ -9,18 +9,23 @@ type DashboardContentLayoutProps = {
 };
 
 const DashboardContentLayout = ({ children }: DashboardContentLayoutProps) => {
-    const { jobPostLimitExceeded } = useCompanySubscription();
+    const { jobPostLimitExceeded, applicationViewLimitExceeded } = useCompanySubscription();
     const location = useLocation();
+
     const showJobPostAlertPaths = ["/company/post-job", "/company/edit-job", "/company/jobs"];
+    const isJobPostPath = showJobPostAlertPaths.includes(location.pathname);
+    
+    const jobApplicationPathRegex = /^\/company\/job\/[^/]+$|^\/company\/applicants$/;
+    const isJobApplicationPath = jobApplicationPathRegex.test(location.pathname);
 
     return (
         <ScrollableContainer height={"100%"} overflow={"auto"} display={"flex"} flexDirection={"column"}>
             <Header />
             <Box component="section" sx={{ height: "100%", p: 3 }}>
                 <>
-                    {jobPostLimitExceeded && showJobPostAlertPaths.includes(location.pathname) && (
+                    {jobPostLimitExceeded && isJobPostPath && (
                         <Alert severity="warning" sx={{ mb: 2 }}>
-                            You have reached your job posting limit.{" "}
+                            You have reached your job posting limit. {" "}
                             <Link
                                 component={RouterLink}
                                 to="/company/pricing-plans"
@@ -30,6 +35,21 @@ const DashboardContentLayout = ({ children }: DashboardContentLayoutProps) => {
                                 Upgrade your plan
                             </Link>{" "}
                             to post more jobs.
+                        </Alert>
+                    )}
+
+                    {applicationViewLimitExceeded && isJobApplicationPath && (
+                        <Alert severity="warning" sx={{ mb: 2 }}>
+                            You have reached your limit for viewing job applications. {" "}
+                            <Link
+                                component={RouterLink}
+                                to="/company/pricing-plans"
+                                underline="hover"
+                                sx={{ fontWeight: "bold", color: "primary.main" }}
+                            >
+                                Upgrade your plan
+                            </Link>{" "}
+                            to unlock more applications. <br></br> You can still access previously viewed applications.
                         </Alert>
                     )}
                     {children}

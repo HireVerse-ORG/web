@@ -12,6 +12,7 @@ import PricingPage from "./pages/PricingPage";
 import FindJobsPage from "../shared/FindJobsPage";
 import ViewJobPage from "../shared/ViewJobPage";
 import MyApplicationsPage from "./pages/MyApplicationsPage";
+import NotificationsPage from "./pages/NotificationsPage";
 
 
 const SeekerRoutes = () => {
@@ -26,6 +27,7 @@ const SeekerRoutes = () => {
           <Route path="/view-job/:id" element={<ViewJobPage />} />
           <Route path="/my-applications" element={<MyApplicationsPage />} />
           <Route path="/pricing-plans" element={<PricingPage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
 
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to={"/seeker"} />} />

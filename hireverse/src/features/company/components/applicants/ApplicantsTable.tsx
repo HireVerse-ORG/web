@@ -1,9 +1,11 @@
 import TableComponent, { TableColumn } from "@core/components/ui/TableComponent";
+import { useCompanySubscription } from "@core/contexts/CompanySubscriptionContext";
 import { JobApplicationStatus } from "@core/types/job.application.interface";
 import { dateFormatter } from "@core/utils/helper";
 import { getJobApplicationStatusDetails } from "@core/utils/ui";
 import { Button, Chip, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export interface CompanyJobApplicantTableData {
     applicationId: string;
@@ -20,7 +22,16 @@ type ApplicantsTableProps = {
 };
 
 const ApplicantsTable = ({ data, showRoleColumn }: ApplicantsTableProps) => {
+    const {usage, applicationViewLimitExceeded} = useCompanySubscription();
     const navigate = useNavigate();
+
+    const handleViewApplication = (applicationId: string, isDeclined: boolean) => {
+        if (!isDeclined && applicationViewLimitExceeded && usage && !(usage.applicationIdsAccessed ?? []).includes(applicationId)) {
+            toast.warning("You have exceeded the application view limit.");
+            return;
+        }
+        navigate(`/company/applicant/${applicationId}`);
+    };    
 
     const columns: TableColumn[] = [
         ...(showRoleColumn
@@ -71,14 +82,10 @@ const ApplicantsTable = ({ data, showRoleColumn }: ApplicantsTableProps) => {
             minWidth: 180,
             align: "center",
             render: (row: CompanyJobApplicantTableData) => {
-                const handleViewApplication = () => {
-                    navigate(`/company/applicant/${row.applicationId}`);
-                };
-
                 return (
                     <Button
                         variant="outlined"
-                        onClick={handleViewApplication}
+                        onClick={() => handleViewApplication(row.applicationId, row.hiringStage === "declined")}
                         sx={{ whiteSpace: "nowrap" }}
                     >
                         See Application

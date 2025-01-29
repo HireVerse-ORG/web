@@ -1,8 +1,15 @@
 import { Box, Container, Typography } from "@mui/material";
 import JobSeacrhBox from "../../../../core/components/ui/job/JobSearchBox";
+import { useNavigate } from "react-router-dom";
 
 
 const HeroSection = () => {
+    const navigate = useNavigate();
+
+    const handleSearch = (title: string, loc: { location: string; city: string; country: string }) => {
+        navigate(`/find-jobs?keyword=${title}&location=${loc.location}&city=${loc.city}&country=${loc.country}`)
+    }
+
     return (
         <Container>
             <Box sx={{
@@ -67,7 +74,7 @@ const HeroSection = () => {
                         maxWidth: { md: "70%" },
                         boxShadow: 4,
                     }}>
-                        <JobSeacrhBox onSearch={() => {}}/>
+                        <JobSeacrhBox onSearch={handleSearch}/>
                     </Box>
                 </Box>
             </Box>

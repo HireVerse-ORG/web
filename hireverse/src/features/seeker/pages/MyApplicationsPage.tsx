@@ -19,6 +19,7 @@ const MyApplicationsPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [tabValue, setTabValue] = useState("all");
     const [applications, setApplications] = useState<IJobApplicationWithCompanyProfile[]>([]);
+    const [actionloading, setActionLoading] = useState(false);
 
     const { data, loading, refetch } = useGet<IPaginationResponse<IJobApplicationWithCompanyProfile>>(() => getMyJobApplications({
         page: currentPage,
@@ -26,6 +27,8 @@ const MyApplicationsPage = () => {
         query: searchQuery,
         status: tabValue === "all" ? undefined : tabValue as JobApplicationStatus
     }))
+
+
 
     useEffect(() => {
         if (data) {
@@ -53,6 +56,38 @@ const MyApplicationsPage = () => {
     const handleTabChange = (_event: React.SyntheticEvent, value: string) => {
         setTabValue(value)
         setCurrentPage(1);
+    };
+
+    const handleReapply = async (id: string) => {
+        if(jobApplicationLimitExceeded){
+            toast.warning("Your job apply limited exceeded.", {description: "Upgrade your plan and retry."})
+            return;
+        }
+        setActionLoading(true);
+        try {
+            await reApplyJob(id);
+            setApplications(applications.map((app) =>
+                app.id === id ? { ...app, status: "pending" } : app
+            ));
+            toast.success("Successfully reapplied for the job!");
+        } catch (error: any) {
+            toast.error(error || "Failed to reapply");
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
+    const handleWithdraw = async (id: string) => {
+        setActionLoading(true);
+        try {
+            await withdrawJobApplication(id);
+            setApplications(prevState => prevState.filter((app) => app.id !== id));
+            toast.success("Successfully withdrew the application!");
+        } catch (error: any) {
+            toast.error(error || "Failed to withdraw the application");
+        } finally {
+            setActionLoading(false);
+        }
     };
 
     const columns: TableColumn[] = [
@@ -133,40 +168,6 @@ const MyApplicationsPage = () => {
             minWidth: 150,
             align: "center",
             render: (row: IJobApplicationWithCompanyProfile) => {
-                const [loading, setLoading] = useState(false);
-
-                const handleReapply = async () => {
-                    if(jobApplicationLimitExceeded){
-                        toast.warning("Your job apply limited exceeded.", {description: "Upgrade your plan and retry."})
-                        return;
-                    }
-                    setLoading(true);
-                    try {
-                        await reApplyJob(row.id);
-                        setApplications(applications.map((app) =>
-                            app.id === row.id ? { ...app, status: "pending" } : app
-                        ));
-                        toast.success("Successfully reapplied for the job!");
-                    } catch (error: any) {
-                        toast.error(error || "Failed to reapply");
-                    } finally {
-                        setLoading(false);
-                    }
-                };
-
-                const handleWithdraw = async () => {
-                    setLoading(true);
-                    try {
-                        await withdrawJobApplication(row.id);
-                        setApplications(applications.filter((app) => app.id !== row.id));
-                        toast.success("Successfully withdrew the application!");
-                    } catch (error: any) {
-                        toast.error(error || "Failed to withdraw the application");
-                    } finally {
-                        setLoading(false);
-                    }
-                };
-
                 const viewInterviewDetails = () => {
                     window.location.href = `/interview-details/${row.id}`;
                 };
@@ -181,20 +182,20 @@ const MyApplicationsPage = () => {
                             <Button
                                 variant="contained"
                                 size="small"
-                                onClick={handleReapply}
-                                disabled={loading}
+                                onClick={() => handleReapply(row.id)}
+                                disabled={actionloading}
                             >
-                                {loading ? <CircularProgress size={24} color="inherit" /> : "Reapply"}
+                                Reapply
                             </Button>
                         ) : row.status === "pending" || row.status === "applied" ? (
                             <Button
                                 variant="outlined"
                                 size="small"
                                 color="error"
-                                onClick={handleWithdraw}
-                                disabled={loading}
+                                onClick={() => handleWithdraw(row.id)}
+                                disabled={actionloading}
                             >
-                                {loading ? <CircularProgress size={24} color="inherit" /> : "Withdraw"}
+                                Withdraw
                             </Button>
                         ) : row.status === "interview" ? (
                             <Button
@@ -223,7 +224,7 @@ const MyApplicationsPage = () => {
 
 
     return (
-        <>
+        <Box sx={{paddingBottom: 3}}>
             <Box
                 display={"flex"}
                 justifyContent={"space-between"}
@@ -283,7 +284,7 @@ const MyApplicationsPage = () => {
                     No Applications found
                 </Typography>
             )}
-        </>
+        </Box>
     );
 };
 
