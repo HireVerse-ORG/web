@@ -13,6 +13,7 @@ import FindJobsPage from "../shared/FindJobsPage";
 import ViewJobPage from "../shared/ViewJobPage";
 import MyApplicationsPage from "./pages/MyApplicationsPage";
 import NotificationsPage from "./pages/NotificationsPage";
+import MyApplicationViewPage from "./pages/MyApplicationViewPage";
 
 
 const SeekerRoutes = () => {
@@ -26,6 +27,7 @@ const SeekerRoutes = () => {
           <Route path="/find-jobs" element={<FindJobsPage viewJobBaseUrl="/seeker/view-job"/>} />
           <Route path="/view-job/:id" element={<ViewJobPage />} />
           <Route path="/my-applications" element={<MyApplicationsPage />} />
+          <Route path="/my-application/:id" element={<MyApplicationViewPage />} />
           <Route path="/pricing-plans" element={<PricingPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
 

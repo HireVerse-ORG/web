@@ -1,16 +1,44 @@
-import Sidebar from "@core/components/ui/Sidebar";
-import { Badge, Box, Button, Drawer, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { useState } from "react";
-import MenuButton from "@core/components/ui/MenuButton";
+import { Box, Button, Badge, Drawer, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { SeekerSidebarSections } from "./SidebarSection";
 import { HomeOutlined, NotificationsOutlined } from "@mui/icons-material";
+import { useNotificationSocket } from "@core/contexts/NotificationContext";
+import MenuButton from "@core/components/ui/MenuButton";
+import Sidebar from "@core/components/ui/Sidebar";
+import { shakeAnimation } from "@core/utils/ui";
 
 const Header = () => {
     const [openMenu, setOpenMenu] = useState(false);
+    const [notificationCount, setNotificationCount] = useState(0);
+    const [isAnimating, setIsAnimating] = useState(false);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const location = useLocation();
+
+    const socket = useNotificationSocket();
+
+    useEffect(() => {
+        if (!socket) return;
+
+        const handleNewResumeComment = (notification: { message: string }) => {
+            console.log("new notification: ", notification.message);
+
+            setNotificationCount((prevCount) => prevCount + 1);
+
+            setIsAnimating(true);
+
+            setTimeout(() => {
+                setIsAnimating(false);
+            }, 1000);
+        };
+
+        socket.on("new-notification", handleNewResumeComment);
+
+        return () => {
+            socket.off("new-notification", handleNewResumeComment);
+        };
+    }, [socket]);
 
     const pathTitles: Record<string, string> = {
         "/seeker": "Dashboard",
@@ -73,11 +101,10 @@ const Header = () => {
                     gap: 2,
                 }}>
                     {isMobile ? (
-                        <Link to={'/admin/dashboard'}>
-                            <HomeOutlined />
+                        <Link to={'/seeker/dashboard'} style={{display: "flex", justifyContent: "center", alignItems: "center", textDecoration: "none"}}>
+                            <HomeOutlined color="primary" />
                         </Link>
                     ) : (
-
                         <Button
                             variant="outlined"
                             component={Link}
@@ -90,7 +117,7 @@ const Header = () => {
                     {/* Notifications Button with Count */}
                     <Link to="/seeker/notifications">
                         <Badge
-                            badgeContent={1}
+                            badgeContent={notificationCount}
                             color="error"
                             overlap="circular"
                             sx={{
@@ -99,7 +126,12 @@ const Header = () => {
                                 },
                             }}
                         >
-                            <NotificationsOutlined />
+                            <NotificationsOutlined
+                                color="primary"
+                                sx={{
+                                    animation: isAnimating ? `${shakeAnimation} 1s ease-in-out 3`: 'none',
+                                }}
+                            />
                         </Badge>
                     </Link>
                 </Box>

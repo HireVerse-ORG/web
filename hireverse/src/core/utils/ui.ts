@@ -1,6 +1,7 @@
 import colors from "@core/theme/colors";
 import { JobApplicationStatus } from "@core/types/job.application.interface";
 import { JobStatus } from "@core/types/job.interface";
+import { keyframes } from "@emotion/react";
 
 export function getJobApplicationStatusDetails(
     status: JobApplicationStatus
@@ -61,3 +62,11 @@ export const getApplicantStagesOrder = (stage: JobApplicationStatus) => {
 
     return { progress, color };
 };
+
+export const shakeAnimation = keyframes`
+0% { transform: rotate(0deg); }
+25% { transform: rotate(-10deg); }
+50% { transform: rotate(10deg); }
+75% { transform: rotate(-10deg); }
+100% { transform: rotate(0deg); }
+`;

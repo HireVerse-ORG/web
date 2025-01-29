@@ -10,6 +10,7 @@ import { dateFormatter } from "@core/utils/helper";
 import { getJobApplicationStatusDetails } from "@core/utils/ui";
 import { Box, Button, Chip, CircularProgress, debounce, Pagination, Tab, Tabs, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const MyApplicationsPage = () => {
@@ -28,6 +29,7 @@ const MyApplicationsPage = () => {
         status: tabValue === "all" ? undefined : tabValue as JobApplicationStatus
     }))
 
+    const navigate= useNavigate();
 
 
     useEffect(() => {
@@ -214,7 +216,13 @@ const MyApplicationsPage = () => {
                                 View Offer Letter
                             </Button>
                         ) : (
-                            <Typography fontStyle={"italic"} color="textDisabled">No Actions</Typography>
+                            <Button
+                                variant="contained"
+                                size="small"
+                                onClick={() => navigate(`/seeker/my-application/${row.id}`)}
+                            >
+                                View
+                            </Button>
                         )}
                     </>
                 );
