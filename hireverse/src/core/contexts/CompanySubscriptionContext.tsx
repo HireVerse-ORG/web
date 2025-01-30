@@ -35,7 +35,7 @@ export const CompanySubscriptionProvider = ({ children }: SubscriptionProviderPr
     const [jobPostLimitExceeded, setJobPostLimitExceeded] = useState(false);
     const [applicationViewLimitExceeded, setApplicationViewLimitExceeded] = useState(false);
 
-    const socket = useNotificationSocket();
+    const {socket} = useNotificationSocket();
 
     const handleJobPosted = useCallback(() => {
         setUsage((prevUsage) => 

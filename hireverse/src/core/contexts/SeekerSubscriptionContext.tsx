@@ -1,6 +1,6 @@
+import { createContext, useContext, useState, ReactNode, useEffect, useCallback, useMemo } from 'react';
 import { getSeekerSubscription, getSeekerUsage } from '@core/api/subscription/seekerSubscriptionApi';
 import { ISeekerSubscription, ISeekerSubscriptionUsage } from '@core/types/subscription.interface';
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { useNotificationSocket } from './NotificationContext';
 
 interface SeekerSubscriptionContextType {
@@ -18,7 +18,7 @@ const SeekerSubscriptionContext = createContext<SeekerSubscriptionContextType | 
 export const useSeekerSubscription = (): SeekerSubscriptionContextType => {
     const context = useContext(SeekerSubscriptionContext);
     if (!context) {
-        throw new Error('useSubscription must be used within a SubscriptionProvider');
+        throw new Error('useSeekerSubscription must be used within a SubscriptionProvider');
     }
     return context;
 };
@@ -33,66 +33,70 @@ export const SubscriptionProvider = ({ children }: SubscriptionProviderProps) =>
     const [loading, setLoading] = useState(false);
     const [jobApplicationLimitExceeded, setJobApplicationLimitExceeded] = useState(false);
 
-    const socket = useNotificationSocket();
+    const { socket } = useNotificationSocket();
 
-    useEffect(() => {
-        if (!socket) return;
-
-        const handleJobApplied = () => {
-            if (usage) {
-                setUsage((prevUsage) => prevUsage ? { ...prevUsage, jobApplicationsUsed: prevUsage.jobApplicationsUsed + 1 } : prevUsage);
-            }
-        };
-
-        socket.on("job-applied", handleJobApplied);
-
-        return () => {
-            socket.off("job-applied");
-        };
-    }, [socket, usage]);
-
-    const fetchSubscriptionData = async () => {
+    const fetchSubscriptionData = useCallback(async () => {
         setLoading(true);
         try {
-            const subscriptionData = await getSeekerSubscription();
-            const usageData = await getSeekerUsage();
+            const [subscriptionData, usageData] = await Promise.all([
+                getSeekerSubscription(),
+                getSeekerUsage(),
+            ]);
 
             setSubscription(subscriptionData);
             setUsage(usageData);
         } catch (error) {
-            // Handle errors gracefully
-            // console.error('Error fetching subscription data:', error);
+            console.error('Error fetching subscription data:', error);
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+
+    const handleJobApplied = useCallback(() => {
+        setUsage(prevUsage =>
+            prevUsage ? { ...prevUsage, jobApplicationsUsed: prevUsage.jobApplicationsUsed + 1 } : prevUsage
+        );
+    }, []);
+
 
     useEffect(() => {
         fetchSubscriptionData();
-    }, []);
+    }, [fetchSubscriptionData]);
+
+
+    useEffect(() => {
+        if (!socket) return;
+
+        socket.on('job-applied', handleJobApplied);
+
+        return () => {
+            socket.off('job-applied', handleJobApplied);
+        };
+    }, [socket, handleJobApplied]);
+
 
     useEffect(() => {
         if (usage && subscription) {
-            if (subscription.jobApplicationsPerMonth !== -1 && usage.jobApplicationsUsed + 1 > subscription.jobApplicationsPerMonth) {
-                setJobApplicationLimitExceeded(true);
-            } else {
-                setJobApplicationLimitExceeded(false);
-            }
+            setJobApplicationLimitExceeded(
+                subscription.jobApplicationsPerMonth !== -1 &&
+                usage.jobApplicationsUsed >= subscription.jobApplicationsPerMonth
+            );
         }
     }, [subscription, usage]);
 
+    const value = useMemo(() => ({
+        subscription,
+        usage,
+        setSubscription,
+        setUsage,
+        loading,
+        refetch: fetchSubscriptionData,
+        jobApplicationLimitExceeded,
+    }), [subscription, usage, loading, fetchSubscriptionData]);
+
     return (
-        <SeekerSubscriptionContext.Provider
-            value={{
-                subscription,
-                usage,
-                setSubscription,
-                setUsage,
-                loading,
-                refetch: fetchSubscriptionData,
-                jobApplicationLimitExceeded,
-            }}
-        >
+        <SeekerSubscriptionContext.Provider value={value}>
             {children}
         </SeekerSubscriptionContext.Provider>
     );

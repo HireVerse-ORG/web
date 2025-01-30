@@ -4,22 +4,30 @@ import { io, Socket } from 'socket.io-client';
 
 const SOCKET_URL = import.meta.env.VITE_NOTIFICATION_SOCKET_URL;
 
-const NotificationContext = createContext<Socket | null>(null);
+interface NotificationContextType {
+    socket: Socket | null;
+    notificationCount: number;
+    setNotificationCount: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const NotificationContext = createContext<NotificationContextType | null>(null);
 
 type NotificationProviderProps = {
     children: React.ReactNode;
 }
-export const NotificationProvider= ({ children }: NotificationProviderProps) => {
+
+export const NotificationProvider = ({ children }: NotificationProviderProps) => {
     const user = useAppSelector(state => state.auth.user);
     const [socket, setSocket] = useState<Socket | null>(null);
+    const [notificationCount, setNotificationCount] = useState<number>(0);
 
     useEffect(() => {
         if (user) {
             const socketConnection = io(SOCKET_URL, {
                 transports: ['websocket'],
                 query: {
-                    userId: user.id, 
-                    email: user.email, 
+                    userId: user.id,
+                    email: user.email,
                 },
             });
 
@@ -31,13 +39,17 @@ export const NotificationProvider= ({ children }: NotificationProviderProps) => 
         }
     }, [user]);
 
-    return <NotificationContext.Provider value={socket}>{children}</NotificationContext.Provider>;
+    return (
+        <NotificationContext.Provider value={{ socket, notificationCount, setNotificationCount }}>
+            {children}
+        </NotificationContext.Provider>
+    );
 };
 
 export const useNotificationSocket = () => {
-    const socket = useContext(NotificationContext);
-    if (!socket) {
-        throw new Error('Socket not initialized');
+    const context = useContext(NotificationContext);
+    if (!context) {
+        throw new Error('useNotificationSocket must be used within a NotificationProvider');
     }
-    return socket;
+    return context;
 };

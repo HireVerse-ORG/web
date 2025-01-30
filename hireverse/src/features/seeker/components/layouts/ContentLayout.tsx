@@ -16,7 +16,7 @@ const ContentLayout = ({ children }: ContentLayoutProps) => {
     return (
         <ScrollableContainer height={"100%"} overflow={"auto"} display={"flex"} flexDirection={"column"}>
             <Header />
-            <Box component="section" sx={{ height: "100%", p: 3 }}>
+            <Box component="section" sx={{ height: "100%", px: 3, py: 2 }}>
                 <>
                     {jobApplicationLimitExceeded && showJobApplyAlertPaths.includes(location.pathname) && (
                         <Alert severity="warning" sx={{ mb: 2 }}>

@@ -7,21 +7,34 @@ import { useNotificationSocket } from "@core/contexts/NotificationContext";
 import MenuButton from "@core/components/ui/MenuButton";
 import Sidebar from "@core/components/ui/Sidebar";
 import { shakeAnimation } from "@core/utils/ui";
+import { getMyNotificationsCount } from "@core/api/shared/notificationsApi";
 
 const Header = () => {
     const [openMenu, setOpenMenu] = useState(false);
-    const [notificationCount, setNotificationCount] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const location = useLocation();
 
-    const socket = useNotificationSocket();
+    const {socket, notificationCount, setNotificationCount} = useNotificationSocket();
+
+    useEffect(() => {
+        const fetchInitialNotificationCount = async () => {
+            try {
+                const {count} = await getMyNotificationsCount({status: "sent", type: "inApp"});
+                setNotificationCount(count);
+            } catch (error) {
+                console.error("Error fetching initial notification count", error);
+            }
+        };
+
+        fetchInitialNotificationCount();
+    }, []);
 
     useEffect(() => {
         if (!socket) return;
 
-        const handleNewResumeComment = (notification: { message: string }) => {
+        const handleNewNotification = (notification: { message: string }) => {
             console.log("new notification: ", notification.message);
 
             setNotificationCount((prevCount) => prevCount + 1);
@@ -33,10 +46,10 @@ const Header = () => {
             }, 1000);
         };
 
-        socket.on("new-notification", handleNewResumeComment);
+        socket.on("new-notification", handleNewNotification);
 
         return () => {
-            socket.off("new-notification", handleNewResumeComment);
+            socket.off("new-notification");
         };
     }, [socket]);
 
@@ -46,6 +59,7 @@ const Header = () => {
         "/seeker/my-applications": "My Applications",
         "/seeker/find-jobs": "Find Jobs",
         "/seeker/view-job/:id": "Job Description",
+        "/seeker/my-application/:id": "Application Details",
         "/seeker/profile": "My Profile",
         "/seeker/pricing-plans": "Pricing Plans",
         "/seeker/notifications": "Notifications",

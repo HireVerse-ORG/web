@@ -217,8 +217,9 @@ const MyApplicationsPage = () => {
                             </Button>
                         ) : (
                             <Button
-                                variant="contained"
+                                variant="text"
                                 size="small"
+                                sx={{width: "100px"}}
                                 onClick={() => navigate(`/seeker/my-application/${row.id}`)}
                             >
                                 View
@@ -239,7 +240,7 @@ const MyApplicationsPage = () => {
                 flexWrap={{ xs: "wrap-reverse", sm: "nowrap" }}
                 alignItems={{ xs: "start", sm: "center" }}
                 gap={2}
-                sx={{ paddingBlock: 2, mb: 2, backgroundColor: "white", position: "sticky", top: 0, zIndex: 1 }}
+                sx={{ paddingBottom: 2, mb: 2, backgroundColor: "white", position: "sticky", top: 0, zIndex: 1 }}
             >
                 <Box>
                     <Typography variant="h6" fontWeight={"bold"}>

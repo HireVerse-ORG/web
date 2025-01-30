@@ -26,6 +26,10 @@ export const withdrawJobApplication = async (id: string): Promise<{message: stri
     return (await apiWrapper(axios.put<{message: string}>(`${baseUrl}/withdraw-application/${id}`))).data;
 };
 
+export const getApplicationDetails = async (id: string): Promise<IJobApplication> => {
+    return (await apiWrapper(axios.get<IJobApplication>(`${baseUrl}/application/${id}`))).data;
+};
+
 export const getMyJobApplications = async (filter: {
     page: number;
     limit: number;
