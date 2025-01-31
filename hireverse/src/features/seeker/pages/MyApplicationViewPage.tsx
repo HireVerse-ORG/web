@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import DocViewer from '@core/components/ui/DocViewer';
 import { Box, Typography, Tabs, Tab, Skeleton } from '@mui/material';
-import ApplicantInfoCard from '../components/APplicationInfoCard';
+import ApplicantInfoCard from '../components/ApplicationInfoCard';
 import GoBackTitleButton from '@core/components/ui/GoBackTitleButton';
 import { momentDateFormatter } from '@core/utils/helper';
 import { IJobApplication } from '@core/types/job.application.interface';

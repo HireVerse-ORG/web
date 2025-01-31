@@ -58,6 +58,7 @@ const Header = () => {
         "/seeker/messages": "Messages",
         "/seeker/my-applications": "My Applications",
         "/seeker/find-jobs": "Find Jobs",
+        "/seeker/browse-companies": "Discover Companies",
         "/seeker/view-job/:id": "Job Description",
         "/seeker/my-application/:id": "Application Details",
         "/seeker/profile": "My Profile",

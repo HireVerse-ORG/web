@@ -38,8 +38,8 @@ const palette: PaletteOptions = {
         contrastText: '#FFFFFF',
     },
     background: {
-        default: '#F9FAFC',
-        paper: '#FFFFFF',
+        default: '#FFFFFF',
+        // paper: '#F9FAFC',
     },
     text: {
         primary: '#25324B',

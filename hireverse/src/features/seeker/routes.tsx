@@ -14,6 +14,7 @@ import ViewJobPage from "../shared/ViewJobPage";
 import MyApplicationsPage from "./pages/MyApplicationsPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import MyApplicationViewPage from "./pages/MyApplicationViewPage";
+import BrowseCompaniesPage from "./pages/BrowseCompaniesPage";
 
 
 const SeekerRoutes = () => {
@@ -25,6 +26,7 @@ const SeekerRoutes = () => {
           <Route path="/" element={<SeekerDashboard />} />
           <Route path="/profile" element={<ProfilePage mode="edit" />} />
           <Route path="/find-jobs" element={<FindJobsPage viewJobBaseUrl="/seeker/view-job"/>} />
+          <Route path="/browse-companies" element={<BrowseCompaniesPage />} />
           <Route path="/view-job/:id" element={<ViewJobPage />} />
           <Route path="/my-applications" element={<MyApplicationsPage />} />
           <Route path="/my-application/:id" element={<MyApplicationViewPage />} />

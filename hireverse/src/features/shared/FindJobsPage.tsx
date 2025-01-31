@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { searchJobs } from "@core/api/shared/jobsApi";
-import JobSearchBox from "@core/components/ui/job/JobSearchBox";
+import JobSearchBox from "@core/components/ui/SearchWithLocation";
 import { Box, Pagination, Skeleton, Stack, Typography } from "@mui/material";
 import JobCard from "../../core/components/ui/job/JobCard";
 import { DEAFULT_COMPANY_IMAGE_URL } from "@core/utils/constants";
@@ -17,7 +17,7 @@ type FindJobsProps = {
     viewJobBaseUrl: string;
 };
 
-const FindJobs = ({ viewJobBaseUrl }: FindJobsProps) => {
+const FindJobsPage = ({ viewJobBaseUrl }: FindJobsProps) => {
     const user = useAppSelector((state) => state.auth.user);
     const [loading, setLoading] = useState(false);
     const [jobs, setJobs] = useState<IJobWithCompanyProfile[]>([]);
@@ -107,7 +107,7 @@ const FindJobs = ({ viewJobBaseUrl }: FindJobsProps) => {
             <SecondaryLightLayout
                 header={
                     <Box sx={{ width: "100%", maxWidth: "1000px", mx: "auto" }}>
-                        <JobSearchBox onSearch={handleSearch} searching={loading} />
+                        <JobSearchBox onSearch={handleSearch} searching={loading} placeholder="Job title or keyword" />
                     </Box>
                 }
             >
@@ -206,4 +206,4 @@ const FindJobs = ({ viewJobBaseUrl }: FindJobsProps) => {
     );
 };
 
-export default FindJobs;
+export default FindJobsPage;

@@ -35,7 +35,7 @@ const SeekerExperienceForm = ({ experience, onAdded, onDeleted, onUpdated }: See
     const fetchCompanies = debounce(async (query: string) => {
         setLoadingCompanies(true);
         try {
-            const response = (await listPublicCompanies(1, 10, query)).data;
+            const response = (await listPublicCompanies(1, 10, {query})).data;
             const mappedResponse = response.map(cmp => ({
                 companyId: cmp.id,
                 name: cmp.name,

@@ -1,5 +1,5 @@
 import { Box, Container, Typography } from "@mui/material";
-import JobSeacrhBox from "../../../../core/components/ui/job/JobSearchBox";
+import JobSeacrhBox from "../../../../core/components/ui/SearchWithLocation";
 import { useNavigate } from "react-router-dom";
 
 
@@ -15,7 +15,8 @@ const HeroSection = () => {
             <Box sx={{
                 position: 'relative',
                 paddingY: { xs: 8, sm: 10 },
-                minHeight: 'calc(100vh - 78px)',
+                height: 'calc(100vh - 78px)',
+                maxHeight: "700px",
             }}>
                 {/* Image */}
                 <Box
@@ -74,7 +75,7 @@ const HeroSection = () => {
                         maxWidth: { md: "70%" },
                         boxShadow: 4,
                     }}>
-                        <JobSeacrhBox onSearch={handleSearch}/>
+                        <JobSeacrhBox onSearch={handleSearch} placeholder="Job title or keyword"/>
                     </Box>
                 </Box>
             </Box>

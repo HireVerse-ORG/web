@@ -4,13 +4,14 @@ import colors from '@core/theme/colors';
 import { Search, LocationOnOutlined } from '@mui/icons-material';
 import { Box, Button, CircularProgress, debounce, MenuItem, TextField } from '@mui/material';
 
-type JobSearchBoxProps = {
-    onSearch: (jobTitle: string, location: { location: string; city: string; country: string }) => void;
+type SearchWithLocationProps = {
+    onSearch: (searchQuery: string, location: { location: string; city: string; country: string }) => void;
     searching?: boolean;
+    placeholder?: string; 
 };
 
-const JobSearchBox = ({ onSearch, searching = false }: JobSearchBoxProps) => {
-    const [jobTitle, setJobTitle] = useState('');
+const SearchWithLocation = ({ onSearch, searching = false, placeholder = 'Search' }: SearchWithLocationProps) => {
+    const [searchQuery, setSearchQuery] = useState('');
     const [location, setLocation] = useState<{ location: string; city: string; country: string }>({ location: '', city: '', country: '' });
     const [locationSuggestions, setLocationSuggestions] = useState<{ location: string; city: string; country: string }[]>([]);
     const [loading, setLoading] = useState(false);
@@ -35,7 +36,7 @@ const JobSearchBox = ({ onSearch, searching = false }: JobSearchBoxProps) => {
     }, 500);
 
     const handleSearch = () => {
-        onSearch(jobTitle, location);
+        onSearch(searchQuery, location);
     };
 
     const handleClickOutside = (event: MouseEvent) => {
@@ -68,7 +69,7 @@ const JobSearchBox = ({ onSearch, searching = false }: JobSearchBoxProps) => {
                 border: `1px solid ${colors.borderColour}`,
             }}
         >
-            {/* Job Title Input */}
+            {/* Search Input */}
             <Box
                 sx={{
                     width: '100%',
@@ -84,9 +85,9 @@ const JobSearchBox = ({ onSearch, searching = false }: JobSearchBoxProps) => {
                     size="small"
                     fullWidth
                     variant="standard"
-                    placeholder="Job Title or Keyword"
-                    value={jobTitle}
-                    onChange={(e) => setJobTitle(e.target.value)}
+                    placeholder={placeholder} // Placeholder passed as prop
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                 />
             </Box>
 
@@ -171,4 +172,4 @@ const JobSearchBox = ({ onSearch, searching = false }: JobSearchBoxProps) => {
     );
 };
 
-export default JobSearchBox;
+export default SearchWithLocation;
