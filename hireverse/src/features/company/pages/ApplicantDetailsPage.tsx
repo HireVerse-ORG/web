@@ -13,13 +13,13 @@ const ApplicantDetailsPage = () => {
     const { data: application,
         loading: applicationLoading,
         error: applicationError } = useGet<IJobApplicationWithSeekerProfile>(() => getApplicationDetailsforCompany(applicationId || ""));
-    
+
     const [status, setStatus] = useState<JobApplicationStatus | null>(null)
 
     const navigate = useNavigate();
-    
+
     useEffect(() => {
-        if(application){
+        if (application) {
             setStatus(application.status);
         }
     }, [application])
@@ -76,26 +76,28 @@ const ApplicantDetailsPage = () => {
                 gap: 2
             }}>
                 {/* left */}
-                <ApplicantInfoCard
-                    data={{
-                        profilePicture: application.profile?.image || "",
-                        fullName: application.fullName,
-                        currentPosition: application.profile?.title || "",
-                        appliedJob: application.jobRole,
-                        appliedDate: application.createdAt,
-                        stage: status || application.status,
-                        email: application.email,
-                        phone: application.phone || ""
-                    }}
-                    onMessageClick={() => {
-                        console.log("Message button clicked!");
-                    }}
-                    onViewProfileClick={() => {
-                        if (application.profile) {
-                            navigate(`/${application.profile.profileUsername}`)
-                        }
-                    }}
-                />
+                <Box sx={{ minWidth: "350px" }}>
+                    <ApplicantInfoCard
+                        data={{
+                            profilePicture: application.profile?.image || "",
+                            fullName: application.fullName,
+                            currentPosition: application.profile?.title || "",
+                            appliedJob: application.jobRole,
+                            appliedDate: application.createdAt,
+                            stage: status || application.status,
+                            email: application.email,
+                            phone: application.phone || ""
+                        }}
+                        onMessageClick={() => {
+                            console.log("Message button clicked!");
+                        }}
+                        onViewProfileClick={() => {
+                            if (application.profile) {
+                                navigate(`/${application.profile.profileUsername}`)
+                            }
+                        }}
+                    />
+                </Box>
 
                 {/* right */}
                 <Box flexGrow={1}>

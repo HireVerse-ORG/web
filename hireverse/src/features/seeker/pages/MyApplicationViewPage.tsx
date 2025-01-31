@@ -16,7 +16,7 @@ const MyApplicationViewPage = () => {
     const { data: application,
         loading: applicationLoading,
         error: applicationError } = useGet<IJobApplication>(() => getApplicationDetails(applicationId || ""));
-    
+
 
 
     const handleTabChange = (_: React.SyntheticEvent, newtabValue: string) => {
@@ -69,14 +69,16 @@ const MyApplicationViewPage = () => {
                 gap: 2
             }}>
                 {/* left */}
-                <ApplicantInfoCard data={{
-                    fullName: application.fullName,
-                    appliedJob: application.jobRole,
-                    stage: application.status,
-                    email: application.email,
-                    phone: application.phone || "",
-                    appliedDate: application.createdAt
-                }} />
+                <Box sx={{minWidth: "350px"}}>
+                    <ApplicantInfoCard data={{
+                        fullName: application.fullName,
+                        appliedJob: application.jobRole,
+                        stage: application.status,
+                        email: application.email,
+                        phone: application.phone || "",
+                        appliedDate: application.createdAt
+                    }} />
+                </Box>
 
                 {/* right */}
                 <Box sx={{ flexGrow: 1 }}>
