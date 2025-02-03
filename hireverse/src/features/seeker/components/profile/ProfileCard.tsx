@@ -1,6 +1,6 @@
 import { Avatar, Box, Button, Skeleton, Typography } from "@mui/material";
 import colors from "@core/theme/colors";
-import { AssistantPhotoTwoTone, GroupOutlined, LocationOnOutlined } from "@mui/icons-material";
+import { AssistantPhotoTwoTone, LocationOnOutlined } from "@mui/icons-material";
 import EditButton from "@core/components/ui/EditButton";
 import { useState } from "react";
 import { getSeekerProfile } from "@core/api/seeker/profileApi";
@@ -10,6 +10,10 @@ import CustomDialog from "@core/components/ui/CustomDialog";
 import SeekerProfileForm from "../forms/SeekerProfileForm";
 import SeekerCoverPicForm from "../forms/SeekerCoverPicForm";
 import { DEAFULT_SEEKER_PROFILE_IMAGE_URL } from "@core/utils/constants";
+import FollowersCount from "@core/components/Follower/FollowersCount";
+import MessageButton from "@core/components/chat/MessageButton";
+import FollowButton from "@core/components/Follower/FollowButton";
+import useAppSelector from "@core/hooks/useSelector";
 
 type ProfileCardProps = {
     editable?: boolean;
@@ -17,6 +21,8 @@ type ProfileCardProps = {
 };
 
 const ProfileCard = ({ editable, username }: ProfileCardProps) => {
+    const user = useAppSelector(state => state.auth.user);
+
     const { data: profile, setData: seProfile, loading, error, refetch } = useGet<SeekerProfile>(() => getSeekerProfile(username));
     const [modelOpen, setModelOpen] = useState(false);
     const [coverPhotoModalOpen, setCoverPhotoModalOpen] = useState(false);
@@ -198,19 +204,18 @@ const ProfileCard = ({ editable, username }: ProfileCardProps) => {
                         </Box>
                     )}
 
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            mt: 1,
-                            color: "lightgray",
-                        }}
-                    >
-                        <GroupOutlined sx={{ mr: 0.5, fontSize: 18, color: "text.secondary" }} />
-                        <Typography variant="body2" sx={{ color: "text.secondary", fontWeight: "bold" }}>
-                            {"1000 followers"}
-                        </Typography>
+                {/* Follow Button */}
+                {!editable && (
+                    <Box sx={{ mt: 1 }}>
+                        <FollowersCount count={1000}/>
+                        {user && user.id != profile?.userId && (
+                            <Box sx={{mt: 2, display: "flex", alignItems: "center", gap: 2}}>
+                                <MessageButton toId={user.id} />
+                                <FollowButton id="123" />
+                            </Box>
+                        )}
                     </Box>
+                )}
 
                     {/* Opportunity Button */}
                     {profile?.isOpenToWork && (

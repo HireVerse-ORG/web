@@ -9,6 +9,10 @@ import { useState } from "react";
 import { ICompanyProfile } from "@core/types/company.interface";
 import { dateFormatter, formatCount } from "@core/utils/helper";
 import CompanyInfoForms from "../forms/CompanyInfoForms";
+import useAppSelector from "@core/hooks/useSelector";
+import FollowersCount from "@core/components/Follower/FollowersCount";
+import FollowButton from "@core/components/Follower/FollowButton";
+import MessageButton from "@core/components/chat/MessageButton";
 
 type CompanyInfoCardProps = {
     mode: "read" | "edit";
@@ -17,6 +21,7 @@ type CompanyInfoCardProps = {
 };
 
 const CompanyInfoCard = ({ mode, profile, loading }: CompanyInfoCardProps) => {
+    const user = useAppSelector(state => state.auth.user);
     const [modelOpen, setModelOpen] = useState(false);
 
     const handleModelClose = () => setModelOpen(false);
@@ -119,6 +124,19 @@ const CompanyInfoCard = ({ mode, profile, loading }: CompanyInfoCardProps) => {
                         {profile.website}
                     </Link>
                 )}
+
+                {/* Follow Button */}
+                {mode === "read" && (
+                    <Box sx={{ mt: 1 }}>
+                        <FollowersCount count={2}/>
+                        {user && user.id != profile.userId && (
+                            <Box sx={{mt: 2, display: "flex", alignItems: "center", gap: 2}}>
+                                <MessageButton toId="123" />
+                                <FollowButton id="123" />
+                            </Box>
+                        )}
+                    </Box>
+                )}
             </Box>
 
             {/* Company Details */}
@@ -131,7 +149,7 @@ const CompanyInfoCard = ({ mode, profile, loading }: CompanyInfoCardProps) => {
                         sm: "repeat(4, 1fr)",
                     },
                     gap: 2,
-                    mt: { xs: 2, md: 3 },
+                    mt: 2,
                 }}
             >
                 {loading ? (
