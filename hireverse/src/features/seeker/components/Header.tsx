@@ -8,6 +8,7 @@ import MenuButton from "@core/components/ui/MenuButton";
 import Sidebar from "@core/components/ui/Sidebar";
 import { shakeAnimation } from "@core/utils/ui";
 import { getMyNotificationsCount } from "@core/api/shared/notificationsApi";
+import { getFollowRequestCount } from "@core/api/shared/followerRequestApi";
 
 const Header = () => {
     const [openMenu, setOpenMenu] = useState(false);
@@ -21,8 +22,11 @@ const Header = () => {
     useEffect(() => {
         const fetchInitialNotificationCount = async () => {
             try {
-                const {count} = await getMyNotificationsCount({status: "sent", type: "inApp"});
-                setNotificationCount(count);
+                const [notificationData, followRequestCount] = await Promise.all([
+                    getMyNotificationsCount({ status: "sent", type: "inApp" }),
+                    getFollowRequestCount("pending")
+                ]);
+                setNotificationCount(notificationData.count + followRequestCount.count);
             } catch (error) {
                 console.error("Error fetching initial notification count", error);
             }
@@ -34,9 +38,7 @@ const Header = () => {
     useEffect(() => {
         if (!socket) return;
 
-        const handleNewNotification = (notification: { message: string }) => {
-            console.log("new notification: ", notification.message);
-
+        const handleNewNotification = (_: { message: string }) => {
             setNotificationCount((prevCount) => prevCount + 1);
 
             setIsAnimating(true);

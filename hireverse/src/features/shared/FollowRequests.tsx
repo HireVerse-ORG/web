@@ -1,11 +1,22 @@
 import { Box, Typography, List, ListItem, ListItemText, IconButton } from '@mui/material';
 import colors from '@core/theme/colors';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Cancel, CheckCircle } from '@mui/icons-material';
+import { FollowRequestWithProfile } from '@core/types/followersRequest.interface';
+import { getMyFollowRequest } from '@core/api/shared/followerRequestApi';
+import { IPaginationResponse } from '@core/types/pagination.interface';
+import useGet from '@core/hooks/useGet';
 
 
-const ConnectionRequests = () => {
-  const [connectionRequests, setConnectionRequests] = useState<any[]>([]);
+const FollowRequests = () => {
+  const { data, loading, error } = useGet<IPaginationResponse<FollowRequestWithProfile>>(() => getMyFollowRequest('accepted'));
+  const [followRequests, setFollowRequests] = useState<FollowRequestWithProfile[]>([]);
+
+  useEffect(() => {
+    if(data){
+      setFollowRequests(data.data);
+    }
+  }, [data]);
 
   return (
     <Box
@@ -17,11 +28,11 @@ const ConnectionRequests = () => {
       }}
     >
       <Typography variant="h6" gutterBottom>
-        Connection Requests
+        Follow Requests
       </Typography>
       <List>
-        {connectionRequests.length > 0 ? (
-          connectionRequests.map((request) => (
+        {followRequests.length > 0 ? (
+          followRequests.map((request) => (
             <ListItem
               key={request.id}
               sx={{
@@ -32,7 +43,7 @@ const ConnectionRequests = () => {
                 alignItems: 'center',
               }}
             >
-              <ListItemText primary={request.sender} secondary={request.message} sx={{textWrap: "wrap"}} />
+              <ListItemText primary={request.targetProfile.name} secondary={"You"} sx={{textWrap: "wrap"}} />
               <Box sx={{ display: 'flex', gap: 1 }}>
                 <IconButton color="primary" size="small">
                   <CheckCircle fontSize="small" />
@@ -45,7 +56,7 @@ const ConnectionRequests = () => {
           ))
         ) : (
           <Typography variant="body1" color="textSecondary">
-            No connection requests.
+            No follow requests.
           </Typography>
         )}
       </List>
@@ -54,4 +65,4 @@ const ConnectionRequests = () => {
   );
 };
 
-export default ConnectionRequests;
+export default FollowRequests;

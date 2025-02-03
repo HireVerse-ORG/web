@@ -17,7 +17,7 @@ import EditJobPage from "./pages/EditJobPage";
 import CompanyJobViewPage from "./pages/CompanyJobViewPage";
 import ApplicantDetailsPage from "./pages/ApplicantDetailsPage";
 import ApplicationsListPage from "./pages/ApplicationsListPage";
-import NotificationsPage from "../seeker/pages/NotificationsPage";
+import NotificationsPage from "./pages/NotificationsPage";
 
 
 const CompanyRoutes = () => {

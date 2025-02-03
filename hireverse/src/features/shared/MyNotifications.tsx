@@ -6,15 +6,16 @@ import { INotification } from '@core/types/notification.interface';
 import { IPaginationResponse } from '@core/types/pagination.interface';
 import { Box, Button, CircularProgress, Skeleton, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
-const MyNotifications = () => {
+type MyNotificationsProps = {
+    onClick?: (metadata?: Record<string, any>) => void;
+}
+
+const MyNotifications = ({onClick}:MyNotificationsProps) => {
     const { data, loading, error } = useGet<IPaginationResponse<INotification>>(() => getMyNotifications(1, 10, { type: "inApp" }));
     const [notifications, setNotifications] = useState<INotification[]>([]);
     const [markingAllNotificationRead, setMarkingAllNotificationRead] = useState<boolean>(false);
-
-    const navigate = useNavigate();
 
     const {setNotificationCount} = useNotificationSocket();
 
@@ -51,16 +52,6 @@ const MyNotifications = () => {
             toast.error("Failed to update notification.")
         } finally {
             setMarkingAllNotificationRead(false);
-        }
-    };
-
-    const handleClick = (metadata?: Record<string, any>) => {
-        if (metadata?.type) {
-            switch (metadata.type) {
-                case "resume-comment":
-                    navigate(`/seeker/my-application/${metadata?.job_application_id}`);
-                    break;
-            }
         }
     };
 
@@ -117,7 +108,7 @@ const MyNotifications = () => {
                                 key={notification.id}
                                 notification={notification}
                                 handleMarkAsRead={handleMarkAsRead}
-                                onClick={() => handleClick(notification.metadata)}
+                                onClick={() => onClick?.(notification.metadata)}
                             />
                         ))
                     ) : (

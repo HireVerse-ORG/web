@@ -1,18 +1,61 @@
 import Sidebar from "@core/components/ui/Sidebar";
-import { Box, Button, Drawer, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { useState } from "react";
+import { Badge, Box, Button, Drawer, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { useEffect, useState } from "react";
 import MenuButton from "@core/components/ui/MenuButton";
 import { Link } from "react-router-dom";
 import { CompanySidebarSections } from "./SidebarSections";
 import { useCompanyContext } from "@core/contexts/CompanyContext";
 import { DEAFULT_COMPANY_IMAGE_URL } from "@core/utils/constants";
-import { Add } from "@mui/icons-material";
+import { Add, NotificationsOutlined } from "@mui/icons-material";
+import { useNotificationSocket } from "@core/contexts/NotificationContext";
+import { getMyNotificationsCount } from "@core/api/shared/notificationsApi";
+import { shakeAnimation } from "@core/utils/ui";
+import { getFollowRequestCount } from "@core/api/shared/followerRequestApi";
 
 const Header = () => {
     const { companyProfile } = useCompanyContext();
     const [openMenu, setOpenMenu] = useState(false);
+    const [isAnimating, setIsAnimating] = useState(false);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+    const { socket, notificationCount, setNotificationCount } = useNotificationSocket();
+
+    useEffect(() => {
+        const fetchInitialNotificationCount = async () => {
+            try {
+                const [notificationData, followRequestCount] = await Promise.all([
+                    getMyNotificationsCount({ status: "sent", type: "inApp" }),
+                    getFollowRequestCount("pending")
+                ]);
+                setNotificationCount(notificationData.count + followRequestCount.count);
+            } catch (error) {
+                console.error("Error fetching initial notification count", error);
+            }
+        };
+
+        fetchInitialNotificationCount();
+    }, []);
+
+    useEffect(() => {
+        if (!socket) return;
+
+        const handleNewNotification = (_: { message: string }) => {
+            setNotificationCount((prevCount) => prevCount + 1);
+
+            setIsAnimating(true);
+
+            setTimeout(() => {
+                setIsAnimating(false);
+            }, 1000);
+        };
+
+        socket.on("new-notification", handleNewNotification);
+
+        return () => {
+            socket.off("new-notification");
+        };
+    }, [socket]);
 
     const toggleMenu = () => {
         setOpenMenu(!openMenu);
@@ -29,7 +72,7 @@ const Header = () => {
                 justifyContent: "space-between",
                 alignItems: "center",
                 py: 3,
-                px: {xs: 2, sm: 3}
+                px: { xs: 2, sm: 3 }
             }}>
                 <Box
                     sx={{
@@ -60,7 +103,7 @@ const Header = () => {
                         <Typography
                             variant="h6"
                             sx={{
-                                fontSize: {xs: "14px", sm: "16px"},
+                                fontSize: { xs: "14px", sm: "16px" },
                                 fontWeight: 600,
                                 color: "text.primary",
                             }}
@@ -71,18 +114,43 @@ const Header = () => {
                 </Box>
 
                 {/* Link Button */}
-                {companyProfile?.status === "verified" && (
-                    <Button
-                        variant="contained"
-                        component={Link}
-                        to="/company/post-job"
-                        startIcon={<Add />}
-                        sx={{textWrap: "nowrap"}}
-                    >
-                        Post a job
-                    </Button>
-                )}
+                <Box sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 2,
+                }}>
+                    {companyProfile?.status === "verified" && (
+                        <Button
+                            variant="contained"
+                            component={Link}
+                            to="/company/post-job"
+                            startIcon={<Add />}
+                            sx={{ textWrap: "nowrap" }}
+                        >
+                            Post a job
+                        </Button>
+                    )}
 
+                    <Link to="/company/notifications">
+                        <Badge
+                            badgeContent={notificationCount}
+                            color="error"
+                            overlap="circular"
+                            sx={{
+                                "& .MuiBadge-dot": {
+                                    backgroundColor: "red",
+                                },
+                            }}
+                        >
+                            <NotificationsOutlined
+                                color="primary"
+                                sx={{
+                                    animation: isAnimating ? `${shakeAnimation} 1s ease-in-out 3` : 'none',
+                                }}
+                            />
+                        </Badge>
+                    </Link>
+                </Box>
             </Box>
 
             {isMobile && (

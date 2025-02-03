@@ -1,20 +1,18 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 
 type FollowButtonProps = {
     id: string;
-    isFollowing?: boolean
+    isFollowing: boolean | null;
 };
 
 const FollowButton = ({ id, isFollowing: userFollowed }: FollowButtonProps) => {
-    const [isFollowing, setIsFollowing] = useState<boolean | null>(userFollowed || null);
+    const [isFollowing, setIsFollowing] = useState<boolean | null>(null);
 
     useEffect(() => {
-        if(!userFollowed){
-            // Fetch follow status from API here
-        }
-    }, [userFollowed, id]);
+        setIsFollowing(userFollowed)
+    }, [userFollowed])
 
     const handleFollow = async () => {
         try {
