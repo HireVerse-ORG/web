@@ -10,8 +10,8 @@ import { getCompanyProfile } from "@core/api/company/profileApi";
 import PageLoader from "@core/components/ui/PageLoader";
 
 const CompanyPublicViewPage = () => {
-    const {data: profile, loading: profileLoading, error: profileError} = useGet(() => getCompanyProfile(companyId));
     const { companyId } = useParams();
+    const {data: profile, loading: profileLoading, error: profileError} = useGet(() => getCompanyProfile(companyId));
 
     const mode = "read";
 

@@ -11,7 +11,6 @@ import DashboardContentLayout from "./components/layouts/DashboardContentLayout"
 import CompanyProfilePage from "./pages/CompanyProfilePage";
 import PostJobPage from "./pages/PostJobPage";
 import MyJobsPage from "./pages/MyJobsPage";
-import CompanyPublicViewPage from "../landing/pages/CompanyPublicViewPage";
 import PricingPlansPage from "./pages/PricingPlansPage";
 import { CompanySubscriptionProvider } from "@core/contexts/CompanySubscriptionContext";
 import EditJobPage from "./pages/EditJobPage";
@@ -43,8 +42,7 @@ const CompanyRoutes = () => {
             </Route>
           </Route>
           <Route path="/profile-creation" element={<ProfileCreationPage />} />
-          <Route path=":companyId" element={<CompanyPublicViewPage />} />
-          <Route path="/*" element={<Navigate to="/company" />} />
+          <Route path="*" element={<Navigate to="/company" />} />
         </Routes>
       </CompanySubscriptionProvider>
     </CompanyProvider>
