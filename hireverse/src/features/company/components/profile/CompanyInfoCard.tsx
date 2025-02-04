@@ -14,6 +14,7 @@ import FollowersCount from "@core/components/Follower/FollowersCount";
 import FollowButton from "@core/components/Follower/FollowButton";
 import MessageButton from "@core/components/chat/MessageButton";
 import { getFollowersCount } from "@core/api/shared/followersApi";
+import FollowersList from "../../../shared/FollowersList";
 
 type CompanyInfoCardProps = {
     mode: "read" | "edit";
@@ -25,6 +26,8 @@ const CompanyInfoCard = ({ mode, profile, loading }: CompanyInfoCardProps) => {
     const user = useAppSelector(state => state.auth.user);
     const [modelOpen, setModelOpen] = useState(false);
     const [followersCount, setFollowersCount] = useState(0);
+    const [followerModalOpen, setFollowerModalOpen] = useState(false);
+    const [followerListUserId, setFollowerListUserId] = useState<string | null>(null);
 
     useEffect(() => {
         if (!profile?.userId || !user?.id) return;
@@ -53,6 +56,22 @@ const CompanyInfoCard = ({ mode, profile, loading }: CompanyInfoCardProps) => {
     const handleUnfollowed = () => {
         setFollowersCount(prev => prev - 1);
     }
+
+    const handleFollowerModelClose = () => {
+        setFollowerModalOpen(false);
+    };
+
+    const handleFollowerCountClick = () => {
+        if(followersCount === 0) return;
+    
+        if(user && user?.id === profile?.userId){
+            setFollowerListUserId(user.id);
+            setFollowerModalOpen(true);
+        } else if(profile){
+            setFollowerListUserId(profile.userId);
+            setFollowerModalOpen(true);
+        }
+    };
 
     return (
         <Box
@@ -149,7 +168,7 @@ const CompanyInfoCard = ({ mode, profile, loading }: CompanyInfoCardProps) => {
 
                 {/* Follow Details */}
                 <Box sx={{ mt: 1 }}>
-                    <FollowersCount count={followersCount} />
+                    <FollowersCount count={followersCount} onClick={handleFollowerCountClick}/>
                     {mode === "read" && user && user.id != profile.userId && (
                         <Box sx={{
                             mt: 2,
@@ -224,6 +243,12 @@ const CompanyInfoCard = ({ mode, profile, loading }: CompanyInfoCardProps) => {
             {mode === "edit" && (
                 <CustomDialog open={modelOpen} onClose={handleModelClose}>
                     <CompanyInfoForms profile={profile} onSucces={handleSucces} />
+                </CustomDialog>
+            )}
+
+            {followerListUserId && (
+                <CustomDialog open={followerModalOpen} title="Followers" onClose={handleFollowerModelClose}>
+                    <FollowersList userId={followerListUserId} />
                 </CustomDialog>
             )}
         </Box>

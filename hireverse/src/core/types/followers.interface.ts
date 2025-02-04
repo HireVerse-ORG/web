@@ -12,6 +12,18 @@ export interface IFollowers {
     createdAt: Date;
     updatedAt: Date;
 }
+
+export interface IFindFollower {
+    followId: string;
+    name: string,
+    title: string,
+    image: string,
+    userType: UserRoles,
+    userId: string,
+    publicId: string,
+    isMutual: string, 
+}
+
 export interface IFollowersWithProfile {
     id: string;
     requesterId: string;

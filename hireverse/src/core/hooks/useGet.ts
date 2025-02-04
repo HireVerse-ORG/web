@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 
-export default function useGet<T>(fetchData: () => Promise<T>) {
+export default function useGet<T>(fetchData: () => Promise<T>, dependency:any[]=[]) {
     const [data, setData] = useState<T | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -21,7 +21,7 @@ export default function useGet<T>(fetchData: () => Promise<T>) {
 
     useEffect(() => {
         fetch();
-    }, []);
+    }, [...dependency]);
 
     return { data, setData, loading, error, refetch: fetch };
 }

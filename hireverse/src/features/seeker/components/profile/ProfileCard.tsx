@@ -15,6 +15,7 @@ import MessageButton from "@core/components/chat/MessageButton";
 import FollowButton from "@core/components/Follower/FollowButton";
 import useAppSelector from "@core/hooks/useSelector";
 import { getFollowersCount } from "@core/api/shared/followersApi";
+import FollowersList from "../../../shared/FollowersList";
 
 type ProfileCardProps = {
     editable?: boolean;
@@ -24,11 +25,13 @@ type ProfileCardProps = {
 const ProfileCard = ({ editable, username }: ProfileCardProps) => {
     const user = useAppSelector(state => state.auth.user);
 
-    const { data: profile, setData: seProfile, loading, error, refetch } = useGet<SeekerProfile>(() => getSeekerProfile(username));
+    const { data: profile, setData: seProfile, loading, error, refetch } = useGet<SeekerProfile>(() => getSeekerProfile(username), [username]);
     const [modelOpen, setModelOpen] = useState(false);
     const [coverPhotoModalOpen, setCoverPhotoModalOpen] = useState(false);
     const [avatarLoading, setAvatarLoading] = useState(true);
     const [followersCount, setFollowersCount] = useState(0);
+    const [followerModalOpen, setFollowerModalOpen] = useState(false);
+    const [followerListUserId, setFollowerListUserId] = useState<string | null>(null);
 
     useEffect(() => {
         if (!profile?.userId || !user?.id) return;
@@ -37,6 +40,7 @@ const ProfileCard = ({ editable, username }: ProfileCardProps) => {
             try {
                 const followersResponse = await getFollowersCount(profile.userId);
                 setFollowersCount(followersResponse.count);
+
             } catch (error) {
                 console.error("Failed to fetch followers count and following status:", error);
             }
@@ -70,6 +74,22 @@ const ProfileCard = ({ editable, username }: ProfileCardProps) => {
     const handleUnfollowed = () => {
         setFollowersCount(prev => prev - 1);
     }
+
+    const handleFollowerModelClose = () => {
+        setFollowerModalOpen(false);
+    };
+
+    const handleFollowerCountClick = () => {
+        if(followersCount === 0) return;
+    
+        if(user && user?.id === profile?.userId){
+            setFollowerListUserId(user.id);
+            setFollowerModalOpen(true);
+        } else if(profile){
+            setFollowerListUserId(profile.userId);
+            setFollowerModalOpen(true);
+        }
+    };
 
     if (loading) {
         return (
@@ -227,7 +247,7 @@ const ProfileCard = ({ editable, username }: ProfileCardProps) => {
 
                     {/* Follow Details */}
                     <Box sx={{ mt: 1 }}>
-                        <FollowersCount count={followersCount} />
+                        <FollowersCount count={followersCount} onClick={handleFollowerCountClick}/>
                         {!editable && user && user.id != profile!.userId && (
                             <Box sx={{
                                 mt: 2,
@@ -240,7 +260,7 @@ const ProfileCard = ({ editable, username }: ProfileCardProps) => {
                                 <FollowButton
                                     followerId={user.id}
                                     followedUserId={profile!.userId}
-                                    followedUserType="company"
+                                    followedUserType="seeker"
                                     onUnfollowed={handleUnfollowed} />
                             </Box>
                         )}
@@ -290,6 +310,12 @@ const ProfileCard = ({ editable, username }: ProfileCardProps) => {
                         <SeekerCoverPicForm onSucces={handleCoverPicFormSucces} initialImageUrl={profile?.coverImage} />
                     </CustomDialog>
                 </>
+            )}
+
+            {followerListUserId && (
+                <CustomDialog open={followerModalOpen} title="Followers" onClose={handleFollowerModelClose}>
+                    <FollowersList userId={followerListUserId}/>
+                </CustomDialog>
             )}
         </Box>
     );

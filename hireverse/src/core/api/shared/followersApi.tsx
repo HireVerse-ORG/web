@@ -1,5 +1,5 @@
 import axios from "@core/lib/axios";
-import { IFollowers, IFollowersWithProfile, FollowRequestStatus } from "@core/types/followers.interface";
+import { IFollowers, IFollowersWithProfile, IFindFollower } from "@core/types/followers.interface";
 import { IPaginationResponse } from "@core/types/pagination.interface";
 import { apiWrapper } from "@core/utils/helper";
 
@@ -21,17 +21,29 @@ export const getfollowDetails = async (followedUserId: string): Promise<{ follow
 };
 
 export const getFollowersList = async (
-    followerId: string,
-    status: FollowRequestStatus,
+    userId: string,
     page: number = 1,
-    limit: number = 10
-): Promise<IPaginationResponse<IFollowersWithProfile>> => {
-    const url = `${baseurl}/followers/${followerId}/list?status=${status}&page=${page}&limit=${limit}`;
+    limit: number = 10,
+    query?: string
+): Promise<IPaginationResponse<IFindFollower>> => {
+    const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+    });
+
+    if (query) {
+        params.append("query", query);
+    }
+
+    const url = `${baseurl}/followers/${userId}/list?${params.toString()}`;
+
     const response = await apiWrapper(
-        axios.get<IPaginationResponse<IFollowersWithProfile>>(url)
+        axios.get<IPaginationResponse<IFindFollower>>(url)
     );
+
     return response.data;
 };
+
 
 export const getMyFollowersRequests = async (
     page: number = 1,
