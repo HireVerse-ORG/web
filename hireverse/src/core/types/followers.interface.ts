@@ -2,29 +2,28 @@ import { UserRoles } from "./user.interface";
 
 export type FollowRequestStatus = 'pending' | 'accepted' | 'rejected';
 
-export interface FollowRequest {
+export interface IFollowers {
     id: string;
-    requesterId: string;
-    requesterType: UserRoles;
-    targetUserId: string;
-    targetUserType: UserRoles;
-    status: FollowRequestStatus;
+    followerId: string,
+    followerUserType: UserRoles;
+    followedUserId: string;
+    followedUserType: UserRoles;
+    requestStatus: FollowRequestStatus;
     createdAt: Date;
     updatedAt: Date;
 }
-
-export interface FollowRequestWithProfile {
+export interface IFollowersWithProfile {
     id: string;
     requesterId: string;
     requesterType: UserRoles;
     targetUserId: string;
     targetUserType: UserRoles;
     status: FollowRequestStatus;
-    targetProfile: {
+    followedUserProfile: null | {
         id: string,
         name: string,
-        type: string,
-        uniqueid: string,
+        type: UserRoles,
+        publicId: string,
         image?: string,
     };
     createdAt: Date;

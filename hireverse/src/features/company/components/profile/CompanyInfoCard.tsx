@@ -13,7 +13,7 @@ import useAppSelector from "@core/hooks/useSelector";
 import FollowersCount from "@core/components/Follower/FollowersCount";
 import FollowButton from "@core/components/Follower/FollowButton";
 import MessageButton from "@core/components/chat/MessageButton";
-import { getFollowersCount, userIsFollowing } from "@core/api/shared/followersApi";
+import { getFollowersCount } from "@core/api/shared/followersApi";
 
 type CompanyInfoCardProps = {
     mode: "read" | "edit";
@@ -25,23 +25,14 @@ const CompanyInfoCard = ({ mode, profile, loading }: CompanyInfoCardProps) => {
     const user = useAppSelector(state => state.auth.user);
     const [modelOpen, setModelOpen] = useState(false);
     const [followersCount, setFollowersCount] = useState(0);
-    const [isFollowing, setIsFollowing] = useState<boolean | null>(null);
 
     useEffect(() => {
         if (!profile?.userId || !user?.id) return;
 
         const fetchFollowers = async () => {
             try {
-                const [followersResponse, followingResponse] = await Promise.all([
-                    getFollowersCount(profile.userId),
-                    userIsFollowing(user.id),
-                ]);
-
-                console.log(followingResponse);
-                
-
+                const followersResponse = await getFollowersCount(profile.userId);
                 setFollowersCount(followersResponse.count);
-                setIsFollowing(followingResponse.isFollowing);
             } catch (error) {
                 console.error("Failed to fetch followers count and following status:", error);
             }
@@ -57,6 +48,10 @@ const CompanyInfoCard = ({ mode, profile, loading }: CompanyInfoCardProps) => {
 
     const handleSucces = () => {
         handleModelClose();
+    }
+
+    const handleUnfollowed = () => {
+        setFollowersCount(prev => prev - 1);
     }
 
     return (
@@ -152,18 +147,26 @@ const CompanyInfoCard = ({ mode, profile, loading }: CompanyInfoCardProps) => {
                     </Link>
                 )}
 
-                {/* Follow Button */}
-                {mode === "read" && (
-                    <Box sx={{ mt: 1 }}>
-                        <FollowersCount count={followersCount} />
-                        {user && user.id != profile.userId && (
-                            <Box sx={{ mt: 2, display: "flex", alignItems: "center", gap: 2 }}>
-                                <MessageButton toId={user.id} />
-                                <FollowButton id={user.id} isFollowing={isFollowing} />
-                            </Box>
-                        )}
-                    </Box>
-                )}
+                {/* Follow Details */}
+                <Box sx={{ mt: 1 }}>
+                    <FollowersCount count={followersCount} />
+                    {mode === "read" && user && user.id != profile.userId && (
+                        <Box sx={{
+                            mt: 2,
+                            display: "flex",
+                            flexWrap: "wrap",
+                            alignItems: "center",
+                            gap: 2,
+                        }}>
+                            <MessageButton toId={user.id} />
+                            <FollowButton
+                                followerId={user.id}
+                                followedUserId={profile.userId}
+                                followedUserType="company"
+                                onUnfollowed={handleUnfollowed} />
+                        </Box>
+                    )}
+                </Box>
             </Box>
 
             {/* Company Details */}
@@ -176,7 +179,7 @@ const CompanyInfoCard = ({ mode, profile, loading }: CompanyInfoCardProps) => {
                         sm: "repeat(4, 1fr)",
                     },
                     gap: 2,
-                    mt: 2,
+                    mt: 1,
                 }}
             >
                 {loading ? (

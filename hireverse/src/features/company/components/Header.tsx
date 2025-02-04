@@ -10,7 +10,7 @@ import { Add, NotificationsOutlined } from "@mui/icons-material";
 import { useNotificationSocket } from "@core/contexts/NotificationContext";
 import { getMyNotificationsCount } from "@core/api/shared/notificationsApi";
 import { shakeAnimation } from "@core/utils/ui";
-import { getFollowRequestCount } from "@core/api/shared/followerRequestApi";
+import { getFolloweRequestCount } from "@core/api/shared/followersApi";
 
 const Header = () => {
     const { companyProfile } = useCompanyContext();
@@ -24,18 +24,30 @@ const Header = () => {
     useEffect(() => {
         const fetchInitialNotificationCount = async () => {
             try {
-                const [notificationData, followRequestCount] = await Promise.all([
+                const [notificationData, followRequestCount] = await Promise.allSettled([
                     getMyNotificationsCount({ status: "sent", type: "inApp" }),
-                    getFollowRequestCount("pending")
+                    getFolloweRequestCount()
                 ]);
-                setNotificationCount(notificationData.count + followRequestCount.count);
+    
+                let notificationCount = 0;
+    
+                if (notificationData.status === "fulfilled") {
+                    notificationCount += notificationData.value.count;
+                } 
+    
+                if (followRequestCount.status === "fulfilled") {
+                    notificationCount += followRequestCount.value.count;
+                } 
+    
+                setNotificationCount(notificationCount);
             } catch (error) {
-                console.error("Error fetching initial notification count", error);
+                console.error("Unexpected error in fetchInitialNotificationCount", error);
             }
         };
-
+    
         fetchInitialNotificationCount();
     }, []);
+    
 
     useEffect(() => {
         if (!socket) return;

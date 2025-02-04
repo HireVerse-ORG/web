@@ -2,7 +2,7 @@ import { Avatar, Box, Button, Skeleton, Typography } from "@mui/material";
 import colors from "@core/theme/colors";
 import { AssistantPhotoTwoTone, LocationOnOutlined } from "@mui/icons-material";
 import EditButton from "@core/components/ui/EditButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getSeekerProfile } from "@core/api/seeker/profileApi";
 import { SeekerProfile } from "@core/types/seeker.interface";
 import useGet from "@core/hooks/useGet";
@@ -14,6 +14,7 @@ import FollowersCount from "@core/components/Follower/FollowersCount";
 import MessageButton from "@core/components/chat/MessageButton";
 import FollowButton from "@core/components/Follower/FollowButton";
 import useAppSelector from "@core/hooks/useSelector";
+import { getFollowersCount } from "@core/api/shared/followersApi";
 
 type ProfileCardProps = {
     editable?: boolean;
@@ -27,6 +28,22 @@ const ProfileCard = ({ editable, username }: ProfileCardProps) => {
     const [modelOpen, setModelOpen] = useState(false);
     const [coverPhotoModalOpen, setCoverPhotoModalOpen] = useState(false);
     const [avatarLoading, setAvatarLoading] = useState(true);
+    const [followersCount, setFollowersCount] = useState(0);
+
+    useEffect(() => {
+        if (!profile?.userId || !user?.id) return;
+
+        const fetchFollowers = async () => {
+            try {
+                const followersResponse = await getFollowersCount(profile.userId);
+                setFollowersCount(followersResponse.count);
+            } catch (error) {
+                console.error("Failed to fetch followers count and following status:", error);
+            }
+        };
+
+        fetchFollowers();
+    }, [profile?.userId, user?.id]);
 
     const profilePicSize = 120;
 
@@ -45,10 +62,14 @@ const ProfileCard = ({ editable, username }: ProfileCardProps) => {
     const handleCoverPicFormSucces = (newCoverImage: string) => {
         if (profile) {
             const updatedProfile = { ...profile, coverImage: newCoverImage };
-            seProfile(updatedProfile); 
+            seProfile(updatedProfile);
         }
         handleCoverModelClose();
     };
+
+    const handleUnfollowed = () => {
+        setFollowersCount(prev => prev - 1);
+    }
 
     if (loading) {
         return (
@@ -204,18 +225,26 @@ const ProfileCard = ({ editable, username }: ProfileCardProps) => {
                         </Box>
                     )}
 
-                {/* Follow Button */}
-                {!editable && (
+                    {/* Follow Details */}
                     <Box sx={{ mt: 1 }}>
-                        <FollowersCount count={1000}/>
-                        {user && user.id != profile?.userId && (
-                            <Box sx={{mt: 2, display: "flex", alignItems: "center", gap: 2}}>
+                        <FollowersCount count={followersCount} />
+                        {!editable && user && user.id != profile!.userId && (
+                            <Box sx={{
+                                mt: 2,
+                                display: "flex",
+                                flexWrap: "wrap",
+                                alignItems: "center",
+                                gap: 2,
+                            }}>
                                 <MessageButton toId={user.id} />
-                                <FollowButton id="123" />
+                                <FollowButton
+                                    followerId={user.id}
+                                    followedUserId={profile!.userId}
+                                    followedUserType="company"
+                                    onUnfollowed={handleUnfollowed} />
                             </Box>
                         )}
                     </Box>
-                )}
 
                     {/* Opportunity Button */}
                     {profile?.isOpenToWork && (

@@ -28,7 +28,7 @@ const CompanyPublicViewPage = () => {
         <>
             <Header />
             <Container>
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pb: 3 }}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pb: 3, pt:2 }}>
                     <CompanyInfoCard mode={mode} profile={profile!}/>
                     <AboutCompanyCard mode={mode} data={{about: profile?.bio || ""}} />
                     <ContactCard mode={mode} data={{
