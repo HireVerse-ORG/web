@@ -18,6 +18,7 @@ import CompanyJobViewPage from "./pages/CompanyJobViewPage";
 import ApplicantDetailsPage from "./pages/ApplicantDetailsPage";
 import ApplicationsListPage from "./pages/ApplicationsListPage";
 import NotificationsPage from "./pages/NotificationsPage";
+import MessagesPage from "../shared/MessagesPage";
 
 
 const CompanyRoutes = () => {
@@ -29,6 +30,7 @@ const CompanyRoutes = () => {
             {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<CompanyDashboard />} />
+              <Route path="/messages" element={<MessagesPage />} />
               <Route path="/profile" element={<CompanyProfilePage/>} />
               <Route path="/post-job" element={<PostJobPage />} />
               <Route path="/edit-job" element={<EditJobPage />} />

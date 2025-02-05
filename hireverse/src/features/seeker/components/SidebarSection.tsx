@@ -5,7 +5,11 @@ export const SeekerSidebarSections: SidebarSection[] = [
     {
         items: [
             { name: "Dashboard", icon: <HomeOutlined />, path: "/seeker" },
-            { name: "Messages", icon: <ChatOutlined />, path: "/seeker/messages" },
+            { 
+                name: "Messages", 
+                icon: <ChatOutlined />, 
+                path: "/seeker/messages",
+            },
             { name: "My Applications", icon: <DescriptionOutlined />, path: "/seeker/my-applications" },
             { name: "Find Jobs", icon: <SearchOutlined />, path: "/seeker/find-jobs" },
             { name: "Browse Companies", icon: <CorporateFareOutlined />, path: "/seeker/browse-companies" },

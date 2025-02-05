@@ -15,6 +15,7 @@ import MyApplicationsPage from "./pages/MyApplicationsPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import MyApplicationViewPage from "./pages/MyApplicationViewPage";
 import BrowseCompaniesPage from "./pages/BrowseCompaniesPage";
+import MessagesPage from "../shared/MessagesPage";
 
 
 const SeekerRoutes = () => {
@@ -24,6 +25,7 @@ const SeekerRoutes = () => {
       <Routes>
         <Route element={<DashboardLayout Sidebar={<Sidebar sections={SeekerSidebarSections} />} ContentLayout={ContentLayout} />}>
           <Route path="/" element={<SeekerDashboard />} />
+          <Route path="/messages" element={<MessagesPage />} />
           <Route path="/profile" element={<ProfilePage mode="edit" />} />
           <Route path="/find-jobs" element={<FindJobsPage viewJobBaseUrl="/seeker/view-job"/>} />
           <Route path="/browse-companies" element={<BrowseCompaniesPage />} />
