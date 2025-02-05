@@ -1,5 +1,6 @@
 import colors from "@core/theme/colors";
 import { Box, SxProps, Typography } from "@mui/material";
+import ScrollableContainer from "../ui/ScrollableContainer";
 
 type ChatMessagesProps = {
   messages: { sender: string; text: string; isMe: boolean }[];
@@ -8,7 +9,15 @@ type ChatMessagesProps = {
 
 const ChatMessages = ({ messages, styles }: ChatMessagesProps) => {
   return (
-    <Box sx={{ flexGrow: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 1, ...styles }}>
+    <ScrollableContainer sx={{
+      overflowY: "auto",
+      display: "flex",
+      flexDirection: "column",
+      gap: 1,
+      paddingTop: 0.75,
+      paddingRight: 0.75,
+      ...styles
+    }}>
       {messages.length === 0 ? (
         <Typography textAlign="center" color="text.secondary">
           No messages yet. Start a conversation!
@@ -31,7 +40,7 @@ const ChatMessages = ({ messages, styles }: ChatMessagesProps) => {
           </Box>
         ))
       )}
-    </Box>
+    </ScrollableContainer>
   );
 };
 
