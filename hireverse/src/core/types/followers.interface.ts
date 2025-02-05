@@ -21,7 +21,7 @@ export interface IFindFollower {
     userType: UserRoles,
     userId: string,
     publicId: string,
-    isMutual: string, 
+    isMutual: boolean, 
 }
 
 export interface IFollowersWithProfile {
