@@ -1,29 +1,11 @@
+import { listConversations } from '@core/api/shared/chatsApi';
+import InboxChatCardSkeleton from '@core/components/chat/InboxCardSkeleton';
 import InboxChatCard from '@core/components/chat/InboxChatCard';
-import { Box } from '@mui/material';
-
-const dummyChats = [
-    {
-        id: '1',
-        name: "Alice Johnson",
-        image: "https://randomuser.me/api/portraits/women/44.jpg",
-        lastMessage: "Hey, how have you been?",
-        lastMessageTimeStamp: new Date("2025-01-30T14:20:00"),
-    },
-    {
-        id: '2',
-        name: "Bob Smith",
-        image: "https://randomuser.me/api/portraits/men/32.jpg",
-        lastMessage: "Let's catch up later.",
-        lastMessageTimeStamp: new Date("2025-01-30T13:05:00"),
-    },
-    {
-        id: '3',
-        name: "Carol Davis",
-        image: "https://randomuser.me/api/portraits/women/68.jpg",
-        lastMessage: "Got it, thanks!",
-        lastMessageTimeStamp: new Date("2025-01-29T18:45:00"),
-    },
-];
+import useGet from '@core/hooks/useGet';
+import { IConversationWithSenderProfle } from '@core/types/conversation.interface';
+import { ChatBubbleOutline } from '@mui/icons-material';
+import { Box, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
 
 type MyInboxProps = {
     onSelectChat?: (chatId: string) => void;
@@ -31,18 +13,51 @@ type MyInboxProps = {
 };
 
 const MyInbox = ({ onSelectChat, activeChatId }: MyInboxProps) => {
+    const [conversations, setConversations] = useState<IConversationWithSenderProfle[]>([]); 
+    const { data, loading, error } = useGet(listConversations);
+
+    useEffect(() => {
+        if (data) {
+            setConversations(data.data);
+        }
+    }, [data]);
+
+
     return (
-        <Box sx={{ paddingRight: 2 }}>
-            {dummyChats.map((chat) => (
-                <InboxChatCard
-                    key={chat.id}
-                    data={chat}
-                    onClick={() => onSelectChat && onSelectChat(chat.id)}
-                    isActive={activeChatId === chat.id}
-                />
-            ))}
+        <Box sx={{ paddingRight: 2, height: "100%" }}>
+            {loading ? (
+                Array.from({ length: 6 }).map((_, index) => <InboxChatCardSkeleton key={index} />)
+            ) : error ? (
+                <Typography color="error" sx={{ textAlign: 'center', padding: 2 }}>
+                    Failed to load conversations. Please try again.
+                </Typography>
+            ) : conversations.length === 0 ? (  
+                <Box sx={{padding: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: "100%" }}>
+                    <ChatBubbleOutline sx={{ fontSize: 48, color: 'text.secondary', mb: 1 }} />
+                    <Typography variant="h6" color="text.secondary">
+                        No Conversations Yet
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        Start a chat to see your messages here.
+                    </Typography>
+                </Box>
+            ) : (
+                conversations.map((chat) => (
+                    <InboxChatCard
+                        key={chat.id}
+                        data={{
+                            name: chat.senderProfile.name,
+                            image: chat.senderProfile.image || "",
+                            lastMessage: chat.lastMessage?.text || "",
+                            lastMessageTimeStamp: chat.lastMessage?.sentAt
+                        }}
+                        onClick={() => onSelectChat && onSelectChat(chat.id)}
+                        isActive={activeChatId === chat.id}
+                    />
+                ))
+            )}
         </Box>
-    );
+    );    
 };
 
 export default MyInbox;

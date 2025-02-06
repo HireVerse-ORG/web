@@ -17,7 +17,7 @@ type SkillsCardProps = {
 };
 
 const SkillsCard = ({ editable, username }: SkillsCardProps) => {
-    const { data: skills, setData: setSkills, loading, error } = useGet<ISkill[] | null>(() => getSeekerSkills(username));
+    const { data: skills, setData: setSkills, loading, error } = useGet<ISkill[] | null>(() => getSeekerSkills(username), [username]);
     const [deletable, setDeletable] = useState(false);
     const [modelOpen, setModelOpen] = useState(false);
 

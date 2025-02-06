@@ -14,7 +14,7 @@ type AboutMeCardProps = {
 };
 
 const AboutMeCard = ({ editable, username }: AboutMeCardProps) => {
-    const { data: bio, setData: setBio, loading, error } = useGet<string>(() => getSeekerBio(username));
+    const { data: bio, setData: setBio, loading, error } = useGet<string>(() => getSeekerBio(username), [username]);
     const [modelOpen, setModelOpen] = useState(false);
 
     const handleBioEdit = () => setModelOpen(true)

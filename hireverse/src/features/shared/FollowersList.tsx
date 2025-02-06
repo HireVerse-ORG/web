@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 type FollowersListProps = {
   userId: string;
@@ -29,6 +30,19 @@ const FollowersList = ({ userId }: FollowersListProps) => {
   const [error, setError] = useState<string | null>(null);
   const [followRequests, setFollowRequests] = useState<IFindFollower[]>([]);
   const [followLoading, setFollowLoading] = useState<{ [key: string]: boolean }>({});
+
+  const navigate = useNavigate();
+  const location = useLocation(); 
+
+  const handleProfileNavigation = (profileUrl: string) => {
+    if (location.pathname.includes("company-view")) {
+      navigate(profileUrl);
+    } else if (location.pathname.includes("seeker") || location.pathname.includes("company")) {
+      window.open(profileUrl, "_blank");
+    } else {
+      navigate(profileUrl);
+    }
+  };
 
   const fetchFollowers = async () => {
     setLoading(true);
@@ -145,14 +159,14 @@ const FollowersList = ({ userId }: FollowersListProps) => {
               <Avatar
                 src={follower.image || DEFAULT_IMAGE}
                 alt={follower.name}
-                onClick={() => (window.location.href = PROFILE_URL)}
+                onClick={() => handleProfileNavigation(PROFILE_URL)}
                 sx={{ width: 50, height: 50, marginRight: 2, cursor: "pointer" }}
               />
 
               <Box flex={1}>
                 <Typography
                   fontWeight="bold"
-                  onClick={() => (window.location.href = PROFILE_URL)}
+                  onClick={() => handleProfileNavigation(PROFILE_URL)}
                   sx={{ cursor: "pointer", width: "max-content" }}
                 >
                   {follower.name || "Unknown"}

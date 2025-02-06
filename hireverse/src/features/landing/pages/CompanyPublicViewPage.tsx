@@ -11,7 +11,7 @@ import PageLoader from "@core/components/ui/PageLoader";
 
 const CompanyPublicViewPage = () => {
     const { companyId } = useParams();
-    const {data: profile, loading: profileLoading, error: profileError} = useGet(() => getCompanyProfile(companyId));
+    const {data: profile, loading: profileLoading, error: profileError} = useGet(() => getCompanyProfile(companyId), [companyId]);
 
     const mode = "read";
 

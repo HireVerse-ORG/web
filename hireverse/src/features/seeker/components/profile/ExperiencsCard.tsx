@@ -18,7 +18,8 @@ type ExperienceCardProps = {
 
 const ExperiencesCard = ({ editable, showCount = 2, username }: ExperienceCardProps) => {
   const { data: experiences, setData: setExperiences, loading, error } = useGet<SeekerExperience[]>(() =>
-    listSeekerExperience(username)
+    listSeekerExperience(username),
+    [username]
   );
 
   const [showAll, setShowAll] = useState(false);

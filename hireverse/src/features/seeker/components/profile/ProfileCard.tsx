@@ -36,18 +36,22 @@ const ProfileCard = ({ editable, username }: ProfileCardProps) => {
     useEffect(() => {
         if (!profile?.userId || !user?.id) return;
 
+        if(followerModalOpen){
+            setFollowerModalOpen(false);
+            setFollowersCount(0);
+        }
+
         const fetchFollowers = async () => {
             try {
                 const followersResponse = await getFollowersCount(profile.userId);
                 setFollowersCount(followersResponse.count);
-
             } catch (error) {
                 console.error("Failed to fetch followers count and following status:", error);
             }
         };
 
         fetchFollowers();
-    }, [profile?.userId, user?.id]);
+    }, [profile?.userId, user?.id, username]);
 
     const profilePicSize = 120;
 

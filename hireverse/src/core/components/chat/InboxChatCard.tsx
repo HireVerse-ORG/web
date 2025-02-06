@@ -7,7 +7,7 @@ type InboxChatCardProps = {
     name: string;
     image: string;
     lastMessage: string;
-    lastMessageTimeStamp: Date; 
+    lastMessageTimeStamp?: Date;
   };
   isActive?: boolean;
   onClick: () => void;
@@ -32,10 +32,10 @@ const InboxChatCard = ({ data, isActive, onClick }: InboxChatCardProps) => {
       }}
     >
       {/* Left Side: Avatar */}
-      <Avatar 
-        src={data.image} 
-        alt={data.name} 
-        sx={{ width: 56, height: 56, mr: 2 }} 
+      <Avatar
+        src={data.image}
+        alt={data.name}
+        sx={{ width: 56, height: 56, mr: 2 }}
       />
 
       {/* Right Side: Name, timestamp and last message */}
@@ -44,9 +44,11 @@ const InboxChatCard = ({ data, isActive, onClick }: InboxChatCardProps) => {
           <Typography variant="subtitle1" fontWeight="bold">
             {data.name}
           </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {momentDateFormatter(data.lastMessageTimeStamp)}
-          </Typography>
+          {data.lastMessageTimeStamp && (
+            <Typography variant="caption" color="text.secondary">
+              {momentDateFormatter(data.lastMessageTimeStamp)}
+            </Typography>
+          )}
         </Box>
         <Typography variant="body2" color="text.secondary">
           {data.lastMessage}

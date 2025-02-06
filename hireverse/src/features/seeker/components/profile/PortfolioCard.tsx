@@ -17,7 +17,7 @@ type PortfolioCardProps = {
 };
 
 const PortfolioCard = ({ editable, username }: PortfolioCardProps) => {
-    const { data: portfolios, setData: setPortfolios, loading, error } = useGet<SeekerPortfolio[]>(() => listSeekerPortfolio(username));
+    const { data: portfolios, setData: setPortfolios, loading, error } = useGet<SeekerPortfolio[]>(() => listSeekerPortfolio(username), [username]);
 
     const [portfolio, setPortfolio] = useState<SeekerPortfolio | null>(null);
     const [modelOpen, setModelOpen] = useState(false);

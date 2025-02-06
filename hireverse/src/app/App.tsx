@@ -11,6 +11,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { NotificationProvider } from "@core/contexts/NotificationContext";
+import { ChatSocketProvider } from "@core/contexts/ChatSocketContext";
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -21,13 +22,17 @@ function App() {
         <MsalProvider instance={msalInstance}>
           <Provider store={store}>
             <NotificationProvider>
-              <ThemeProvider theme={theme}>
-                <LocalizationProvider dateAdapter={AdapterMoment}>
-                  <CssBaseline />
-                  <AppRoutes />
-                </LocalizationProvider>
-              </ThemeProvider>
-              <Toaster richColors={true} visibleToasts={2} />
+              <ChatSocketProvider>
+
+                <ThemeProvider theme={theme}>
+                  <LocalizationProvider dateAdapter={AdapterMoment}>
+                    <CssBaseline />
+                    <AppRoutes />
+                  </LocalizationProvider>
+                </ThemeProvider>
+                <Toaster richColors={true} visibleToasts={2} />
+                
+              </ChatSocketProvider>
             </NotificationProvider>
           </Provider>
         </MsalProvider>

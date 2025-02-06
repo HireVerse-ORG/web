@@ -17,7 +17,7 @@ type EducationCardProps = {
 };
 
 const EducationCard = ({ editable, showCount = 2, username }: EducationCardProps) => {
-    const { data: educations, setData: setEducations, loading, error } = useGet<SeekerEducation[]>(() => listSeekerEducation(username));
+    const { data: educations, setData: setEducations, loading, error } = useGet<SeekerEducation[]>(() => listSeekerEducation(username), [username]);
 
     const [showAll, setShowAll] = useState(false);
     const [visibleEducations, setVisibleEducations] = useState<SeekerEducation[]>([]);

@@ -15,7 +15,7 @@ type ProfileUrlCardProps = {
 };
 
 const ProfileUrlCard = ({ editable, username }: ProfileUrlCardProps) => {
-    const { data: profileUsername, setData: setProfileUsername, loading, error } = useGet<string>(() => getSeekerUsername(username));
+    const { data: profileUsername, setData: setProfileUsername, loading, error } = useGet<string>(() => getSeekerUsername(username), [username]);
     const [profileUrl, setProfileUrl] = useState<string>("");
 
     const baseUrl = import.meta.env.VITE_APP_URL;
