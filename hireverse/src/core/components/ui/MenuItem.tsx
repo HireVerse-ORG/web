@@ -1,3 +1,4 @@
+import { getMyUnreadMessageCount } from "@core/api/shared/chatsApi";
 import { Badge, Box, ListItem, ListItemButton, ListItemText, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -15,11 +16,18 @@ const MenuItem = ({ name, icon, path, onItemClick }: MenuItemProps) => {
     const isActive = location.pathname === path;
 
     useEffect(() => {
-        if (name === "Messages") {
-            setBadge(1000)
-            return () => {
+        const fetchUnreadMessages = async () => {
+            try {
+                if (name === "Messages") {
+                    const {count} = await getMyUnreadMessageCount();
+                    setBadge(count);
+                }
+            } catch (error) {
+                console.error("Error fetching unread messages:", error);
             }
-        }
+        };
+
+        fetchUnreadMessages();
     }, [name])
 
     return (

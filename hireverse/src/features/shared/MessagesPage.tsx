@@ -12,7 +12,7 @@ const MessagesPage = () => {
   const [showChat, setShowChat] = useState(false);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     const chatId = searchParams.get('chatId');
@@ -24,6 +24,7 @@ const MessagesPage = () => {
 
   const handleInboxClick = (chatId: string) => {
     setActiveChatId(chatId);
+    setSearchParams({ ...Object.fromEntries(searchParams), chatId });
     setShowChat(true);
   };
 

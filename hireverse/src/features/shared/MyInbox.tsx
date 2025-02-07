@@ -2,7 +2,8 @@ import { listConversations } from '@core/api/shared/chatsApi';
 import InboxChatCardSkeleton from '@core/components/chat/InboxCardSkeleton';
 import InboxChatCard from '@core/components/chat/InboxChatCard';
 import useGet from '@core/hooks/useGet';
-import { IConversationWithSenderProfle } from '@core/types/conversation.interface';
+import useAppSelector from '@core/hooks/useSelector';
+import { IConversation } from '@core/types/conversation.interface';
 import { ChatBubbleOutline } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -13,7 +14,8 @@ type MyInboxProps = {
 };
 
 const MyInbox = ({ onSelectChat, activeChatId }: MyInboxProps) => {
-    const [conversations, setConversations] = useState<IConversationWithSenderProfle[]>([]); 
+      const user = useAppSelector(state => state.auth.user);
+    const [conversations, setConversations] = useState<IConversation[]>([]); 
     const { data, loading, error } = useGet(listConversations);
 
     useEffect(() => {
@@ -42,19 +44,23 @@ const MyInbox = ({ onSelectChat, activeChatId }: MyInboxProps) => {
                     </Typography>
                 </Box>
             ) : (
-                conversations.map((chat) => (
-                    <InboxChatCard
-                        key={chat.id}
-                        data={{
-                            name: chat.senderProfile?.name || "Unknown",
-                            image: chat.senderProfile?.image || "",
-                            lastMessage: chat.lastMessage?.text || "",
-                            lastMessageTimeStamp: chat.lastMessage?.sentAt
-                        }}
-                        onClick={() => onSelectChat && onSelectChat(chat.id)}
-                        isActive={activeChatId === chat.id}
-                    />
-                ))
+                conversations.map((chat) => {
+                    const isUnread = activeChatId !== chat.id && chat.lastMessage?.status !== "read" && user?.id !== chat.lastMessage?.sender;
+                    return (
+                        <InboxChatCard
+                            key={chat.id}
+                            data={{
+                                name: chat.title || "Unknown",
+                                image: chat.thumbnail || "",
+                                lastMessage: chat.lastMessage?.content || "",
+                                lastMessageTimeStamp: chat.lastMessage?.sentAt,
+                            }}
+                            onClick={() => onSelectChat && onSelectChat(chat.id)}
+                            isActive={activeChatId === chat.id}
+                            isUnread={isUnread}
+                        />
+                    )
+                })
             )}
         </Box>
     );    
