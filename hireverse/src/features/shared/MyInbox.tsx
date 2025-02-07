@@ -46,8 +46,8 @@ const MyInbox = ({ onSelectChat, activeChatId }: MyInboxProps) => {
                     <InboxChatCard
                         key={chat.id}
                         data={{
-                            name: chat.senderProfile.name,
-                            image: chat.senderProfile.image || "",
+                            name: chat.senderProfile?.name || "Unknown",
+                            image: chat.senderProfile?.image || "",
                             lastMessage: chat.lastMessage?.text || "",
                             lastMessageTimeStamp: chat.lastMessage?.sentAt
                         }}

@@ -3,8 +3,7 @@ export type SeekerSubscriptioPlan = "free" | "basic" | "premium";
 export interface ISeekerSubscription {
     plan: SeekerSubscriptioPlan;
     jobApplicationsPerMonth: number;
-    canMessageAllSeekers: boolean;
-    canMessageOnlySeekers: boolean;
+    canMessageAnyone: boolean;
 }
 
 export interface ISeekerSubscriptionUsage {

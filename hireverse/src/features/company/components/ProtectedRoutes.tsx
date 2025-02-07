@@ -4,7 +4,7 @@ import { Box, Typography } from "@mui/material";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 const ProtectedRoute = () => {
-    const { companyProfile, loading } = useCompanyContext();
+    const { companyProfile, loading, fetched } = useCompanyContext();
     const location = useLocation();
 
     const excludedPaths = ["/company/settings", "/company/profile"];
@@ -23,7 +23,7 @@ const ProtectedRoute = () => {
         return <PageLoader />;
     }
 
-    if (!loading && !companyProfile) {
+    if (fetched && !companyProfile) {
         return <Navigate to="/company/profile-creation" replace state={{from: location.pathname}} />;
     }
 

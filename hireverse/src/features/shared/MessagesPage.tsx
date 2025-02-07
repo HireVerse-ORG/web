@@ -1,15 +1,26 @@
 import { Box, useMediaQuery, Slide } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import MyInbox from './MyInbox';
 import ChatContainer from '@core/components/chat/ChatContainer';
 import colors from '@core/theme/colors';
+import { useSearchParams } from 'react-router-dom';
 
 const MessagesPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [showChat, setShowChat] = useState(false);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
+
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const chatId = searchParams.get('chatId');
+    if (chatId) {
+      setActiveChatId(chatId);
+      setShowChat(true); 
+    }
+  }, [searchParams]);
 
   const handleInboxClick = (chatId: string) => {
     setActiveChatId(chatId);

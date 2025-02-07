@@ -11,9 +11,10 @@ type FollowButtonProps = {
     followedUserId: string;
     followedUserType: UserRoles;
     onUnfollowed?: () => void;
+    onDataFetched?: (data: IFollowers | null) => void;
 };
 
-const FollowButton = ({ followerId, followedUserId, followedUserType, onUnfollowed }: FollowButtonProps) => {
+const FollowButton = ({ followerId, followedUserId, followedUserType, onUnfollowed, onDataFetched }: FollowButtonProps) => {
     const [followDetails, setFollowDetails] = useState<IFollowers | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -25,6 +26,7 @@ const FollowButton = ({ followerId, followedUserId, followedUserType, onUnfollow
                 setLoading(true);
                 const { followDetails } = await getfollowDetails(followedUserId);
                 setFollowDetails(followDetails);
+                onDataFetched?.(followDetails)
             } catch (error) {
                 console.error("Failed to fetch follow details:", error);
             } finally {

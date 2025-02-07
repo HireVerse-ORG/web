@@ -7,22 +7,25 @@ interface CompanyContextType {
     companyProfile: ICompanyProfile | null;
     setCompanyProfile: (profile: ICompanyProfile | null) => void;
     loading: boolean;
+    fetched: boolean;
 }
 
 const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
 
 export const CompanyProvider = ({ children }: { children: ReactNode }) => {
     const [companyProfile, setCompanyProfile] = useState<ICompanyProfile | null>(null);
+    const [fetched, setfetched] = useState(false);
     const { data, loading } = useGet<ICompanyProfile | null>(getCompanyProfile);
 
     useEffect(() => {
         if (data) {
             setCompanyProfile(data);
+            setfetched(true);
         }
     }, [data]);
 
     return (
-        <CompanyContext.Provider value={{ companyProfile, setCompanyProfile, loading }}>
+        <CompanyContext.Provider value={{ companyProfile, setCompanyProfile, loading, fetched }}>
             {children}
         </CompanyContext.Provider>
     );

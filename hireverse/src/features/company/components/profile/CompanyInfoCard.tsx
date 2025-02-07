@@ -28,6 +28,7 @@ const CompanyInfoCard = ({ mode, profile, loading }: CompanyInfoCardProps) => {
     const [followersCount, setFollowersCount] = useState(0);
     const [followerModalOpen, setFollowerModalOpen] = useState(false);
     const [followerListUserId, setFollowerListUserId] = useState<string | null>(null);
+    const [isFollowing, setIsFollowing] = useState<boolean>(false);
 
     useEffect(() => {
         if (!profile?.userId || !user?.id) return;
@@ -55,6 +56,7 @@ const CompanyInfoCard = ({ mode, profile, loading }: CompanyInfoCardProps) => {
 
     const handleUnfollowed = () => {
         setFollowersCount(prev => prev - 1);
+        setIsFollowing(false);
     }
 
     const handleFollowerModelClose = () => {
@@ -177,12 +179,25 @@ const CompanyInfoCard = ({ mode, profile, loading }: CompanyInfoCardProps) => {
                             alignItems: "center",
                             gap: 2,
                         }}>
-                            <MessageButton toId={user.id} />
+                            <MessageButton 
+                                toId={profile.userId} 
+                                toName={profile.name} 
+                                toType="company" 
+                                fromId={user.id} 
+                                fromType={user.role}
+                                isFollowing={isFollowing} 
+                            />
                             <FollowButton
                                 followerId={user.id}
                                 followedUserId={profile.userId}
                                 followedUserType="company"
-                                onUnfollowed={handleUnfollowed} />
+                                onUnfollowed={handleUnfollowed}
+                                onDataFetched={(data) => {
+                                    if(data && data.requestStatus === "accepted"){
+                                        setIsFollowing(true);
+                                    }
+                                }} 
+                            />
                         </Box>
                     )}
                 </Box>
