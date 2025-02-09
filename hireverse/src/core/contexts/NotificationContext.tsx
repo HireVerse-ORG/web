@@ -31,7 +31,13 @@ export const NotificationProvider = ({ children }: NotificationProviderProps) =>
                 },
             });
 
-            setSocket(socketConnection);
+            socketConnection.on('connect', () => {
+                setSocket(socketConnection);
+            });
+
+            socketConnection.on('disconnect', () => {
+                setSocket(null);
+            });
 
             return () => {
                 socketConnection.disconnect();

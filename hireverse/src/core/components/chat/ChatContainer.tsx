@@ -6,6 +6,9 @@ import ChatMessages from './ChatMessages';
 import ChatInput from './ChatInput';
 import { IConversation } from '@core/types/conversation.interface';
 import { getConversationFromId } from '@core/api/shared/chatsApi';
+import { useChatSocket } from '@core/contexts/ChatSocketContext';
+import { toast } from 'sonner';
+import useAppSelector from '@core/hooks/useSelector';
 
 type ChatContainerProps = {
   onBack?: () => void;
@@ -13,9 +16,12 @@ type ChatContainerProps = {
 };
 
 const ChatContainer = ({ onBack, activeChatId }: ChatContainerProps) => {
+  const user = useAppSelector((state) => state.auth.user);
   const [activeChat, setActiveChat] = useState<IConversation | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  const {socket} = useChatSocket();
 
   const fetchConversation = async (conversationId: string) => {
     setLoading(true);
@@ -37,8 +43,27 @@ const ChatContainer = ({ onBack, activeChatId }: ChatContainerProps) => {
     }
   }, [activeChatId]);
 
+  useEffect(() => {
+    if(!activeChat || !socket) return;
+
+    socket.emit('join-room', {roomId: activeChat.id});
+
+    return () => {
+      socket.off('join-room');
+    }
+  }, [socket, activeChat])
+
   const handleSendMessage = (text: string) => {
-    console.log(text);
+    if(socket && activeChat) {
+      socket.emit('send-message', {
+        roomId: activeChat.id,
+        message: text,
+        to: activeChat.participants.filter(participant => participant.id === user?.id)[0]
+      });
+      return;
+    }
+
+    toast.error("Couldn't send message")
   };
 
   return (

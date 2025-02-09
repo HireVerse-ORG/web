@@ -29,11 +29,9 @@ export const ChatSocketProvider = ({ children }: ChatSocketProviderProps) => {
                 },
             });
 
-            setSocket(socketConnection);
-
             socketConnection.on('connect', () => {
-                socketConnection.emit('join', {data: "test data"})
-            })
+                setSocket(socketConnection);
+            });
 
             socketConnection.on('disconnect', () => {
                 setSocket(null);

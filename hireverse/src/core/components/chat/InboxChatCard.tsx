@@ -1,6 +1,6 @@
 import colors from '@core/theme/colors';
-import { momentDateFormatter } from '@core/utils/helper';
 import { Box, Avatar, Typography } from '@mui/material';
+import moment from 'moment';
 
 type InboxChatCardProps = {
   data: {
@@ -50,7 +50,7 @@ const InboxChatCard = ({ data, isActive, isUnread=false, onClick }: InboxChatCar
           </Box>
           {data.lastMessageTimeStamp && (
             <Typography variant="caption" color="text.secondary">
-              {momentDateFormatter(data.lastMessageTimeStamp)}
+              {moment(data.lastMessageTimeStamp).format("hh:mm A")}
             </Typography>
           )}
         </Box>

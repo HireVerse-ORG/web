@@ -16,6 +16,10 @@ const CompanyProfilePage = () => {
         })
     }
 
+    if(!companyProfile){
+        return null;
+    }
+
     return (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pb: 3 }}>
             <CompanyInfoCard mode={mode} profile={companyProfile!} />
@@ -28,7 +32,7 @@ const CompanyProfilePage = () => {
                 facebook: companyProfile?.socialLinks.facebook,
                 twitter: companyProfile?.socialLinks.twitter,
             }} />
-            <CompanyImagesCard mode={mode} companyName={companyProfile!.name} images={companyProfile!.workplaceImages} onImageRemove={handleImageRemove}/>
+            <CompanyImagesCard mode={mode} companyName={companyProfile.name} images={companyProfile.workplaceImages} onImageRemove={handleImageRemove}/>
             {/* <CompanyBenifitList mode={mode} /> */}
         </Box>
     );
