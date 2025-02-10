@@ -12,6 +12,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { NotificationProvider } from "@core/contexts/NotificationContext";
 import { ChatSocketProvider } from "@core/contexts/ChatSocketContext";
+import { MessageProvider } from "@core/contexts/MessageContext";
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -23,6 +24,7 @@ function App() {
           <Provider store={store}>
             <NotificationProvider>
               <ChatSocketProvider>
+                <MessageProvider>
 
                 <ThemeProvider theme={theme}>
                   <LocalizationProvider dateAdapter={AdapterMoment}>
@@ -31,7 +33,8 @@ function App() {
                   </LocalizationProvider>
                 </ThemeProvider>
                 <Toaster richColors={true} visibleToasts={2} />
-                
+
+                </MessageProvider>
               </ChatSocketProvider>
             </NotificationProvider>
           </Provider>

@@ -18,7 +18,7 @@ const Header = () => {
     const [isAnimating, setIsAnimating] = useState(false);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
+    
     const { socket, notificationCount, setNotificationCount } = useNotificationSocket();
 
     useEffect(() => {

@@ -76,10 +76,27 @@ const ChatMessages = ({ conversationId, styles }: ChatMessagesProps) => {
       );
     });
 
+    socket.on('read-all-messages', (data: {userId: string}) => {
+      const {userId} = data;
+      
+      setMessages((prev) => 
+        prev.map((message) => {
+          if (message.recipient === userId) {
+            return {
+             ...message,
+             status: "read",
+            };
+          }
+          return message;
+        })
+      )
+    })
+
     return () => {
       socket.off("message-send", handleSendMessage);
       socket.off("new-message", handleIncomingMessage);
       socket.off("message-updated");
+      socket.off("read-all-messages");
     };
   }, [socket, conversationId]);
 

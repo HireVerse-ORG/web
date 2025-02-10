@@ -1,7 +1,7 @@
 import colors from '@core/theme/colors';
 import { ArrowBackIosNewOutlined } from '@mui/icons-material';
 import { Avatar, Box, CircularProgress, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ChatMessages from './ChatMessages';
 import ChatInput from './ChatInput';
 import { IConversation } from '@core/types/conversation.interface';
@@ -21,7 +21,7 @@ const ChatContainer = ({ onBack, activeChatId }: ChatContainerProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const {socket} = useChatSocket();
+  const { socket } = useChatSocket();
 
   const fetchConversation = async (conversationId: string) => {
     setLoading(true);
@@ -44,9 +44,9 @@ const ChatContainer = ({ onBack, activeChatId }: ChatContainerProps) => {
   }, [activeChatId]);
 
   useEffect(() => {
-    if(!activeChat || !socket) return;
+    if (!activeChat || !socket) return;
 
-    socket.emit('join-room', {roomId: activeChat.id});
+    socket.emit('join-room', { roomId: activeChat.id });
 
     return () => {
       socket.off('join-room');
@@ -54,7 +54,7 @@ const ChatContainer = ({ onBack, activeChatId }: ChatContainerProps) => {
   }, [socket, activeChat])
 
   const handleSendMessage = (text: string) => {
-    if(socket && activeChat) {
+    if (socket && activeChat) {
       socket.emit('send-message', {
         roomId: activeChat.id,
         message: text,
@@ -65,6 +65,14 @@ const ChatContainer = ({ onBack, activeChatId }: ChatContainerProps) => {
 
     toast.error("Couldn't send message")
   };
+
+  const handleTobBarClick = useCallback(() => {
+    if (activeChat && activeChat.profileType && activeChat.profilePublicId) {
+      const profileLink = activeChat.profileType === "seeker" ?
+        `/${activeChat.profilePublicId}` : `/company-view/${activeChat.profilePublicId}`
+      window.open(profileLink, "_blank");
+    }
+  }, [activeChat])
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 145px)' }}>
@@ -89,9 +97,15 @@ const ChatContainer = ({ onBack, activeChatId }: ChatContainerProps) => {
             <CircularProgress size={24} />
           ) : activeChat && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Avatar src={activeChat.thumbnail} alt={activeChat.title} />
+              <Avatar src={activeChat.thumbnail} alt={activeChat.title}
+                sx={{ cursor: 'pointer' }}
+                onClick={handleTobBarClick}
+              />
               <Box>
-                <Typography variant="h6">{activeChat.title}</Typography>
+                <Typography variant="h6"
+                  sx={{ cursor: 'pointer' }}
+                  onClick={handleTobBarClick}
+                >{activeChat.title}</Typography>
               </Box>
             </Box>
           )}

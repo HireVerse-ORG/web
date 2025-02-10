@@ -5,38 +5,51 @@ import MyInbox from './MyInbox';
 import ChatContainer from '@core/components/chat/ChatContainer';
 import colors from '@core/theme/colors';
 import { useSearchParams } from 'react-router-dom';
+import { useMessage } from '@core/contexts/MessageContext';
 
 const MessagesPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [showChat, setShowChat] = useState(false);
-  const [activeChatId, setActiveChatId] = useState<string | null>(null);
+
+  const { activeConversation, setActiveConversation } = useMessage();
 
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
+    return () => {
+      setActiveConversation(null);
+    };
+  }, [setActiveConversation]);
+
+  useEffect(() => {
     const chatId = searchParams.get('chatId');
     if (chatId) {
-      setActiveChatId(chatId);
-      setShowChat(true); 
+      setActiveConversation(chatId);
+      setShowChat(true);
     }
   }, [searchParams]);
 
   const handleInboxClick = (chatId: string) => {
-    setActiveChatId(chatId);
+    setActiveConversation(chatId);
     setSearchParams({ ...Object.fromEntries(searchParams), chatId });
     setShowChat(true);
   };
 
   if (isMobile) {
     const handleBack = () => {
-        setActiveChatId(null);
-        setShowChat(false);
+      setSearchParams(prev => {
+        const params = { ...Object.fromEntries(prev.entries()) };
+        delete params.chatId;
+        return params;
+      });
+      setActiveConversation(null);
+      setShowChat(false);
     }
     return (
-      <Box sx={{ height: "100%"}}>
+      <Box sx={{ height: "100%" }}>
         {!showChat ? (
-          <MyInbox onSelectChat={handleInboxClick} activeChatId={activeChatId} />
+          <MyInbox onSelectChat={handleInboxClick} activeChatId={activeConversation} />
         ) : (
           <Slide
             direction="left"
@@ -45,7 +58,7 @@ const MessagesPage = () => {
             unmountOnExit
           >
             <Box sx={{ height: "inherit" }}>
-              <ChatContainer onBack={handleBack} activeChatId={activeChatId} />
+              <ChatContainer onBack={handleBack} activeChatId={activeConversation} />
             </Box>
           </Slide>
         )}
@@ -56,10 +69,10 @@ const MessagesPage = () => {
   return (
     <Box display="flex" height="100%">
       <Box minWidth="350px" borderRight={`1px solid ${colors.borderColour}`}>
-        <MyInbox onSelectChat={handleInboxClick} activeChatId={activeChatId} />
+        <MyInbox onSelectChat={handleInboxClick} activeChatId={activeConversation} />
       </Box>
       <Box flex={1}>
-        <ChatContainer activeChatId={activeChatId} />
+        <ChatContainer activeChatId={activeConversation} />
       </Box>
     </Box>
   );

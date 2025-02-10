@@ -32,13 +32,20 @@ const MyInbox = ({ onSelectChat, activeChatId }: MyInboxProps) => {
     useEffect(() => {
         if (conversations.length === 0 || !socket) return;
 
-        const handleIncomingMessage = (message: IMessage) => {
+        const handleIncomingMessage = (message: IMessage, eventType: "new-message-notification" | "message-send") => {
+            console.log("Incoming message: ", message);
+            
             setConversations(prevConversations => {
                 const updatedConversations = prevConversations.map(chat => {
                     if (chat.id === message.conversation) {
                         return {
                             ...chat,
-                            lastMessage: message,
+                            lastMessage: {
+                                ...message,
+                                status: eventType === "new-message-notification" && message.conversation === activeChatId
+                                    ? "read"
+                                    : message.status,
+                            },
                         };
                     }
                     return chat;
@@ -54,14 +61,23 @@ const MyInbox = ({ onSelectChat, activeChatId }: MyInboxProps) => {
             });
         };
 
-        socket.on("new-message-notification", handleIncomingMessage);
-        socket.on("message-send", handleIncomingMessage);
+        const handleNewMessageNotification = (message: IMessage) => {
+            handleIncomingMessage(message, "new-message-notification");
+        };
+
+        const handleMessageSend = (message: IMessage) => {
+            handleIncomingMessage(message, "message-send");
+        };
+
+        socket.on("new-message-notification", handleNewMessageNotification);
+        socket.on("message-send", handleMessageSend);
 
         return () => {
-            socket.off("new-message-notification", handleIncomingMessage);
-            socket.off("message-send", handleIncomingMessage);
+            socket.off("new-message-notification", handleNewMessageNotification);
+            socket.off("message-send", handleMessageSend);
         };
-    }, [socket, conversations]);
+    }, [socket, conversations, activeChatId]);
+
 
     const flipKey = conversations.map(chat => chat.id).join(",");
 
@@ -86,7 +102,8 @@ const MyInbox = ({ onSelectChat, activeChatId }: MyInboxProps) => {
             ) : (
                 <Flipper flipKey={flipKey}>
                     {conversations.map((chat) => {
-                        const isUnread = activeChatId !== chat.id && chat.lastMessage?.status !== "read" && user?.id !== chat.lastMessage?.sender;
+                        let isUnread = activeChatId !== chat.id && chat.lastMessage?.status !== "read" && user?.id !== chat.lastMessage?.sender;
+
                         return (
                             <Flipped key={chat.id} flipId={chat.id}>
                                 <div>
@@ -97,7 +114,13 @@ const MyInbox = ({ onSelectChat, activeChatId }: MyInboxProps) => {
                                             lastMessage: chat.lastMessage?.content || "",
                                             lastMessageTimeStamp: chat.lastMessage?.sentAt,
                                         }}
-                                        onClick={() => onSelectChat && onSelectChat(chat.id)}
+                                        onClick={() => {
+                                            if (isUnread && chat.lastMessage) {
+                                                isUnread = false;
+                                                chat.lastMessage.status = "read"
+                                            }
+                                            onSelectChat && onSelectChat(chat.id)
+                                        }}
                                         isActive={activeChatId === chat.id}
                                         isUnread={isUnread}
                                     />
