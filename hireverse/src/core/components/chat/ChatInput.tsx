@@ -7,22 +7,37 @@ import colors from "@core/theme/colors";
 
 type ChatInputProps = {
     onSendMessage: (message: string) => void;
+    onTyping?: (isTyping: boolean) => void;
     styles?: SxProps;
 };
 
-const ChatInput = ({ onSendMessage, styles }: ChatInputProps) => {
+const ChatInput = ({ onSendMessage, onTyping, styles }: ChatInputProps) => {
     const [message, setMessage] = useState("");
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const emojiPickerRef = useRef<HTMLDivElement>(null);
+    const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const handleSend = () => {
         if (!message.trim()) return;
         onSendMessage(message);
         setMessage("");
+        if (onTyping) onTyping(false);
     };
 
     const handleEmojiSelect = (emoji: any) => {
         setMessage((prev) => prev + emoji.native);
+        if (onTyping) onTyping(true);
+    };
+
+    const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setMessage(e.target.value);
+        if (onTyping) {
+            onTyping(true);
+            if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+            typingTimeoutRef.current = setTimeout(() => {
+                onTyping(false);
+            }, 2000);
+        }
     };
 
     useEffect(() => {
@@ -46,20 +61,21 @@ const ChatInput = ({ onSendMessage, styles }: ChatInputProps) => {
             {/* Emoji Picker */}
             {showEmojiPicker && (
                 <Box ref={emojiPickerRef} sx={{ position: "absolute", bottom: 50, left: 0, zIndex: 10 }}>
-                    <Picker data={data}
-                        onEmojiSelect={handleEmojiSelect}
-                    />
+                    <Picker data={data} onEmojiSelect={handleEmojiSelect} />
                 </Box>
             )}
 
             {/* Emoji Button */}
-            <IconButton onClick={() => setShowEmojiPicker((prev) => !prev)} sx={{
-                mr: 0.5,
-                color: `${colors.borderColour}`,
-                "&:hover": {
-                    color: "primary.main"
-                }
-            }}>
+            <IconButton
+                onClick={() => setShowEmojiPicker((prev) => !prev)}
+                sx={{
+                    mr: 0.5,
+                    color: `${colors.borderColour}`,
+                    "&:hover": {
+                        color: "primary.main",
+                    },
+                }}
+            >
                 <EmojiEmotionsOutlined />
             </IconButton>
 
@@ -70,7 +86,7 @@ const ChatInput = ({ onSendMessage, styles }: ChatInputProps) => {
                 size="small"
                 placeholder="Type a message..."
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={handleTyping}
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
             />
 

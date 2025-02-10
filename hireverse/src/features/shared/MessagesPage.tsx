@@ -68,7 +68,7 @@ const MessagesPage = () => {
 
   return (
     <Box display="flex" height="100%">
-      <Box minWidth="350px" borderRight={`1px solid ${colors.borderColour}`}>
+      <Box width="350px" borderRight={`1px solid ${colors.borderColour}`}>
         <MyInbox onSelectChat={handleInboxClick} activeChatId={activeConversation} />
       </Box>
       <Box flex={1}>

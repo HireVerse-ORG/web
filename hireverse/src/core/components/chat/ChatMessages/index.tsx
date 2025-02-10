@@ -9,6 +9,7 @@ import ScrollableContainer from "@core/components/ui/ScrollableContainer";
 import DateGroup from "./DateGroup";
 import MessageBubble from "./MessageBubble";
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
+import TypingIndicator from "./TypingIndicator";
 
 type ChatMessagesProps = {
   conversationId: string;
@@ -34,6 +35,7 @@ const ChatMessages = ({ conversationId, styles }: ChatMessagesProps) => {
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
   const loadingRef = useRef(loading);
   const hasMoreRef = useRef(hasMore);
+  const [typingUsers, setTypingUsers] = useState<string[]>([]);
 
   // Keep refs up to date
   useEffect(() => {
@@ -68,6 +70,20 @@ const ChatMessages = ({ conversationId, styles }: ChatMessagesProps) => {
       socket.emit("read-message", { roomId: conversationId, messageId: message.id });
     };
 
+    const handleTypingStatus = (data: { userId: string; isTyping: boolean }) => {
+      setTypingUsers((prev) => {
+        if (data.isTyping) {
+          return prev.includes(data.userId) ? prev : [...prev, data.userId];
+        } else {
+          return prev.filter((id) => id !== data.userId);
+        }
+      });
+
+      if (isAtBottomRef.current) {
+        scrollToBottom();
+      }
+    };
+
     socket.on("message-send", handleSendMessage);
     socket.on("new-message", handleIncomingMessage);
     socket.on("message-updated", (message: IMessage) => {
@@ -76,21 +92,23 @@ const ChatMessages = ({ conversationId, styles }: ChatMessagesProps) => {
       );
     });
 
-    socket.on('read-all-messages', (data: {userId: string}) => {
-      const {userId} = data;
-      
-      setMessages((prev) => 
+    socket.on('read-all-messages', (data: { userId: string }) => {
+      const { userId } = data;
+
+      setMessages((prev) =>
         prev.map((message) => {
           if (message.recipient === userId) {
             return {
-             ...message,
-             status: "read",
+              ...message,
+              status: "read",
             };
           }
           return message;
         })
       )
     })
+
+    socket.on('typing-status', handleTypingStatus)
 
     return () => {
       socket.off("message-send", handleSendMessage);
@@ -201,7 +219,7 @@ const ChatMessages = ({ conversationId, styles }: ChatMessagesProps) => {
             <DateGroup key={date} date={date}>
               {msgs.map((msg) => (
                 <MessageBubble
-                  key={msg.id}
+                  key={`${msg.id}-${msg.sentAt}`}
                   message={msg}
                   isOwn={user?.id === msg.sender}
                 />
@@ -210,6 +228,11 @@ const ChatMessages = ({ conversationId, styles }: ChatMessagesProps) => {
           ))
         )}
         <div ref={messagesEndRef} />
+        {typingUsers.length > 0 && (
+          <Box sx={{ display: "flex", justifyContent: "start"}}>
+            <TypingIndicator />
+          </Box>
+        )}
       </ScrollableContainer>
 
       <Fade in={!isAtBottom && newMessagesCount > 0}>

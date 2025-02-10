@@ -66,6 +66,12 @@ const ChatContainer = ({ onBack, activeChatId }: ChatContainerProps) => {
     toast.error("Couldn't send message")
   };
 
+  const handleTyping = (isTyping: boolean) => {
+    if (socket && activeChat) {
+      socket.emit('typing', { roomId: activeChat.id, isTyping });
+    }
+  };
+
   const handleTobBarClick = useCallback(() => {
     if (activeChat && activeChat.profileType && activeChat.profilePublicId) {
       const profileLink = activeChat.profileType === "seeker" ?
@@ -128,7 +134,7 @@ const ChatContainer = ({ onBack, activeChatId }: ChatContainerProps) => {
       </Box>
 
       {/* Chat Input */}
-      {activeChat && !loading && !error && <ChatInput onSendMessage={handleSendMessage} />}
+      {activeChat && !loading && !error && <ChatInput onSendMessage={handleSendMessage} onTyping={handleTyping} />}
     </Box>
   );
 };

@@ -33,8 +33,6 @@ const MyInbox = ({ onSelectChat, activeChatId }: MyInboxProps) => {
         if (conversations.length === 0 || !socket) return;
 
         const handleIncomingMessage = (message: IMessage, eventType: "new-message-notification" | "message-send") => {
-            console.log("Incoming message: ", message);
-            
             setConversations(prevConversations => {
                 const updatedConversations = prevConversations.map(chat => {
                     if (chat.id === message.conversation) {
