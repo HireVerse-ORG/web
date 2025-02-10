@@ -1,6 +1,6 @@
 import colors from '@core/theme/colors';
 import { ArrowBackIosNewOutlined } from '@mui/icons-material';
-import { Avatar, Box, CircularProgress, Typography } from '@mui/material';
+import { Avatar, Box, CircularProgress, Skeleton, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import ChatMessages from './ChatMessages';
 import ChatInput from './ChatInput';
@@ -100,7 +100,12 @@ const ChatContainer = ({ onBack, activeChatId }: ChatContainerProps) => {
             </Box>
           )}
           {loading ? (
-            <CircularProgress size={24} />
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <Skeleton variant="circular" width={40} height={40} />
+              <Box>
+                <Skeleton variant="text" width={120} height={24} />
+              </Box>
+            </Box>
           ) : activeChat && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Avatar src={activeChat.thumbnail} alt={activeChat.title}

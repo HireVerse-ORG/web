@@ -1,13 +1,16 @@
-import { Box, Typography, Avatar, Skeleton, Divider, Button, IconButton, Tooltip } from "@mui/material";
+import { Box, Typography, Avatar, Skeleton, Divider, IconButton, Tooltip } from "@mui/material";
 import colors from "@core/theme/colors";
 import SegmentedProgressBar from "@core/components/ui/SegmentedProgressBar";
 import { JobApplicationStatus } from "@core/types/job.application.interface";
 import { applicantStagesOrder, getApplicantStagesOrder } from "@core/utils/ui";
 import { ArrowOutward, EmailOutlined, Phone } from "@mui/icons-material";
 import { momentDateFormatter } from "@core/utils/helper";
+import MessageButton from "@core/components/chat/MessageButton";
+import useAppSelector from "@core/hooks/useSelector";
 
 type ApplicantInfoCardProps = {
     data: {
+        applicantUserId: string;
         profilePicture: string;
         fullName: string;
         currentPosition: string;
@@ -17,15 +20,15 @@ type ApplicantInfoCardProps = {
         email: string;
         phone: string;
     };
-    onMessageClick: () => void;
     onViewProfileClick: () => void;
 };
 
 const ApplicantInfoCard = ({
     data,
-    onMessageClick,
     onViewProfileClick
 }: ApplicantInfoCardProps) => {
+    const user = useAppSelector(state => state.auth.user);
+
     const {
         profilePicture,
         fullName,
@@ -184,16 +187,20 @@ const ApplicantInfoCard = ({
                     </Box>
                 </Box>
                 {/* Message Button */}
-                <Box sx={{ mt: 2 }}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        onClick={onMessageClick}
-                    >
-                        Message Applicant
-                    </Button>
-                </Box>
+                {data.applicantUserId && user && (
+                    <Box sx={{ mt: 2 }}>
+                        <MessageButton 
+                            fromId={user.id} 
+                            fromType="company"
+                            toId={data.applicantUserId}
+                            toType="seeker"
+                            toName={fullName}
+                            sx={{
+                                width: "100% !important",
+                            }}
+                        />
+                    </Box>
+                )}        
             </Box>
         </Box>
     );

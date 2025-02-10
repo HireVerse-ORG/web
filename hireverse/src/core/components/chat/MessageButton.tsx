@@ -1,7 +1,7 @@
-import { Button, CircularProgress, TextField, Box } from "@mui/material";
+import { Button, CircularProgress, TextField, Box, SxProps } from "@mui/material";
 import { ChatBubbleOutline } from "@mui/icons-material";
 import { UserRoles } from "@core/types/user.interface";
-import { useEffect, useState } from "react";
+import { useEffect, useState, ReactNode } from "react";
 import { getConversationDetails, startConversation } from "@core/api/shared/chatsApi";
 import CustomDialog from "../ui/CustomDialog";
 import { useNavigate } from "react-router-dom";
@@ -16,13 +16,26 @@ type MessageButtonProps = {
     fromId: string;
     fromType: UserRoles;
     isFollowing?: boolean;
-};
+    buttonText?: string;
+    sx?: SxProps;
+    icon?: ReactNode;
+} & React.ComponentProps<typeof Button>;
 
-const MessageButton = ({ toId, toType, toName, fromId, fromType, isFollowing }: MessageButtonProps) => {
+const MessageButton = ({ 
+    toId, 
+    toType, 
+    toName, 
+    fromId, 
+    fromType, 
+    isFollowing,
+    buttonText = "Message",
+    sx = {}, 
+    icon = <ChatBubbleOutline />, 
+    ...props
+}: MessageButtonProps) => {
     const [loading, setLoading] = useState(false);
     const [chatId, setChatId] = useState<string | null>(null);
     const [plan, setPlan] = useState<SeekerSubscriptioPlan | null>(null);
-
     const [startChatModel, setStartChatModel] = useState(false);
     const [message, setMessage] = useState("");
     const [error, setError] = useState<string | null>(null);
@@ -32,14 +45,12 @@ const MessageButton = ({ toId, toType, toName, fromId, fromType, isFollowing }: 
     useEffect(() => {
         const checkConditions = async () => {
             setLoading(true);
-
             try {
                 const chat = await getConversationDetails(toId, fromId);
                 setChatId(chat.id);
             } catch (error) {
                 setChatId(null);
             }
-
             if (fromType === "seeker") {
                 try {
                     const subscription = await getSeekerSubscription();
@@ -48,10 +59,8 @@ const MessageButton = ({ toId, toType, toName, fromId, fromType, isFollowing }: 
                     setPlan(null);
                 }
             }
-
             setLoading(false);
         };
-
         checkConditions();
     }, [toId, fromId]);
 
@@ -62,20 +71,11 @@ const MessageButton = ({ toId, toType, toName, fromId, fromType, isFollowing }: 
             return;
         }
 
-        if (fromType === "company") {
+        if (fromType === "company" || (fromType === "seeker" && (isFollowing || plan !== "free"))) {
             setStartChatModel(true);
-            return;
+        } else {
+            toast.warning("Upgrade your plan to start a conversation.");
         }
-
-        if (fromType === "seeker") {
-            if ((isFollowing || plan !== "free")) {
-                setStartChatModel(true);
-                return;
-            } else {
-                toast.warning("Upgrade your plan to start conversation.")
-            }
-        }
-
     };
 
     const handleStartChat = async () => {
@@ -89,12 +89,11 @@ const MessageButton = ({ toId, toType, toName, fromId, fromType, isFollowing }: 
             const newChat = await startConversation({
                 participantId: toId,
                 participantRole: toType,
-                message
+                message,
             });
 
             setChatId(newChat.id);
-            const chatPage = fromType === "seeker" ? `/seeker/messages?chatId=${newChat.id}` : `/company/messages?chatId=${newChat.id}`;
-            navigate(chatPage);
+            navigate(fromType === "seeker" ? `/seeker/messages?chatId=${newChat.id}` : `/company/messages?chatId=${newChat.id}`);
             setStartChatModel(false);
         } catch (error) {
             toast.error("Failed to start conversation. Please try again.");
@@ -110,16 +109,16 @@ const MessageButton = ({ toId, toType, toName, fromId, fromType, isFollowing }: 
                 variant="contained"
                 color="primary"
                 size="small"
-                startIcon={<ChatBubbleOutline />}
+                startIcon={icon}
                 sx={{
                     width: "130px",
-                    "&:hover": {
-                        backgroundColor: "primary.dark",
-                    },
+                    "&:hover": { backgroundColor: "primary.dark" },
+                    ...sx, 
                 }}
                 disabled={loading}
+                {...props} 
             >
-                {loading ? <CircularProgress size={20} /> : "Message"}
+                {loading ? <CircularProgress size={20} /> : `${buttonText}`}
             </Button>
 
             <CustomDialog open={startChatModel} title={`Start Chat with ${toName}`} onClose={() => setStartChatModel(false)}>

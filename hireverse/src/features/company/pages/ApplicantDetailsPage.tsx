@@ -79,6 +79,7 @@ const ApplicantDetailsPage = () => {
                 <Box sx={{ minWidth: "350px" }}>
                     <ApplicantInfoCard
                         data={{
+                            applicantUserId: application.profile?.userId || "",
                             profilePicture: application.profile?.image || "",
                             fullName: application.fullName,
                             currentPosition: application.profile?.title || "",
@@ -87,9 +88,6 @@ const ApplicantDetailsPage = () => {
                             stage: status || application.status,
                             email: application.email,
                             phone: application.phone || ""
-                        }}
-                        onMessageClick={() => {
-                            console.log("Message button clicked!");
                         }}
                         onViewProfileClick={() => {
                             if (application.profile) {
