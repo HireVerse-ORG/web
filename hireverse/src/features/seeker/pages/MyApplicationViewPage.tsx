@@ -8,6 +8,7 @@ import { IJobApplication } from '@core/types/job.application.interface';
 import { getApplicationDetails } from '@core/api/seeker/jobApplicationApi';
 import useGet from '@core/hooks/useGet';
 import { useParams } from 'react-router-dom';
+import ApplicationInterviews from '../../shared/ApplicationInterviews';
 
 const MyApplicationViewPage = () => {
     const { id: applicationId } = useParams<{ id: string }>();
@@ -16,8 +17,6 @@ const MyApplicationViewPage = () => {
     const { data: application,
         loading: applicationLoading,
         error: applicationError } = useGet<IJobApplication>(() => getApplicationDetails(applicationId || ""));
-
-
 
     const handleTabChange = (_: React.SyntheticEvent, newtabValue: string) => {
         setTabValue(newtabValue);
@@ -93,6 +92,7 @@ const MyApplicationViewPage = () => {
                         {application.coverLetter && (
                             <Tab label="Cover Letter" value={"cover-letter"} />
                         )}
+                        <Tab label="Interview Schedules" value={"interview-schedules"} />
                     </Tabs>
                     {/* Tab Content */}
                     <Box sx={{ p: 2 }}>
@@ -124,6 +124,10 @@ const MyApplicationViewPage = () => {
                             <Box>
                                 <Typography variant="body1">{application.coverLetter}</Typography>
                             </Box>
+                        )}
+
+                        {tabValue === "interview-schedules" && (
+                            <ApplicationInterviews applicationId={application.id} />
                         )}
                     </Box>
                 </Box>

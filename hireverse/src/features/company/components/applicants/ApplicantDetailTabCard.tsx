@@ -7,10 +7,18 @@ import HiringProgress from "./HiringProgress";
 import { addCommentToApplication, updateJobApplicationStatus } from "@core/api/company/jobApplicationApi";
 import { toast } from "sonner";
 import { momentDateFormatter } from "@core/utils/helper";
+import CustomDialog from "@core/components/ui/CustomDialog";
+import InterviewScheduleForm from "../forms/InterviewScheduleForm";
+import { InterviewType } from "@core/types/interview.interface";
+import { scheduleInterview } from "@core/api/company/interview";
+import ApplicationInterviews from "../../../shared/ApplicationInterviews";
+import { Add } from "@mui/icons-material";
 
 type ApplicantDetailTabCardProps = {
     data: {
         applicationId: string;
+        applicantId: string;
+        jobId: string;
         resume: string;
         ResumeComment?: {
             text: string,
@@ -37,6 +45,8 @@ const ApplicantDetailTabCard = ({ data, onStatusChanged }: ApplicantDetailTabCar
     const [status, seStatus] = useState<JobApplicationStatus>(data.hiringProgress);
     const [declinedReason, setDeclinedReason] = useState<string | undefined>(data.declinedReason);
 
+    const [showInterviewForm, setShowInterviewForm] = useState(false);
+    const [refreshInterviews, setRefreshInterviews] = useState(0);
 
     useEffect(() => {
         if (data.ResumeComment?.text) {
@@ -70,6 +80,11 @@ const ApplicantDetailTabCard = ({ data, onStatusChanged }: ApplicantDetailTabCar
     };
 
     const handleNextStage = async (nextStage: JobApplicationStatus) => {
+        if (nextStage === "interview") {
+            setShowInterviewForm(true);
+            return;
+        }
+
         setChangingStatus(true)
         try {
             await updateJobApplicationStatus(applicationId, { status: nextStage });
@@ -97,6 +112,31 @@ const ApplicantDetailTabCard = ({ data, onStatusChanged }: ApplicantDetailTabCar
         }
     }
 
+    const handleScheduleSubmit = async (schedule: { scheduledTime: Date; type: InterviewType; description?: string }) => {
+        setChangingStatus(true)
+        try {
+            await scheduleInterview({
+                ...schedule,
+                applicantId: data.applicantId,
+                applicationId: data.applicationId,
+                jobId: data.jobId,
+            });
+            onStatusChanged("interview");
+            seStatus("interview");
+            setShowInterviewForm(false);
+            setRefreshInterviews(prev => prev + 1);
+            toast.success("Interview Scheduled");
+        } catch (error: any) {
+            toast.error(error.message || error || "Failed to schedule interview");
+        } finally {
+            setChangingStatus(false)
+        }
+    };
+
+    const handleScheduleCancel = () => {
+        setShowInterviewForm(false);
+    };
+
     return (
         <Box sx={{
             backgroundColor: "white",
@@ -116,7 +156,7 @@ const ApplicantDetailTabCard = ({ data, onStatusChanged }: ApplicantDetailTabCar
                     <Tab label="Cover Letter" value={"cover-letter"} />
                 )}
                 <Tab label="Hiring Progress" value={"hiring-progress"} />
-                <Tab label="Interview Schedule" value={"interview-schedule"} />
+                <Tab label="Interview Schedules" value={"interview-schedule"} />
             </Tabs>
 
             {/* Content Section */}
@@ -215,16 +255,34 @@ const ApplicantDetailTabCard = ({ data, onStatusChanged }: ApplicantDetailTabCar
                 {/* Interview Schedule Tab */}
                 {selectedTab === "interview-schedule" && (
                     <Box>
-                        <Typography variant="body1" fontWeight="bold" >
-                            Interview Schedules
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{ marginTop: 1 }}>
-                            {"No interview scheduled"}
-                        </Typography>
+                        {!['hired', 'declined'].includes(status) && (
+                            <Box sx={{ mb: 3 }}>
+                                <Button
+                                    variant="outlined"
+                                    startIcon={<Add />}
+                                    onClick={() => setShowInterviewForm(true)}
+                                    disabled={changingStatus}
+                                >
+                                    {changingStatus ? (
+                                        <CircularProgress size={24} color="inherit" />
+                                    ) : (
+                                        "Schedule New Interview"
+                                    )}
+                                </Button>
+                            </Box>
+                        )}
+                        <ApplicationInterviews
+                            key={refreshInterviews}
+                            applicationId={data.applicationId}
+                        />
                     </Box>
                 )}
 
             </Box>
+
+            <CustomDialog open={showInterviewForm} title="Schedule Interview" onClose={handleScheduleCancel}>
+                <InterviewScheduleForm onSubmit={handleScheduleSubmit} onCancel={handleScheduleCancel} />
+            </CustomDialog>
         </Box>
     );
 };

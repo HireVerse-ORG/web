@@ -170,9 +170,9 @@ const MyApplicationsPage = () => {
             minWidth: 150,
             align: "center",
             render: (row: IJobApplicationWithCompanyProfile) => {
-                const viewInterviewDetails = () => {
-                    window.location.href = `/interview-details/${row.id}`;
-                };
+                // const viewInterviewDetails = () => {
+                //     window.location.href = `/interview-details/${row.id}`;
+                // };
 
                 const viewOfferLetter = () => {
                     window.location.href = `/offer-letter/${row.id}`;
@@ -199,15 +199,16 @@ const MyApplicationsPage = () => {
                             >
                                 Withdraw
                             </Button>
-                        ) : row.status === "interview" ? (
-                            <Button
-                                variant="contained"
-                                size="small"
-                                onClick={viewInterviewDetails}
-                            >
-                                View Interview Details
-                            </Button>
-                        ) : row.status === "hired" ? (
+                        // ) : row.status === "interview" ? (
+                        //     <Button
+                        //         variant="contained"
+                        //         size="small"
+                        //         onClick={viewInterviewDetails}
+                        //     >
+                        //         View Interview Details
+                        //     </Button>
+                        // ) 
+                        ): row.status === "hired" ? (
                             <Button
                                 variant="contained"
                                 size="small"

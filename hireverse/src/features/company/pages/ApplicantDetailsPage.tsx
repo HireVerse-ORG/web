@@ -102,6 +102,8 @@ const ApplicantDetailsPage = () => {
                     <ApplicantDetailTabCard
                         data={{
                             applicationId: application.id,
+                            applicantId: application.userId,
+                            jobId: application.jobId,
                             resume: application.resume,
                             ResumeComment: application?.comment,
                             hiringProgress: application.status,
