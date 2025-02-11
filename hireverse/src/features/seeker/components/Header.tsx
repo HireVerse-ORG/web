@@ -70,6 +70,7 @@ const Header = () => {
         "/seeker": "Dashboard",
         "/seeker/messages": "Messages",
         "/seeker/my-applications": "My Applications",
+        "/seeker/schedules": "My Schedules",
         "/seeker/find-jobs": "Find Jobs",
         "/seeker/browse-companies": "Discover Companies",
         "/seeker/view-job/:id": "Job Description",

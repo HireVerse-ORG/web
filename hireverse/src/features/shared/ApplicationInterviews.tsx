@@ -2,11 +2,11 @@ import { useState } from "react";
 import { cancelInterview } from "@core/api/company/interview";
 import { acceptInterview, rejectInterview } from "@core/api/seeker/interview";
 import { listApplicationInterviews } from "@core/api/shared/interview";
-import InterviewScheduleCard from "@core/components/ui/InterviewScheduleCard";
+import InterviewScheduleCard, { InterviewScheduleCardSkeleton } from "@core/components/ui/InterviewScheduleCard";
 import useGet from "@core/hooks/useGet";
 import useAppSelector from "@core/hooks/useSelector";
 import { IInterview } from "@core/types/interview.interface";
-import { Alert, Box, Button, Typography, Skeleton, CircularProgress } from "@mui/material";
+import { Alert, Box, Button, Typography, CircularProgress } from "@mui/material";
 import { toast } from "sonner";
 
 type ApplicationInterviewsProps = {
@@ -24,17 +24,10 @@ const ApplicationInterviews = ({ applicationId }: ApplicationInterviewsProps) =>
 
     // Loading state
     if (loading) return (
-        <Box>
-            {[1, 2].map((i) => (
-                <Box key={i} mb={2} p={2} border={1} borderColor="grey.300" borderRadius={2}>
-                    <Skeleton variant="text" width="40%" height={30} />
-                    <Skeleton variant="text" width="60%" height={24} />
-                    <Skeleton variant="text" width="60%" height={24} />
-                    <Skeleton variant="text" width="60%" height={24} />
-                    <Box mt={2} display="flex" gap={1}>
-                        <Skeleton variant="rectangular" width={100} height={36} />
-                        <Skeleton variant="rectangular" width={100} height={36} />
-                    </Box>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+            {Array.from({ length: 3 }).map((_, index) => (
+                <Box key={index} sx={{ width: "100%", maxWidth: "300px" }}>
+                    <InterviewScheduleCardSkeleton />
                 </Box>
             ))}
         </Box>
@@ -110,64 +103,66 @@ const ApplicationInterviews = ({ applicationId }: ApplicationInterviewsProps) =>
     };
 
     return (
-        <Box>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
             {interviews.map((interview) => (
-                <InterviewScheduleCard key={interview.id} data={{
-                    scheduledTime: interview.scheduledTime,
-                    type: interview.type,
-                    status: interview.status,
-                    description: interview.description,
-                }}>
-                    {(user?.role === 'seeker' || user?.role === 'company') && interview.status === 'scheduled' && (
-                        <Box mt={2} display="flex" gap={1}>
-                            {user?.role === 'seeker' && (
-                                <>
-                                    <Button
-                                        variant="contained"
-                                        size="small"
-                                        onClick={() => handleAccept(interview.id)}
-                                        disabled={!!acceptLoading || !!rejectLoading}
-                                    >
-                                        {acceptLoading === interview.id ? (
-                                            <CircularProgress size={20} color="inherit" />
-                                        ) : (
-                                            "Accept"
-                                        )}
-                                    </Button>
+                <Box key={interview.id} sx={{ width: "100%", maxWidth: "300px" }}>
+                    <InterviewScheduleCard  data={{
+                        scheduledTime: interview.scheduledTime,
+                        type: interview.type,
+                        status: interview.status,
+                        description: interview.description,
+                    }}>
+                        {(user?.role === 'seeker' || user?.role === 'company') && interview.status === 'scheduled' && (
+                            <Box mt={2} display="flex" gap={1}>
+                                {user?.role === 'seeker' && (
+                                    <>
+                                        <Button
+                                            variant="contained"
+                                            size="small"
+                                            onClick={() => handleAccept(interview.id)}
+                                            disabled={!!acceptLoading || !!rejectLoading}
+                                        >
+                                            {acceptLoading === interview.id ? (
+                                                <CircularProgress size={20} color="inherit" />
+                                            ) : (
+                                                "Accept"
+                                            )}
+                                        </Button>
+                                        <Button
+                                            variant="outlined"
+                                            size="small"
+                                            color="error"
+                                            onClick={() => handleReject(interview.id)}
+                                            disabled={!!acceptLoading || !!rejectLoading}
+                                        >
+                                            {rejectLoading === interview.id ? (
+                                                <CircularProgress size={20} color="inherit" />
+                                            ) : (
+                                                "Reject"
+                                            )}
+                                        </Button>
+                                    </>
+                                )}
+
+                                {user?.role === 'company' && (
                                     <Button
                                         variant="outlined"
                                         size="small"
                                         color="error"
-                                        onClick={() => handleReject(interview.id)}
-                                        disabled={!!acceptLoading || !!rejectLoading}
+                                        onClick={() => handleCancel(interview.id)}
+                                        disabled={!!cancelLoading}
                                     >
-                                        {rejectLoading === interview.id ? (
+                                        {cancelLoading === interview.id ? (
                                             <CircularProgress size={20} color="inherit" />
                                         ) : (
-                                            "Reject"
+                                            "Cancel"
                                         )}
                                     </Button>
-                                </>
-                            )}
-
-                            {user?.role === 'company' && (
-                                <Button
-                                    variant="outlined"
-                                    size="small"
-                                    color="error"
-                                    onClick={() => handleCancel(interview.id)}
-                                    disabled={!!cancelLoading}
-                                >
-                                    {cancelLoading === interview.id ? (
-                                        <CircularProgress size={20} color="inherit" />
-                                    ) : (
-                                        "Cancel"
-                                    )}
-                                </Button>
-                            )}
-                        </Box>
-                    )}
-                </InterviewScheduleCard>
+                                )}
+                            </Box>
+                        )}
+                    </InterviewScheduleCard>
+                </Box>
             ))}
         </Box>
     );
