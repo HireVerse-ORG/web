@@ -19,6 +19,7 @@ import ApplicantDetailsPage from "./pages/ApplicantDetailsPage";
 import ApplicationsListPage from "./pages/ApplicationsListPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import MessagesPage from "../shared/MessagesPage";
+import MySchedulesPage from "../shared/MySchedulesPage";
 
 
 const CompanyRoutes = () => {
@@ -38,6 +39,7 @@ const CompanyRoutes = () => {
               <Route path="/job/:id" element={<CompanyJobViewPage />} />
               <Route path="/applicants" element={<ApplicationsListPage />} />
               <Route path="/applicant/:id" element={<ApplicantDetailsPage />} />
+              <Route path="/schedules" element={<MySchedulesPage />} />
               <Route path="/pricing-plans" element={<PricingPlansPage />} />
               <Route path="/notifications" element={<NotificationsPage />} />
               <Route path="/settings" element={<SettingsPage />} />

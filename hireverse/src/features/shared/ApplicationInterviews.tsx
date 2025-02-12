@@ -2,7 +2,7 @@ import { useState } from "react";
 import { cancelInterview } from "@core/api/company/interview";
 import { acceptInterview, rejectInterview } from "@core/api/seeker/interview";
 import { listApplicationInterviews } from "@core/api/shared/interview";
-import InterviewScheduleCard, { InterviewScheduleCardSkeleton } from "@core/components/ui/InterviewScheduleCard";
+import InterviewScheduleCard, { InterviewScheduleCardSkeleton } from "@core/components/interview/InterviewScheduleCard";
 import useGet from "@core/hooks/useGet";
 import useAppSelector from "@core/hooks/useSelector";
 import { IInterview } from "@core/types/interview.interface";
@@ -106,19 +106,20 @@ const ApplicationInterviews = ({ applicationId }: ApplicationInterviewsProps) =>
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
             {interviews.map((interview) => (
                 <Box key={interview.id} sx={{ width: "100%", maxWidth: "300px" }}>
-                    <InterviewScheduleCard  data={{
+                    <InterviewScheduleCard data={{
                         scheduledTime: interview.scheduledTime,
                         type: interview.type,
                         status: interview.status,
                         description: interview.description,
                     }}>
-                        {(user?.role === 'seeker' || user?.role === 'company') && interview.status === 'scheduled' && (
+                        {user?.role === 'seeker' && interview.status === 'scheduled' && (
                             <Box mt={2} display="flex" gap={1}>
                                 {user?.role === 'seeker' && (
                                     <>
                                         <Button
                                             variant="contained"
                                             size="small"
+                                            fullWidth
                                             onClick={() => handleAccept(interview.id)}
                                             disabled={!!acceptLoading || !!rejectLoading}
                                         >
@@ -131,6 +132,7 @@ const ApplicationInterviews = ({ applicationId }: ApplicationInterviewsProps) =>
                                         <Button
                                             variant="outlined"
                                             size="small"
+                                            fullWidth
                                             color="error"
                                             onClick={() => handleReject(interview.id)}
                                             disabled={!!acceptLoading || !!rejectLoading}
@@ -143,11 +145,15 @@ const ApplicationInterviews = ({ applicationId }: ApplicationInterviewsProps) =>
                                         </Button>
                                     </>
                                 )}
-
-                                {user?.role === 'company' && (
+                            </Box>
+                        )}
+                        {user?.role === 'company' && (
+                            <Box mt={2} display="flex" gap={1}>
+                                {interview.status != "expired" && (
                                     <Button
                                         variant="outlined"
                                         size="small"
+                                        fullWidth
                                         color="error"
                                         onClick={() => handleCancel(interview.id)}
                                         disabled={!!cancelLoading}

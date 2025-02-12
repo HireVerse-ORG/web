@@ -16,7 +16,7 @@ import NotificationsPage from "./pages/NotificationsPage";
 import MyApplicationViewPage from "./pages/MyApplicationViewPage";
 import BrowseCompaniesPage from "./pages/BrowseCompaniesPage";
 import MessagesPage from "../shared/MessagesPage";
-import MySchedulesPage from "./pages/MySchedulesPage";
+import MySchedulesPage from "../shared/MySchedulesPage";
 
 
 const SeekerRoutes = () => {
