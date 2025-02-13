@@ -1,12 +1,14 @@
 import { cancelInterview } from "@core/api/company/interview";
 import { acceptInterview, rejectInterview } from "@core/api/seeker/interview";
 import { ListMyInterviewSchedules } from "@core/api/shared/interview";
+import { startInterview } from "@core/api/shared/meetingApi";
 import InterviewFilters, { InterviewFilterValues } from "@core/components/interview/InterviewFilters";
 import InterviewScheduleCard, { InterviewScheduleCardSkeleton } from "@core/components/interview/InterviewScheduleCard";
 import useGet from "@core/hooks/useGet";
 import useAppSelector from "@core/hooks/useSelector";
 import { IInterviewWithApplicationDetails, InterviewStatus, InterviewType } from "@core/types/interview.interface";
 import { IPaginationResponse } from "@core/types/pagination.interface";
+import { VideoCall } from "@mui/icons-material";
 import { Box, Typography, CircularProgress, Button, Pagination } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -53,6 +55,7 @@ const MySchedulesPage = () => {
   const [schedules, setSchedules] = useState<IInterviewWithApplicationDetails[]>([]);
   const [activeButtonInterviewId, setActiveButtonInterviewId] = useState<string | null>(null);
   const [cancelLoading, setCancelLoading] = useState<string | null>(null);
+  const [meetingLoading, setMeetingLoading] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -137,6 +140,18 @@ const MySchedulesPage = () => {
       setCancelLoading(null);
     }
   };
+
+  const handleStartMeeting = async (interviewId: string) => {
+    setMeetingLoading(true);
+    try {
+      const meeting = await startInterview({interviewId});
+      window.open(`/meeting/${meeting.roomId}`, "_blank");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setMeetingLoading(false);
+    }
+  }
 
   return (
     <Box sx={{ p: 2 }}>
@@ -251,35 +266,50 @@ const MySchedulesPage = () => {
                   )}
 
                   {user?.role === "company" && (
-                    <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
-                      {interview.status != "expired" && (
+                    <>
+                      <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
+                        {!['expired', 'rejected'].includes(interview.status) && (
+                          <Button
+                            size="small"
+                            fullWidth
+                            variant="outlined"
+                            color="error"
+                            onClick={() => handleCancel(interview.id)}
+                            disabled={cancelLoading === interview.id}
+                          >
+                            {cancelLoading === interview.id ? (
+                              <CircularProgress size={20} color="inherit" />
+                            ) : (
+                              "Cancel"
+                            )}
+                          </Button>
+                        )}
                         <Button
                           size="small"
                           fullWidth
                           variant="outlined"
-                          color="error"
-                          onClick={() => handleCancel(interview.id)}
-                          disabled={cancelLoading === interview.id}
+                          onClick={() =>
+                            handleViewApplication(interview.application.id)
+                          }
+                          sx={{ textWrap: "nowrap" }}
                         >
-                          {cancelLoading === interview.id ? (
-                            <CircularProgress size={20} color="inherit" />
-                          ) : (
-                            "Cancel"
-                          )}
+                          View Application
+                        </Button>
+                      </Box>
+                      {interview.status === "accepted" && interview.type === "online" && (
+                        <Button
+                          fullWidth
+                          variant="contained"
+                          color="primary"
+                          startIcon={<VideoCall />}
+                          onClick={() => handleStartMeeting(interview.id)}
+                          disabled={meetingLoading}
+                          sx={{ mt: 1 }}
+                        >
+                          {meetingLoading ? <CircularProgress size={20} color="inherit" /> : "Start Meeting"}
                         </Button>
                       )}
-                      <Button
-                        size="small"
-                        fullWidth
-                        variant="contained"
-                        onClick={() =>
-                          handleViewApplication(interview.application.id)
-                        }
-                        sx={{ textWrap: "nowrap" }}
-                      >
-                        View Application
-                      </Button>
-                    </Box>
+                    </>
                   )}
                 </InterviewScheduleCard>
               </Box>

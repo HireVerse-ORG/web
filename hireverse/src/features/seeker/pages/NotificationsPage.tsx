@@ -12,6 +12,9 @@ const NotificationsPage = () => {
         case "resume-comment":
           navigate(`/seeker/my-application/${metadata?.job_application_id}`);
           break;
+        case "interview-schedule": 
+          navigate(`/seeker/schedules?statuses=scheduled`);
+          break;
       }
     }
   };

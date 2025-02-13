@@ -9,8 +9,11 @@ const NotificationsPage = () => {
   const handleNotificationClick = (metadata?: Record<string, any>) => {
     if (metadata?.type) {
       switch (metadata.type) {
-        case "resume-comment":
-          navigate(`/seeker/my-application/${metadata?.job_application_id}`);
+        case "interview-accepted":
+          navigate(`/company/schedules?statuses=accepted`);
+          break;
+        case "interview-rejected":
+          navigate(`/company/schedules?statuses=rejected`);
           break;
       }
     }

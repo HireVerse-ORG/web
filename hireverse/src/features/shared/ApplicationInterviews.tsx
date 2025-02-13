@@ -103,7 +103,7 @@ const ApplicationInterviews = ({ applicationId }: ApplicationInterviewsProps) =>
     };
 
     return (
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
             {interviews.map((interview) => (
                 <Box key={interview.id} sx={{ width: "100%", maxWidth: "300px" }}>
                     <InterviewScheduleCard data={{
@@ -113,7 +113,7 @@ const ApplicationInterviews = ({ applicationId }: ApplicationInterviewsProps) =>
                         description: interview.description,
                     }}>
                         {user?.role === 'seeker' && interview.status === 'scheduled' && (
-                            <Box mt={2} display="flex" gap={1}>
+                            <Box display="flex" gap={1}>
                                 {user?.role === 'seeker' && (
                                     <>
                                         <Button
@@ -148,8 +148,8 @@ const ApplicationInterviews = ({ applicationId }: ApplicationInterviewsProps) =>
                             </Box>
                         )}
                         {user?.role === 'company' && (
-                            <Box mt={2} display="flex" gap={1}>
-                                {interview.status != "expired" && (
+                            <Box display="flex" gap={1}>
+                                {!['expired', 'rejected'].includes(interview.status) && (
                                     <Button
                                         variant="outlined"
                                         size="small"

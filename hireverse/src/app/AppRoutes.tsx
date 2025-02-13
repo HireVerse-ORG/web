@@ -12,7 +12,8 @@ const LandingRoutes = lazy(() => import('../features/landing/routes'))
 const AuthPage = lazy(() => import('../features/auth/routes'))
 const AdminRoutes = lazy(() => import('../features/admin/routes'));
 const CompanyRoutes = lazy(() => import('../features/company/routes'));
-const SeekerRoutes = lazy(() => import('../features/seeker/routes')); 
+const SeekerRoutes = lazy(() => import('../features/seeker/routes'));
+const MeetingRoutes = lazy(() => import('../features/meeting/routes'));
 
 
 const AppRoutes = () => {
@@ -20,21 +21,21 @@ const AppRoutes = () => {
     const user = getStoredUser();
 
     useEffect(() => {
-        if(user){
+        if (user) {
             getUser().then((res) => {
-                dispatch(setUser({user: res}))
-            }).catch(() => {})
+                dispatch(setUser({ user: res }))
+            }).catch(() => { })
         }
     }, []);
-    
+
 
     return (
         <BrowserRouter>
-            <Suspense fallback={<PageLoader/>}>
+            <Suspense fallback={<PageLoader />}>
                 <Routes>
                     <Route path="/*" element={<LandingRoutes />} />
 
-                    <Route path='/auth/*' element={<AuthPage/>}/>
+                    <Route path='/auth/*' element={<AuthPage />} />
 
                     <Route
                         path="/admin/*"
@@ -54,7 +55,13 @@ const AppRoutes = () => {
                             <SeekerRoutes />
                         </ProtectedRoute>
                     } />
-                    <Route path="/not-found" element={<NotFoundPage/>} />
+
+                    <Route path="/meeting/*" element={
+                        <ProtectedRoute allowedRoles={['seeker', 'company']}>
+                            <MeetingRoutes />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/not-found" element={<NotFoundPage />} />
                 </Routes>
             </Suspense>
         </BrowserRouter>
