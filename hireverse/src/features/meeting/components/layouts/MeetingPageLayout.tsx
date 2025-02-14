@@ -1,12 +1,12 @@
-import Logo from "@core/components/ui/Logo";
 import ScrollableContainer from "@core/components/ui/ScrollableContainer";
 import { Box } from "@mui/material";
 
 type MeetingPageLayoutProps = {
     children: React.ReactNode;
+    header?: React.ReactNode;
 }
 
-const MeetingPageLayout = ({ children }: MeetingPageLayoutProps) => {
+const MeetingPageLayout = ({ children, header }: MeetingPageLayoutProps) => {
     return (
         <Box
             sx={{
@@ -16,12 +16,9 @@ const MeetingPageLayout = ({ children }: MeetingPageLayoutProps) => {
                 overflow: "hidden",
             }}
         >
-            <Box sx={{
-                paddingBlock: 3,
-                paddingInline: 2,
-            }}>
-                <Logo />
-            </Box>
+            {/* header */}
+            {header}
+            {/* content */}
             <ScrollableContainer
                 sx={{
                     flexGrow: 1,

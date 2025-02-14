@@ -70,16 +70,21 @@ const VideoTile: React.FC<VideoTileProps> = ({ displayName, image, muted, videoO
           sx={{
             width: "100%",
             height: "100%",
-            backgroundColor: "#ddd",
+            backgroundColor: "white",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
           }}
         >
           <Avatar
+            variant="circular"
             src={image || defaultImageUrl}
             alt={displayName || "Video off"}
-            sx={{ width: "auto", height: "70%", fontSize: "3rem" }}
+            sx={{
+              height: "75%",
+              width: "auto",
+              fontSize: "clamp(1.5rem, 3vw, 3rem)",
+            }}
           >
             {!image && displayName ? displayName.charAt(0).toUpperCase() : ""}
           </Avatar>

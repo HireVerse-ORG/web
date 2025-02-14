@@ -2,7 +2,7 @@ import { IJobApplication } from "./job.application.interface";
 
 export type InterviewType = 'online' | 'offline';
 
-export type InterviewStatus = 'scheduled' | 'accepted' | 'rejected' | 'canceled' | 'expired';
+export type InterviewStatus = 'scheduled' | 'accepted' | 'rejected' | 'canceled' | 'expired' | 'completed';
 
 
 export interface IInterview {

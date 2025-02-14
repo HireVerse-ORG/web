@@ -18,3 +18,7 @@ export const scheduleInterview= async (data: {
 export const cancelInterview= async (interviewId: string): Promise<IInterview> => {
     return (await apiWrapper(axios.put<IInterview>(`${baseUrl}/${interviewId}/cancel`))).data;
 };
+
+export const completeInterview= async (interviewId: string): Promise<IInterview> => {
+    return (await apiWrapper(axios.put<IInterview>(`${baseUrl}/${interviewId}/complete`))).data;
+};

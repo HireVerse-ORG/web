@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { cancelInterview } from "@core/api/company/interview";
+import { cancelInterview, completeInterview } from "@core/api/company/interview";
 import { acceptInterview, rejectInterview } from "@core/api/seeker/interview";
 import { listApplicationInterviews } from "@core/api/shared/interview";
 import InterviewScheduleCard, { InterviewScheduleCardSkeleton } from "@core/components/interview/InterviewScheduleCard";
@@ -21,6 +21,7 @@ const ApplicationInterviews = ({ applicationId }: ApplicationInterviewsProps) =>
     const [acceptLoading, setAcceptLoading] = useState<string | null>(null);
     const [rejectLoading, setRejectLoading] = useState<string | null>(null);
     const [cancelLoading, setCancelLoading] = useState<string | null>(null);
+    const [completedLoading, setcompletedLoading] = useState<string | null>(null);
 
     // Loading state
     if (loading) return (
@@ -102,6 +103,26 @@ const ApplicationInterviews = ({ applicationId }: ApplicationInterviewsProps) =>
         }
     };
 
+    const handleCompleted = async (interviewId: string) => {
+        setcompletedLoading(interviewId);
+        try {
+            await completeInterview(interviewId);
+            if (data) {
+                setData({
+                    ...data,
+                    data: data.data.map(interview =>
+                        interview.id === interviewId ? { ...interview, status: 'completed' } : interview
+                    ),
+                });
+            }
+            toast.success("Interview completed successfully!");
+        } catch (error) {
+            toast.error("Failed to completed interview schedule");
+        } finally {
+            setcompletedLoading(null);
+        }
+    };
+
     return (
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
             {interviews.map((interview) => (
@@ -149,21 +170,37 @@ const ApplicationInterviews = ({ applicationId }: ApplicationInterviewsProps) =>
                         )}
                         {user?.role === 'company' && (
                             <Box display="flex" gap={1}>
-                                {!['expired', 'rejected'].includes(interview.status) && (
-                                    <Button
-                                        variant="outlined"
-                                        size="small"
-                                        fullWidth
-                                        color="error"
-                                        onClick={() => handleCancel(interview.id)}
-                                        disabled={!!cancelLoading}
-                                    >
-                                        {cancelLoading === interview.id ? (
-                                            <CircularProgress size={20} color="inherit" />
-                                        ) : (
-                                            "Cancel"
-                                        )}
-                                    </Button>
+                                {!['expired', 'rejected', 'completed'].includes(interview.status) && (
+                                    <>
+                                        <Button
+                                            variant="outlined"
+                                            size="small"
+                                            fullWidth
+                                            color="error"
+                                            onClick={() => handleCancel(interview.id)}
+                                            disabled={!!cancelLoading}
+                                        >
+                                            {cancelLoading === interview.id ? (
+                                                <CircularProgress size={20} color="inherit" />
+                                            ) : (
+                                                "Cancel"
+                                            )}
+                                        </Button>
+                                        <Button
+                                            variant="contained"
+                                            size="small"
+                                            fullWidth
+                                            color="success"
+                                            onClick={() => handleCompleted(interview.id)}
+                                            disabled={!!completedLoading}
+                                        >
+                                            {completedLoading === interview.id ? (
+                                                <CircularProgress size={20} color="inherit" />
+                                            ) : (
+                                                "Completed"
+                                            )}
+                                        </Button>
+                                    </>
                                 )}
                             </Box>
                         )}

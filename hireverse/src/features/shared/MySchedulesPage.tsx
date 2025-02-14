@@ -4,6 +4,7 @@ import { ListMyInterviewSchedules } from "@core/api/shared/interview";
 import { startInterview } from "@core/api/shared/meetingApi";
 import InterviewFilters, { InterviewFilterValues } from "@core/components/interview/InterviewFilters";
 import InterviewScheduleCard, { InterviewScheduleCardSkeleton } from "@core/components/interview/InterviewScheduleCard";
+import { useInterviewScheduleNotification } from "@core/contexts/InterviewScheduleNotification";
 import useGet from "@core/hooks/useGet";
 import useAppSelector from "@core/hooks/useSelector";
 import { IInterviewWithApplicationDetails, InterviewStatus, InterviewType } from "@core/types/interview.interface";
@@ -57,6 +58,8 @@ const MySchedulesPage = () => {
   const [cancelLoading, setCancelLoading] = useState<string | null>(null);
   const [meetingLoading, setMeetingLoading] = useState<boolean>(false);
 
+  const { notifications, setNotifications } = useInterviewScheduleNotification();
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -64,6 +67,16 @@ const MySchedulesPage = () => {
       setSchedules(data.data);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (notifications.length > 0) {
+      setFilters({
+        types: ['online'],
+        statuses: ['accepted'],
+        upcoming: false,
+      })
+    }
+  }, [notifications])
 
   const handlePageChange = (_event: React.ChangeEvent<unknown>, newPage: number) => {
     setCurrentPage(newPage);
@@ -144,8 +157,17 @@ const MySchedulesPage = () => {
   const handleStartMeeting = async (interviewId: string) => {
     setMeetingLoading(true);
     try {
-      const meeting = await startInterview({interviewId});
-      window.open(`/meeting/${meeting.roomId}`, "_blank");
+      const meeting = await startInterview({ interviewId });
+      setNotifications((prev) => {
+        const existingIndex = prev.findIndex((n) => n.interviewId === interviewId);
+        if (existingIndex !== -1) {
+          const updated = [...prev];
+          updated[existingIndex] = { roomId: meeting.roomId, interviewId };
+          return updated;
+        }
+        return [...prev, { roomId: meeting.roomId, interviewId }];
+      });
+      window.open(`/meeting/${meeting.roomId}`, "_self");
     } catch (error) {
       console.log(error);
     } finally {
@@ -199,121 +221,141 @@ const MySchedulesPage = () => {
       ) : (
         <>
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-            {schedules.map((interview) => (
-              <Box key={interview.id} sx={{ width: "100%", maxWidth: "300px" }}>
-                <InterviewScheduleCard
-                  data={{
-                    jobTitle: interview.application?.jobRole || "Unknown",
-                    scheduledTime: interview.scheduledTime,
-                    status: interview.status,
-                    type: interview.type,
-                    description: interview.description,
-                  }}
-                >
-                  {user?.role === "seeker" && (
-                    <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
-                      {interview.status === "scheduled" ? (
-                        <>
+            {schedules.map((interview) => {
+
+              const ongoing = notifications.find(nt => nt.interviewId === interview.id);
+
+              return (
+                <Box key={interview.id} sx={{ width: "100%", maxWidth: "300px" }}>
+                  <InterviewScheduleCard
+                    data={{
+                      jobTitle: interview.application?.jobRole || "Unknown",
+                      scheduledTime: interview.scheduledTime,
+                      status: interview.status,
+                      type: interview.type,
+                      description: interview.description,
+                    }}
+                  >
+                    {user?.role === "seeker" && (
+                      <>
+                        <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
+                          {interview.status === "scheduled" ? (
+                            <>
+                              <Button
+                                size="small"
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                onClick={() => handleAccept(interview.id)}
+                                disabled={
+                                  activeButtonInterviewId !== null &&
+                                  activeButtonInterviewId !== interview.id
+                                }
+                              >
+                                {activeButtonInterviewId === interview.id ? (
+                                  <CircularProgress size={20} color="inherit" />
+                                ) : (
+                                  "Accept"
+                                )}
+                              </Button>
+                              <Button
+                                size="small"
+                                fullWidth
+                                variant="outlined"
+                                color="error"
+                                onClick={() => handleReject(interview.id)}
+                                disabled={
+                                  activeButtonInterviewId !== null &&
+                                  activeButtonInterviewId !== interview.id
+                                }
+                              >
+                                {activeButtonInterviewId === interview.id ? (
+                                  <CircularProgress size={20} color="inherit" />
+                                ) : (
+                                  "Reject"
+                                )}
+                              </Button>
+                            </>
+                          ) : (
+                            <Button
+                              size="small"
+                              fullWidth
+                              variant="outlined"
+                              onClick={() =>
+                                handleViewApplication(interview.application.id)
+                              }
+                              sx={{ textWrap: "nowrap" }}
+                            >
+                              View Application
+                            </Button>
+                          )}
+                        </Box>
+                      </>
+                    )}
+
+                    {user?.role === "company" && (
+                      <>
+                        <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
+                          {!['expired', 'rejected', 'completed'].includes(interview.status) && (
+                            <Button
+                              size="small"
+                              fullWidth
+                              variant="outlined"
+                              color="error"
+                              onClick={() => handleCancel(interview.id)}
+                              disabled={cancelLoading === interview.id}
+                            >
+                              {cancelLoading === interview.id ? (
+                                <CircularProgress size={20} color="inherit" />
+                              ) : (
+                                "Cancel"
+                              )}
+                            </Button>
+                          )}
                           <Button
                             size="small"
+                            fullWidth
+                            variant="outlined"
+                            onClick={() =>
+                              handleViewApplication(interview.application.id)
+                            }
+                            sx={{ textWrap: "nowrap" }}
+                          >
+                            View Application
+                          </Button>
+                        </Box>
+                        {interview.status === "accepted" && interview.type === "online" && !ongoing && (
+                          <Button
                             fullWidth
                             variant="contained"
                             color="primary"
-                            onClick={() => handleAccept(interview.id)}
-                            disabled={
-                              activeButtonInterviewId !== null &&
-                              activeButtonInterviewId !== interview.id
-                            }
+                            startIcon={<VideoCall />}
+                            onClick={() => handleStartMeeting(interview.id)}
+                            disabled={meetingLoading}
+                            sx={{ mt: 1 }}
                           >
-                            {activeButtonInterviewId === interview.id ? (
-                              <CircularProgress size={20} color="inherit" />
-                            ) : (
-                              "Accept"
-                            )}
-                          </Button>
-                          <Button
-                            size="small"
-                            fullWidth
-                            variant="outlined"
-                            color="error"
-                            onClick={() => handleReject(interview.id)}
-                            disabled={
-                              activeButtonInterviewId !== null &&
-                              activeButtonInterviewId !== interview.id
-                            }
-                          >
-                            {activeButtonInterviewId === interview.id ? (
-                              <CircularProgress size={20} color="inherit" />
-                            ) : (
-                              "Reject"
-                            )}
-                          </Button>
-                        </>
-                      ) : (
-                        <Button
-                          size="small"
-                          fullWidth
-                          variant="contained"
-                          onClick={() =>
-                            handleViewApplication(interview.application.id)
-                          }
-                          sx={{ textWrap: "nowrap" }}
-                        >
-                          View Application
-                        </Button>
-                      )}
-                    </Box>
-                  )}
-
-                  {user?.role === "company" && (
-                    <>
-                      <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
-                        {!['expired', 'rejected'].includes(interview.status) && (
-                          <Button
-                            size="small"
-                            fullWidth
-                            variant="outlined"
-                            color="error"
-                            onClick={() => handleCancel(interview.id)}
-                            disabled={cancelLoading === interview.id}
-                          >
-                            {cancelLoading === interview.id ? (
-                              <CircularProgress size={20} color="inherit" />
-                            ) : (
-                              "Cancel"
-                            )}
+                            {meetingLoading ? <CircularProgress size={20} color="inherit" /> : "Start Meeting"}
                           </Button>
                         )}
-                        <Button
-                          size="small"
-                          fullWidth
-                          variant="outlined"
-                          onClick={() =>
-                            handleViewApplication(interview.application.id)
-                          }
-                          sx={{ textWrap: "nowrap" }}
-                        >
-                          View Application
-                        </Button>
-                      </Box>
-                      {interview.status === "accepted" && interview.type === "online" && (
-                        <Button
-                          fullWidth
-                          variant="contained"
-                          color="primary"
-                          startIcon={<VideoCall />}
-                          onClick={() => handleStartMeeting(interview.id)}
-                          disabled={meetingLoading}
-                          sx={{ mt: 1 }}
-                        >
-                          {meetingLoading ? <CircularProgress size={20} color="inherit" /> : "Start Meeting"}
-                        </Button>
-                      )}
-                    </>
-                  )}
-                </InterviewScheduleCard>
-              </Box>
-            ))}
+                      </>
+                    )}
+
+                    {ongoing && (
+                      <Button
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        startIcon={<VideoCall />}
+                        onClick={() => window.open(`/meeting/${ongoing.roomId}`, "_self")}
+                        sx={{ mt: 1 }}
+                      >
+                        Join Meeting
+                      </Button>
+                    )}
+                  </InterviewScheduleCard>
+                </Box>
+              )
+            })}
           </Box>
 
           {/* Pagination */}

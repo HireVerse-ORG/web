@@ -50,7 +50,7 @@ const RoomPage = () => {
     if (meeting.status === "active" && !isParticipant) {
         return (
           <Box p={2}>
-            <Typography variant="h6" color="error">
+            <Typography variant="h6" color="error" textAlign={"center"}>
               You are not authorized to join this meeting.
             </Typography>
           </Box>
@@ -64,7 +64,7 @@ const RoomPage = () => {
             )}
             {joined && stream && <VideoMeeting stream={stream} roomId={roomId!} participants={meeting.participants} hostId={meeting.host}/>}
             {meeting.status !== "active" &&  (
-                <Typography variant="h6" p={2}>
+                <Typography variant="h6" p={2} textAlign={"center"}>
                     This meeting is not active.
                 </Typography>
             )}

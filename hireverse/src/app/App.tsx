@@ -13,6 +13,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { NotificationProvider } from "@core/contexts/NotificationContext";
 import { ChatSocketProvider } from "@core/contexts/ChatSocketContext";
 import { MessageProvider } from "@core/contexts/MessageContext";
+import { InterviewScheduleNotificationProvider } from "@core/contexts/InterviewScheduleNotification";
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -25,15 +26,17 @@ function App() {
             <NotificationProvider>
               <ChatSocketProvider>
                 <MessageProvider>
+                  <InterviewScheduleNotificationProvider>
 
-                <ThemeProvider theme={theme}>
-                  <LocalizationProvider dateAdapter={AdapterMoment}>
-                    <CssBaseline />
-                    <AppRoutes />
-                  </LocalizationProvider>
-                </ThemeProvider>
-                <Toaster richColors={true} visibleToasts={2} />
+                    <ThemeProvider theme={theme}>
+                      <LocalizationProvider dateAdapter={AdapterMoment}>
+                        <CssBaseline />
+                        <AppRoutes />
+                      </LocalizationProvider>
+                    </ThemeProvider>
+                    <Toaster richColors={true} visibleToasts={2} />
 
+                  </InterviewScheduleNotificationProvider>
                 </MessageProvider>
               </ChatSocketProvider>
             </NotificationProvider>

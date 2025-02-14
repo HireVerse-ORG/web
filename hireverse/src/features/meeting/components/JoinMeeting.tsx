@@ -67,6 +67,9 @@ const JoinMeeting: React.FC<JoinMeetingProps> = ({ onJoin }) => {
                 <VideoTile
                     style={{
                         flex: { xs: "none", md: "0 0 60%" },
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                         mr: { md: 2 },
                         mb: { xs: 2, md: 0 },
                     }}

@@ -10,6 +10,7 @@ import VideoTile from "./VideoTile";
 import { UserRoles } from "@core/types/user.interface";
 import { toast } from "sonner";
 import { getUserDashboardPath } from "@core/utils/helper";
+import MeetingHeader from "./MeetingHeader";
 
 interface PeerConnectionData {
     connection: RTCPeerConnection;
@@ -251,11 +252,13 @@ const VideoMeeting = ({ stream, roomId, participants, hostId }: VideoMeetingProp
                 "You are the host. Do you want to end the meeting for everyone?"
             );
 
-            if(confirmed){
-                socket?.emit("end-meeting", { roomId });
-                window.location.href = getUserDashboardPath(user?.role!);
+            if (!confirmed) {
                 return;
             }
+
+            socket?.emit("end-meeting", { roomId });
+            window.location.href = getUserDashboardPath(user?.role!);
+            return;
         }
 
         if (stream) {
@@ -270,10 +273,24 @@ const VideoMeeting = ({ stream, roomId, participants, hostId }: VideoMeetingProp
         }
     };
 
+    const handleNotifyParticipant = (participantId: string) => {
+        socket?.emit("notify-participant-meeting", { participantId, roomId });
+        toast.success("Notification sent to participant.");
+    }
+
     const MY_PROFILE = participants.find((p) => p.id === user?.id);
 
     return (
-        <MeetingPageLayout>
+        <MeetingPageLayout
+            header={
+                <MeetingHeader
+                    myId={user?.id!}
+                    hostId={hostId}
+                    participants={participants}
+                    onNotifyParticipant={handleNotifyParticipant}
+                />
+            }
+        >
             <Box
                 sx={{
                     height: "100%",

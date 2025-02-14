@@ -55,6 +55,7 @@ export function getInterviewStatusDetails(
         rejected: { label: "Rejected", color: "error" },
         canceled: { label: "Canceled", color: "error" },
         expired: { label: "Expired", color: "secondary" },
+        completed: { label: "Completed", color: "success" },
     };
 
     return statusDetails[status] ?? { label: "Unknown", color: "default" };

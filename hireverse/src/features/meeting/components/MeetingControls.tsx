@@ -17,7 +17,7 @@ const MeetingControls = ({
   onEndCall,
 }: MeetingControlsProps) => {
   return (
-    <Box sx={{ mt: 2, display: "flex", justifyContent: "center", gap: 2 }}>
+    <Box sx={{ py: 2, display: "flex", justifyContent: "center", gap: 2 }}>
       <IconButton onClick={onToggleAudio} color="primary">
         {audioEnabled ? <Mic /> : <MicOff />}
       </IconButton>
