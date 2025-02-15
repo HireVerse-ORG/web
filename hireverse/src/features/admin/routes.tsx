@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import AdminDashboard from "./pages/AdminDashboard";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
 import DashboardLayout from "@core/components/layouts/DashboardLayout";
 import Sidebar from "@core/components/ui/Sidebar";
 import SkillsPage from "./pages/SkillsPage";
@@ -14,7 +14,7 @@ const AdminRoutes = () => {
   return (
     <Routes>
       <Route element={<DashboardLayout ContentLayout={ContentLayout} Sidebar={<Sidebar sections={AdminSideBarSections} />} />}>
-        <Route path="/" element={<AdminDashboard />} />
+        <Route path="/" element={<AdminDashboardPage />} />
         <Route path="/seekers" element={<SeekersPage />} />
         <Route path="/companies" element={<CompaniesPage />} />
         <Route path="/skills" element={<SkillsPage />} />
