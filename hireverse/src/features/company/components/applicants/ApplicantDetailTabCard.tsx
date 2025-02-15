@@ -4,7 +4,7 @@ import colors from "@core/theme/colors";
 import DocViewer from "@core/components/ui/DocViewer";
 import { JobApplicationStatus } from "@core/types/job.application.interface";
 import HiringProgress from "./HiringProgress";
-import { addCommentToApplication, updateJobApplicationStatus } from "@core/api/company/jobApplicationApi";
+import { addCommentToApplication, offerJobForApplication, updateJobApplicationStatus } from "@core/api/company/jobApplicationApi";
 import { toast } from "sonner";
 import { momentDateFormatter } from "@core/utils/helper";
 import CustomDialog from "@core/components/ui/CustomDialog";
@@ -13,6 +13,7 @@ import { InterviewType } from "@core/types/interview.interface";
 import { scheduleInterview } from "@core/api/company/interview";
 import ApplicationInterviews from "../../../shared/ApplicationInterviews";
 import { Add } from "@mui/icons-material";
+import OfferLetterForm from "../forms/OfferLetterForm";
 
 type ApplicantDetailTabCardProps = {
     data: {
@@ -26,6 +27,7 @@ type ApplicantDetailTabCardProps = {
         };
         hiringProgress: JobApplicationStatus;
         coverLetter?: string;
+        offerLetter?: string;
         declinedReason?: string;
     };
 
@@ -34,6 +36,8 @@ type ApplicantDetailTabCardProps = {
 
 const ApplicantDetailTabCard = ({ data, onStatusChanged }: ApplicantDetailTabCardProps) => {
     const [comment, setComment] = useState<string>(data?.ResumeComment?.text || "");
+    const [OfferLetterUrl, setOfferLetterUrl] = useState<string | undefined>(data.offerLetter);
+
     const [selectedTab, setSelectedTab] = useState("resume");
     const [loading, setLoading] = useState(false);
     const [existingComment, setExistingComment] = useState<{
@@ -46,6 +50,7 @@ const ApplicantDetailTabCard = ({ data, onStatusChanged }: ApplicantDetailTabCar
     const [declinedReason, setDeclinedReason] = useState<string | undefined>(data.declinedReason);
 
     const [showInterviewForm, setShowInterviewForm] = useState(false);
+    const [showOfferLetterForm, setShowOfferLetterForm] = useState(false);
     const [refreshInterviews, setRefreshInterviews] = useState(0);
 
     useEffect(() => {
@@ -83,6 +88,11 @@ const ApplicantDetailTabCard = ({ data, onStatusChanged }: ApplicantDetailTabCar
         if (nextStage === "interview") {
             setShowInterviewForm(true);
             return;
+        }
+
+        if (nextStage === "offered") {
+            setShowOfferLetterForm(true);
+            return
         }
 
         setChangingStatus(true)
@@ -137,6 +147,30 @@ const ApplicantDetailTabCard = ({ data, onStatusChanged }: ApplicantDetailTabCar
         setShowInterviewForm(false);
     };
 
+    const handleOfferLetterFormSubmit = async (offerLetter: File) => {
+        setShowOfferLetterForm(false);
+        setChangingStatus(true)
+        try {
+            const application = await offerJobForApplication({
+                applicationId: data.applicationId,
+                offerLetter
+            })
+            setOfferLetterUrl(application.offerLetter);
+            onStatusChanged("offered");
+            seStatus("offered");
+            setRefreshInterviews(prev => prev + 1);
+            toast.success("Offer letter sent succesfully");
+        } catch (error: any) {
+            toast.error(error.message || error || "Failed to send offer letter");
+        } finally {
+            setChangingStatus(false)
+        }
+    };
+
+    const handleOfferLetterCancel = () => {
+        setShowOfferLetterForm(false);
+    };
+
     return (
         <Box sx={{
             backgroundColor: "white",
@@ -156,6 +190,9 @@ const ApplicantDetailTabCard = ({ data, onStatusChanged }: ApplicantDetailTabCar
                     <Tab label="Cover Letter" value={"cover-letter"} />
                 )}
                 <Tab label="Hiring Progress" value={"hiring-progress"} />
+                {OfferLetterUrl && (
+                    <Tab label="Offer Letter" value={"offerLetter"} />
+                )}
                 <Tab label="Interview Schedules" value={"interview-schedule"} />
             </Tabs>
 
@@ -252,6 +289,12 @@ const ApplicantDetailTabCard = ({ data, onStatusChanged }: ApplicantDetailTabCar
                     </>
                 )}
 
+                {selectedTab === "offerLetter" && OfferLetterUrl && (
+                    <Box sx={{ marginBottom: 2 }}>
+                        <DocViewer docUrl={OfferLetterUrl} />
+                    </Box>
+                )}
+
                 {/* Interview Schedule Tab */}
                 {selectedTab === "interview-schedule" && (
                     <Box>
@@ -282,6 +325,9 @@ const ApplicantDetailTabCard = ({ data, onStatusChanged }: ApplicantDetailTabCar
 
             <CustomDialog open={showInterviewForm} title="Schedule Interview" onClose={handleScheduleCancel}>
                 <InterviewScheduleForm onSubmit={handleScheduleSubmit} onCancel={handleScheduleCancel} />
+            </CustomDialog>
+            <CustomDialog open={showOfferLetterForm} title="Offer Job" onClose={handleOfferLetterCancel}>
+                <OfferLetterForm onSubmit={handleOfferLetterFormSubmit} onCancel={handleOfferLetterCancel} />
             </CustomDialog>
         </Box>
     );

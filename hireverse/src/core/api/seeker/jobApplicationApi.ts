@@ -30,6 +30,14 @@ export const getApplicationDetails = async (id: string): Promise<IJobApplication
     return (await apiWrapper(axios.get<IJobApplication>(`${baseUrl}/application/${id}`))).data;
 };
 
+export const acceptJobOffer = async (id: string): Promise<void> => {
+    return (await apiWrapper(axios.put<void>(`${baseUrl}/application/${id}/accept-offer`))).data;
+};
+
+export const rejectJobOffer = async (id: string): Promise<void> => {
+    return (await apiWrapper(axios.put<void>(`${baseUrl}/application/${id}/reject-offer`))).data;
+};
+
 export const getMyJobApplications = async (filter: {
     page: number;
     limit: number;

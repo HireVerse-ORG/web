@@ -15,6 +15,11 @@ const NotificationsPage = () => {
         case "interview-schedule": 
           navigate(`/seeker/schedules?statuses=scheduled`);
           break;
+        case "job-offered":
+          if(metadata.job_application_id){
+            navigate(`/seeker/my-application/${metadata?.job_application_id}?tab=offer-letter`);
+          } 
+          break;
       }
     }
   };

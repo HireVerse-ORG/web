@@ -105,6 +105,7 @@ const ApplicantDetailsPage = () => {
                             applicantId: application.userId,
                             jobId: application.jobId,
                             resume: application.resume,
+                            offerLetter: application.offerLetter,
                             ResumeComment: application?.comment,
                             hiringProgress: application.status,
                             coverLetter: application.coverLetter,

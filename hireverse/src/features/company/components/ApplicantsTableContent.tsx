@@ -54,6 +54,7 @@ const ApplicantsTableContent = ({
     { label: "In Review", value: "in-review" },
     { label: "Shortlisted", value: "shortlisted" },
     { label: "Interviewing", value: "interview" },
+    { label: "Offered", value: "offered" },
     { label: "Hired", value: "hired" },
     { label: "Declined", value: "declined" },
   ];

@@ -1,26 +1,78 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DocViewer from '@core/components/ui/DocViewer';
-import { Box, Typography, Tabs, Tab, Skeleton } from '@mui/material';
+import { Box, Typography, Tabs, Tab, Skeleton, Button, CircularProgress } from '@mui/material';
 import ApplicantInfoCard from '../components/ApplicationInfoCard';
 import GoBackTitleButton from '@core/components/ui/GoBackTitleButton';
 import { momentDateFormatter } from '@core/utils/helper';
 import { IJobApplication } from '@core/types/job.application.interface';
-import { getApplicationDetails } from '@core/api/seeker/jobApplicationApi';
+import { acceptJobOffer, getApplicationDetails, rejectJobOffer } from '@core/api/seeker/jobApplicationApi';
 import useGet from '@core/hooks/useGet';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import ApplicationInterviews from '../../shared/ApplicationInterviews';
+import { toast } from 'sonner';
 
 const MyApplicationViewPage = () => {
     const { id: applicationId } = useParams<{ id: string }>();
-    const [tabValue, setTabValue] = useState("resume");
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const initialTab = searchParams.get("tab") || "resume";
+    const [tabValue, setTabValue] = useState(initialTab);
+    const [acceptingOffer, setAcceptingOffer] = useState(false);
+    const [rejectingOffer, setRejectingOffer] = useState(false);
+
+    useEffect(() => {
+        const currentTab = searchParams.get("tab") || "resume";
+        if (currentTab !== tabValue) {
+            setTabValue(currentTab);
+        }
+    }, [searchParams]);
 
     const { data: application,
+        setData: setApplication,
         loading: applicationLoading,
         error: applicationError } = useGet<IJobApplication>(() => getApplicationDetails(applicationId || ""));
 
-    const handleTabChange = (_: React.SyntheticEvent, newtabValue: string) => {
-        setTabValue(newtabValue);
+    const handleTabChange = (_: React.SyntheticEvent, newTabValue: string) => {
+        setTabValue(newTabValue);
+        setSearchParams({ tab: newTabValue });
     };
+
+    const handleAcceptOffer = async (applicationId: string) => {
+        setAcceptingOffer(true)
+        try {
+            await acceptJobOffer(applicationId);
+            if (application) {
+                setApplication({
+                    ...application,
+                    status: "hired"
+                })
+            }
+            toast.success("Offer accepted. Congratulations!");
+        } catch (error) {
+            toast.error("Failed to accept the offer.");
+        } finally {
+            setAcceptingOffer(false);
+        }
+    };
+
+    const handleRejectOffer = async (applicationId: string) => {
+        setRejectingOffer(true);
+        try {
+            await rejectJobOffer(applicationId);
+            if (application) {
+                setApplication({
+                    ...application,
+                    status: "declined"
+                })
+            }
+            toast.info("Offer declined.");
+        } catch (error) {
+            toast.error("Failed to reject the offer.");
+        } finally {
+            setRejectingOffer(false);
+        }
+    };
+
 
     if (applicationLoading) {
         return (
@@ -68,7 +120,7 @@ const MyApplicationViewPage = () => {
                 gap: 2
             }}>
                 {/* left */}
-                <Box sx={{minWidth: "350px"}}>
+                <Box sx={{ minWidth: "350px" }}>
                     <ApplicantInfoCard data={{
                         fullName: application.fullName,
                         appliedJob: application.jobRole,
@@ -91,6 +143,9 @@ const MyApplicationViewPage = () => {
                         <Tab label="Resume" value={"resume"} />
                         {application.coverLetter && (
                             <Tab label="Cover Letter" value={"cover-letter"} />
+                        )}
+                        {application.offerLetter && (
+                            <Tab label="Offer Letter" value={"offer-letter"} />
                         )}
                         <Tab label="Interview Schedules" value={"interview-schedules"} />
                     </Tabs>
@@ -123,6 +178,32 @@ const MyApplicationViewPage = () => {
                         {application.coverLetter && tabValue === "cover-letter" && (
                             <Box>
                                 <Typography variant="body1">{application.coverLetter}</Typography>
+                            </Box>
+                        )}
+
+                        {tabValue === "offer-letter" && application.offerLetter && (
+                            <Box sx={{ marginBottom: 2 }}>
+                                {application.status === "offered" && (
+                                    <Box sx={{ display: 'flex', gap: 2, mb: 2, justifyContent: 'center' }}>
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={() => handleAcceptOffer(application.id)}
+                                            disabled={acceptingOffer || rejectingOffer}
+                                        >
+                                            {acceptingOffer ? <CircularProgress size={20} color='inherit' /> : "Accept Offer"}
+                                        </Button>
+                                        <Button
+                                            variant="outlined"
+                                            color="error"
+                                            onClick={() => handleRejectOffer(application.id)}
+                                            disabled={acceptingOffer || rejectingOffer}
+                                        >
+                                            {rejectingOffer ? <CircularProgress size={20} color='inherit' /> : "Reject Offer"}
+                                        </Button>
+                                    </Box>
+                                )}
+                                <DocViewer docUrl={application.offerLetter} />
                             </Box>
                         )}
 

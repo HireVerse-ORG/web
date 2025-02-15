@@ -2,13 +2,13 @@ import { Box, Button, TextField, Typography, CircularProgress, FormControlLabel,
 import { useFormik } from "formik";
 import colors from "@core/theme/colors";
 import { JobApplicationFormSchema } from "./schema";
-import ResumeUploader from "../../ResumeUploader";
+import ResumeUploader from "@core/components/ui/DocUploader";
 import { useState, useEffect } from "react";
 import { setUserApplicationInfo, getUserApplicationInfo } from "@core/utils/storage";
 import { cloudinaryResumeUploader } from "@core/api/external/cloudinaryApi";
 import { toast } from "sonner";
 import { applyJob } from "@core/api/seeker/jobApplicationApi";
-import { useNavigate } from "react-router-dom"; // import useNavigate
+import { useNavigate } from "react-router-dom";
 import { CheckCircle } from "@mui/icons-material";
 
 type JobApplicationFormProps = {
@@ -36,8 +36,8 @@ const JobApplicationForm = ({ jobData }: JobApplicationFormProps) => {
     const [resumeError, setResumeError] = useState<string | null>(null);
     const [existingResume, setExistingResume] = useState<string | null>(null);
     const [saveInfo, setSaveInfo] = useState<boolean>(false);
-    const [success, setSuccess] = useState<boolean>(false); // success state
-    const navigate = useNavigate(); // hook for navigation
+    const [success, setSuccess] = useState<boolean>(false); 
+    const navigate = useNavigate();
 
     const { jobTitle, companyLogo, companyName, location } = jobData;
 
@@ -282,7 +282,7 @@ const JobApplicationForm = ({ jobData }: JobApplicationFormProps) => {
                             <ResumeUploader
                                 onFileUpload={handleResumeUploader}
                                 error={resumeError || ""}
-                                existingResumeUrl={existingResume || ""}
+                                existingDocUrl={existingResume || ""}
                             />
                         </Box>
 

@@ -19,6 +19,7 @@ export function getJobApplicationStatusDetails(
         "in-review": { label: "In Review", color: "secondary" },
         shortlisted: { label: "Shortlisted", color: "success" },
         interview: { label: "Interviewing", color: "primary" },
+        offered: { label: "Offered", color: "success" },
         hired: { label: "Hired", color: "success" },
         declined: { label: "Unsuitable", color: "error" },
         withdrawn: { label: "Withdrawn", color: "error" },
@@ -66,6 +67,7 @@ export const applicantStagesOrder: JobApplicationStatus[] = [
     "in-review",
     "shortlisted",
     "interview",
+    "offered",
     "hired",
     "declined",
 ];

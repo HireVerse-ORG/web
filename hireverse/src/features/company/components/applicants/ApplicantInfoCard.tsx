@@ -122,7 +122,7 @@ const ApplicantInfoCard = ({
                     </Typography>
 
                     <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        {(["in-review", "interview", "shortlisted"].includes(stage)) && (
+                        {(["in-review", "interview", "shortlisted", "offered"].includes(stage)) && (
                             <Skeleton
                                 variant="circular"
                                 animation="pulse"

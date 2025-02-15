@@ -170,13 +170,6 @@ const MyApplicationsPage = () => {
             minWidth: 150,
             align: "center",
             render: (row: IJobApplicationWithCompanyProfile) => {
-                // const viewInterviewDetails = () => {
-                //     window.location.href = `/interview-details/${row.id}`;
-                // };
-
-                const viewOfferLetter = () => {
-                    window.location.href = `/offer-letter/${row.id}`;
-                };
 
                 return (
                     <>
@@ -198,23 +191,6 @@ const MyApplicationsPage = () => {
                                 disabled={actionloading}
                             >
                                 Withdraw
-                            </Button>
-                        // ) : row.status === "interview" ? (
-                        //     <Button
-                        //         variant="contained"
-                        //         size="small"
-                        //         onClick={viewInterviewDetails}
-                        //     >
-                        //         View Interview Details
-                        //     </Button>
-                        // ) 
-                        ): row.status === "hired" ? (
-                            <Button
-                                variant="contained"
-                                size="small"
-                                onClick={viewOfferLetter}
-                            >
-                                View Offer Letter
                             </Button>
                         ) : (
                             <Button
@@ -268,6 +244,7 @@ const MyApplicationsPage = () => {
                 <Tab label="In Review" value="in-review" />
                 <Tab label="shortlisted" value="shortlisted" />
                 <Tab label="Interviewing" value="interview" />
+                <Tab label="Job Offers" value="offered" />
                 <Tab label="Hired" value="hired" />
                 <Tab label="Withdrawn" value="withdrawn" />
             </Tabs>

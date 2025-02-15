@@ -1,6 +1,6 @@
 import { SeekerProfile } from "./seeker.interface";
 
-export type JobApplicationStatus = 'pending' | 'applied' | 'failed' | 'in-review' | 'shortlisted' | 'interview' | 'hired' |'declined' | 'withdrawn';
+export type JobApplicationStatus = 'pending' | 'applied' | 'failed' | 'in-review' | 'shortlisted' | 'interview' | 'offered' | 'hired' |'declined' | 'withdrawn';
 
 
 export interface IJobApplication {
@@ -14,6 +14,7 @@ export interface IJobApplication {
     phone?: string;
     coverLetter?: string;
     resume: string;
+    offerLetter?: string; 
     status: JobApplicationStatus;
     failedReason: string | null;
     declinedReason?: string | null;

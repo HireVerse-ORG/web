@@ -15,6 +15,7 @@ const stages: (JobApplicationStatus | "hired/declined")[] = [
     "in-review",
     "shortlisted",
     "interview",
+    "offered",
     "hired/declined",
 ];
 
@@ -140,7 +141,7 @@ const HiringProgress = ({
 
             {/* Action Buttons */}
             <Box mt={3} display="flex" flexWrap={"wrap"} gap={2}>
-                {nextStage && hiringStage !== "hired" && hiringStage !== "declined" && (
+                {nextStage && hiringStage !== "hired" && hiringStage !== "declined" && hiringStage != "offered" && (
                     <Button
                         variant="contained"
                         color="primary"
@@ -153,12 +154,13 @@ const HiringProgress = ({
                         }}
                         disabled={disabled}
                     >
-                        Move to{" "}
                         {nextStage === "in-review"
-                            ? "Review"
-                            : nextStage === "hired/declined"
-                                ? "Hiring"
-                                : nextStage.charAt(0).toUpperCase() + nextStage.slice(1)}
+                            ? "Move to Review"
+                            : nextStage === "offered" 
+                                ? "Offer Job"
+                                : nextStage === "hired/declined"
+                                    ? "Move to Hiring"
+                                    : `Move to ${nextStage.charAt(0).toUpperCase() + nextStage.slice(1)}`}
                     </Button>
                 )}
 

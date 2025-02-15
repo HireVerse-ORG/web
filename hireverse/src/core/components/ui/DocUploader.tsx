@@ -3,23 +3,23 @@ import { useState, useEffect } from "react";
 import { AttachFile, Visibility, Delete } from "@mui/icons-material";
 import colors from "@core/theme/colors";
 
-type ResumeUploaderProps = {
+type DocUploaderProps = {
     onFileUpload: (file: File | null) => void;
-    existingResumeUrl?: string; // URL for an existing resume
+    existingDocUrl?: string; // URL for an existing doc
     error?: string;
 };
 
-const ResumeUploader = ({ onFileUpload, existingResumeUrl, error: customError }: ResumeUploaderProps) => {
+const DocUploader = ({ onFileUpload, existingDocUrl, error: customError }: DocUploaderProps) => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [resumeUrl, setResumeUrl] = useState<string | null>(existingResumeUrl || null);
+    const [docUrl, setDocUrl] = useState<string | null>(existingDocUrl || null);
     const [error, setError] = useState<string | null>(customError || null);
     const MAX_SIZE_MB = 5; // 5 MB size limit
 
     useEffect(() => {
-        if (existingResumeUrl) {
-            setResumeUrl(existingResumeUrl);
+        if (existingDocUrl) {
+            setDocUrl(existingDocUrl);
         }
-    }, [existingResumeUrl]);
+    }, [existingDocUrl]);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -49,14 +49,14 @@ const ResumeUploader = ({ onFileUpload, existingResumeUrl, error: customError }:
             // Clear error and set file
             setError(null);
             setSelectedFile(file);
-            setResumeUrl(null); // Remove existing URL when uploading a new file
+            setDocUrl(null); // Remove existing URL when uploading a new file
             onFileUpload(file);
         }
     };
 
     const handleRemove = () => {
         setSelectedFile(null);
-        setResumeUrl(null);
+        setDocUrl(null);
         onFileUpload(null);
     };
 
@@ -64,15 +64,15 @@ const ResumeUploader = ({ onFileUpload, existingResumeUrl, error: customError }:
         if (selectedFile) {
             const fileUrl = URL.createObjectURL(selectedFile);
             window.open(fileUrl, "_blank");
-        } else if (resumeUrl) {
-            window.open(resumeUrl, "_blank");
+        } else if (docUrl) {
+            window.open(docUrl, "_blank");
         }
     };
 
     return (
         <Box sx={{ mt: 2 }}>
             {/* Uploader Box */}
-            {!selectedFile && !resumeUrl && (
+            {!selectedFile && !docUrl && (
                 <Box
                     sx={{
                         border: "2px dashed",
@@ -89,7 +89,7 @@ const ResumeUploader = ({ onFileUpload, existingResumeUrl, error: customError }:
                 >
                     <AttachFile sx={{ color: "primary.main", mr: 1 }} />
                     <Typography variant="body1" color="primary.main">
-                        Attach resume (PDF/DOC)
+                        Attach Document (PDF/DOC)
                     </Typography>
                     <input
                         id="file-input"
@@ -102,7 +102,7 @@ const ResumeUploader = ({ onFileUpload, existingResumeUrl, error: customError }:
             )}
 
             {/* Preview Box */}
-            {(selectedFile || resumeUrl) && (
+            {(selectedFile || docUrl) && (
                 <Box
                     sx={{
                         display: "flex",
@@ -117,7 +117,7 @@ const ResumeUploader = ({ onFileUpload, existingResumeUrl, error: customError }:
                     }}
                 >
                     <Typography variant="body1" color="text.primary">
-                        {selectedFile ? selectedFile.name : "Existing Resume"}
+                        {selectedFile ? selectedFile.name : "Existing Document"}
                     </Typography>
                     <Box>
                         <IconButton onClick={handleView} color="primary" size="small">
@@ -140,4 +140,4 @@ const ResumeUploader = ({ onFileUpload, existingResumeUrl, error: customError }:
     );
 };
 
-export default ResumeUploader;
+export default DocUploader;
