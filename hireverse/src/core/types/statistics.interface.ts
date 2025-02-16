@@ -13,3 +13,13 @@ export interface RevenueStatistics {
     monthRevenue: number;
     yearlyOverview: { month: string; revenue: number }[];
 }
+
+export interface CompanyJobStatistics {
+    jobPosted: number,
+    jobPostTrend: { month: string; count: number }[]
+}
+
+export interface CompanyJobApplicationStatistics {
+    joApplications: number,
+    jobApplicationTrend: { month: string; count: number }[]
+}

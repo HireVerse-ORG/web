@@ -1,4 +1,4 @@
-import { Alert, Box, Grid2, Paper, Skeleton, Typography } from "@mui/material";
+import { Alert, Box, Grid2, Paper, Typography } from "@mui/material";
 import { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { PeopleAlt, Subscriptions, MonetizationOn } from "@mui/icons-material";
 import { useEffect, useState } from "react";
@@ -181,7 +181,6 @@ const AdminDashboardPage = () => {
 
                     <Grid2 size={{ xs: 12, md: 6 }}>
                         <Paper sx={{
-                            p: 2,
                             height: 400,
                             borderRadius: 2,
                             boxShadow: 0

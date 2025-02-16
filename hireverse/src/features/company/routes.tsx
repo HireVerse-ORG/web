@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import CompanyDashboard from "./components/CompanyDashboard";
+import CompanyDashboardPage from "./pages/CompanyDashboardPage";
 import DashboardLayout from "@core/components/layouts/DashboardLayout";
 import Sidebar from "@core/components/ui/Sidebar";
 import SettingsPage from "./pages/SettingsPage";
@@ -30,7 +30,7 @@ const CompanyRoutes = () => {
           <Route element={<DashboardLayout ContentLayout={DashboardContentLayout} Sidebar={<Sidebar sections={CompanySidebarSections} />} />}>
             {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>
-              <Route path="/" element={<CompanyDashboard />} />
+              <Route path="/" element={<CompanyDashboardPage />} />
               <Route path="/messages" element={<MessagesPage />} />
               <Route path="/profile" element={<CompanyProfilePage/>} />
               <Route path="/post-job" element={<PostJobPage />} />

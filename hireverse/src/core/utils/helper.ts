@@ -15,6 +15,8 @@ export const getUserDashboardPath = (user: UserRoles) => {
     return dashboardPath
 }
 
+export const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
 export const maskEmail = (email: string, visibleChars = 2) => {
     const [localPart, domain] = email.split("@");
     const visiblePart = localPart.slice(0, visibleChars);
