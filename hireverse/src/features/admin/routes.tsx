@@ -9,6 +9,7 @@ import SeekersPage from "./pages/SeekersPage";
 import CompaniesPage from "./pages/CompaniesPage";
 import JobCategoryPage from "./pages/JobCategoryPage";
 import { AdminSideBarSections } from "./components/SideBarSections";
+import TransactionPage from "./pages/TransactionPage";
 
 const AdminRoutes = () => {
   return (
@@ -19,6 +20,7 @@ const AdminRoutes = () => {
         <Route path="/companies" element={<CompaniesPage />} />
         <Route path="/skills" element={<SkillsPage />} />
         <Route path="/job-category" element={<JobCategoryPage />} />
+        <Route path="/transactions" element={<TransactionPage />} />
 
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="*" element={<Navigate to={'/admin'} />} />

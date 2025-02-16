@@ -2,23 +2,15 @@ import { Alert, Box, Grid2, Paper, Skeleton, Typography } from "@mui/material";
 import { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { PeopleAlt, Subscriptions, MonetizationOn } from "@mui/icons-material";
 import { useEffect, useState } from "react";
-import { getUserStatistics, UserStatistics } from "@core/api/admin/statisticsApi";
-
-const dashboardData = {
-    totalSubscriptions: 1890,
-    mrr: 62500,
-    revenueData: [
-        { month: 'Jan', revenue: 4000 },
-        { month: 'Feb', revenue: 3000 },
-        { month: 'Mar', revenue: 5000 },
-        { month: 'Apr', revenue: 5780 },
-        { month: 'May', revenue: 7890 },
-        { month: 'Jun', revenue: 6390 },
-    ],
-};
+import { getRevenueStatistics, getSubscriptionStatistics, getUserStatistics } from "@core/api/admin/statisticsApi";
+import { RevenueStatistics, SubscriptionStatistics, UserStatistics } from "@core/types/statistics.interface";
+import MetricSkeleton from "@core/components/ui/MetricSkeleton";
+import ChartSkeleton from "@core/components/ui/ChartSkeleton";
 
 const AdminDashboardPage = () => {
     const [userStatistics, setUserStatistics] = useState<UserStatistics | null>(null);
+    const [subscriptionStatistics, setSubscriptionStatistics] = useState<SubscriptionStatistics | null>(null);
+    const [revenueStatistics, setRevenueStatistics] = useState<RevenueStatistics | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -28,13 +20,15 @@ const AdminDashboardPage = () => {
             setError(null);
 
             try {
-                const [userStats] = await Promise.all([
+                const [userStats, subscriptionStats, revenueStats] = await Promise.all([
                     getUserStatistics(),
-                    // getPaymentStatistics() // Add similar function for payments
+                    getSubscriptionStatistics(),
+                    getRevenueStatistics(),
                 ]);
 
                 setUserStatistics(userStats);
-                // setPaymentStatistics(paymentStats);
+                setSubscriptionStatistics(subscriptionStats);
+                setRevenueStatistics(revenueStats);
             } catch (error) {
                 setError('Failed to load dashboard data');
             } finally {
@@ -44,25 +38,6 @@ const AdminDashboardPage = () => {
 
         fetchData();
     }, []);
-
-    const MetricSkeleton = () => (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Skeleton variant="circular" width={40} height={40} />
-            <Box sx={{ width: '100%' }}>
-                <Skeleton variant="text" width={100} />
-                <Skeleton variant="text" width={80} />
-            </Box>
-        </Box>
-    );
-
-    const ChartSkeleton = () => (
-        <Skeleton
-            variant="rectangular"
-            height={300}
-            sx={{ borderRadius: 2 }}
-            animation="wave"
-        />
-    );
 
     return (
         <Box sx={{ flexGrow: 1, pt: 2, pb: 5 }}>
@@ -89,10 +64,9 @@ const AdminDashboardPage = () => {
                 <Grid2 size={{ xs: 12, md: 4 }}>
                     <Paper sx={{
                         p: 3,
-                        borderRadius: 2,
                         bgcolor: 'primary.main',
                         color: 'primary.contrastText',
-                        boxShadow: 3
+                        boxShadow: 0
                     }}>
                         {loading ? (
                             <MetricSkeleton />
@@ -102,7 +76,7 @@ const AdminDashboardPage = () => {
                                 <Box>
                                     <Typography variant="subtitle1">Total Users</Typography>
                                     <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                                        {userStatistics?.total?.toLocaleString() ?? 'N/A'}
+                                        {userStatistics?.total.toLocaleString() ?? 'N/A'}
                                     </Typography>
                                 </Box>
                             </Box>
@@ -113,40 +87,46 @@ const AdminDashboardPage = () => {
                 <Grid2 size={{ xs: 12, md: 4 }}>
                     <Paper sx={{
                         p: 3,
-                        borderRadius: 2,
                         bgcolor: 'secondary.main',
                         color: 'secondary.contrastText',
-                        boxShadow: 3
+                        boxShadow: 0
                     }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Subscriptions sx={{ fontSize: 40 }} />
-                            <Box>
-                                <Typography variant="subtitle1">Subscriptions</Typography>
-                                <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                                    {dashboardData.totalSubscriptions.toLocaleString()}
-                                </Typography>
+                        {loading ? (
+                            <MetricSkeleton />
+                        ) : (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                <Subscriptions sx={{ fontSize: 40 }} />
+                                <Box>
+                                    <Typography variant="subtitle1">Subscriptions</Typography>
+                                    <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                                        {subscriptionStatistics?.totalSubscriptions.toLocaleString() ?? 'N/A'}
+                                    </Typography>
+                                </Box>
                             </Box>
-                        </Box>
+                        )}
                     </Paper>
                 </Grid2>
 
                 <Grid2 size={{ xs: 12, md: 4 }}>
                     <Paper sx={{
                         p: 3,
-                        borderRadius: 2,
                         bgcolor: 'success.main',
                         color: 'success.contrastText',
-                        boxShadow: 3
+                        boxShadow: 0
                     }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <MonetizationOn sx={{ fontSize: 40 }} />
-                            <Box>
-                                <Typography variant="subtitle1">Monthly Revenue</Typography>
-                                <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                                    ${dashboardData.mrr.toLocaleString()}
-                                </Typography>
+                        {loading ? (
+                            <MetricSkeleton />
+                        ) : (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                <MonetizationOn sx={{ fontSize: 40 }} />
+                                <Box>
+                                    <Typography variant="subtitle1">Monthly Revenue</Typography>
+                                    <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                                        ${revenueStatistics?.monthRevenue.toLocaleString() ?? 'N/A'}
+                                    </Typography>
+                                </Box>
                             </Box>
-                        </Box>
+                        )}
                     </Paper>
                 </Grid2>
 
@@ -170,7 +150,7 @@ const AdminDashboardPage = () => {
                                 </Box>
                             ) : (
                                 <ResponsiveContainer width="100%" height="90%">
-                                    <AreaChart data={dashboardData.revenueData}>
+                                    <AreaChart data={revenueStatistics?.yearlyOverview}>
                                         <defs>
                                             <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
                                                 <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />

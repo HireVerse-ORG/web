@@ -2,6 +2,7 @@ import colors from "@core/theme/colors";
 import { InterviewStatus } from "@core/types/interview.interface";
 import { JobApplicationStatus } from "@core/types/job.application.interface";
 import { JobStatus } from "@core/types/job.interface";
+import { TransactionStatus } from "@core/types/transaction.interface";
 import { keyframes } from "@emotion/react";
 
 type color = "default" | "primary" | "secondary" | "success" | "error" | "warning" | undefined;
@@ -39,6 +40,21 @@ export function getJobPostStatusDetails(
         failed: { label: "Failed", color: "error" },
         closed: { label: "Closed", color: "error" },
         live: { label: "Live", color: "success" }
+    };
+
+    return statusDetails[status] ?? { label: "Unknown", color: "default" };
+}
+
+export function getTransactionStatusDetails(
+    status: TransactionStatus
+): { label: string; color: color } {
+    const statusDetails: Record<
+        TransactionStatus,
+        { label: string; color: color }
+    > = {
+        pending: { label: "Pending", color: "warning" },
+        failed: { label: "Failed", color: "error" },
+        completed: { label: "Completed", color: "success" },
     };
 
     return statusDetails[status] ?? { label: "Unknown", color: "default" };
