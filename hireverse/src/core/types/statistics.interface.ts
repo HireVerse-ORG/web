@@ -23,3 +23,13 @@ export interface CompanyJobApplicationStatistics {
     joApplications: number,
     jobApplicationTrend: { month: string; count: number }[]
 }
+
+export interface SeekerJobApplicationStatistics {
+    totalApplications: number,
+    jobApplicationTrend: { month: string; count: number }[]
+    jobApplicationStatus: { status: string; count: number }[]
+}
+
+export interface SeekerInterviewStatistics {
+    upcomingInterviewCount: number,
+}
