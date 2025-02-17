@@ -1,5 +1,4 @@
 import { getCompanyProfile } from "@core/api/company/profileApi";
-import useGet from "@core/hooks/useGet";
 import { ICompanyProfile } from "@core/types/company.interface";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
@@ -14,15 +13,26 @@ const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
 
 export const CompanyProvider = ({ children }: { children: ReactNode }) => {
     const [companyProfile, setCompanyProfile] = useState<ICompanyProfile | null>(null);
+    const [loading, setLoading] = useState(false);
     const [fetched, setfetched] = useState(false);
-    const { data, loading } = useGet<ICompanyProfile | null>(getCompanyProfile);
 
-    useEffect(() => {
-        if (data) {
-            setCompanyProfile(data);
+    const fetchProfile = async () => {
+        setLoading(true);
+        setfetched(false);
+        try {
+            const profile = await getCompanyProfile();
+            setCompanyProfile(profile);
+        } catch (error) {
+            setCompanyProfile(null);
+        } finally {
+            setLoading(false);
             setfetched(true);
         }
-    }, [data]);
+    }
+
+    useEffect(() => {
+        fetchProfile();
+    }, []);
 
     return (
         <CompanyContext.Provider value={{ companyProfile, setCompanyProfile, loading, fetched }}>
