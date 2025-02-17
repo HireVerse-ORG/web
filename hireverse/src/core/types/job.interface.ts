@@ -73,4 +73,5 @@ export interface IJobWithCompanyProfile extends IJob {
         },
         image: string | null;
     }
+    applied?: boolean;
 }

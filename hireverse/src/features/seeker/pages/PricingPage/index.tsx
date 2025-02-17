@@ -8,6 +8,7 @@ import { useState } from "react";
 import { SeekerPaymentPlans } from "./plan";
 import SubscriptionUsageCard from "@core/components/ui/SubscriptionUsageCard";
 import { APP_URL } from "@core/utils/constants";
+import moment from "moment";
 
 
 function PricingPage() {
@@ -152,7 +153,9 @@ function PricingPage() {
 
             {/* Usage Section */}
             {usage && (
-                <SubscriptionUsageCard title='Your Plan Usage' data={{
+                <SubscriptionUsageCard title='Your Plan Details' data={{
+                    "Started On": `${moment(subscription.startDate).format("DD MMM YYYY")}`,
+                    "Expires On": `${moment(subscription.endDate).format("DD MMM YYYY")}`,
                     "Jobs Applied": usage.jobApplicationsUsed,
                 }} />
             )}

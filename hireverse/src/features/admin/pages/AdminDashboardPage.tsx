@@ -131,10 +131,9 @@ const AdminDashboardPage = () => {
                 </Grid2>
 
                 {/* Charts Section */}
-                <Grid2 size={{ xs: 12 }} container spacing={3} sx={{ mt: 0 }}>
+                <Grid2 size={{ xs: 12 }} container spacing={3} sx={{ mt: 2 }}>
                     <Grid2 size={{ xs: 12, md: 6 }}>
                         <Paper sx={{
-                            p: 2,
                             height: 400,
                             borderRadius: 2,
                             boxShadow: 0

@@ -17,11 +17,12 @@ type JobCardProps = {
         };
     };
     canApply?: boolean;
+    isApplied?: boolean;
     onApply: (jobId: string) => void;
     onCardClick?: (jobId: string) => void;
 };
 
-const JobCard = ({ job, company, onApply, canApply = false, onCardClick }: JobCardProps) => {
+const JobCard = ({ job, company, onApply, canApply = false, onCardClick, isApplied }: JobCardProps) => {
     return (
         <Box
             onClick={() => onCardClick?.(job.id)}
@@ -133,12 +134,14 @@ const JobCard = ({ job, company, onApply, canApply = false, onCardClick }: JobCa
                             fullWidth
                             variant="contained"
                             color="primary"
+                            disabled={isApplied}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 onApply(job.id)
                             }}
+                            sx={{width: 90}}
                         >
-                            Apply
+                            {isApplied ? "Applied" : "Apply"}
                         </Button>
                     </Box>
                 )}

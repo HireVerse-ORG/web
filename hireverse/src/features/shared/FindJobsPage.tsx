@@ -168,6 +168,7 @@ const FindJobsPage = ({ viewJobBaseUrl }: FindJobsProps) => {
                                                     setModelOpen(true);
                                                 }}
                                                 canApply={user ? true : false}
+                                                isApplied={job.applied}
                                                 onCardClick={handleCardClick}
                                             />
                                         </Box>

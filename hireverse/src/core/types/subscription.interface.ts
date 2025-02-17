@@ -4,6 +4,8 @@ export interface ISeekerSubscription {
     plan: SeekerSubscriptioPlan;
     jobApplicationsPerMonth: number;
     canMessageAnyone: boolean;
+    startDate: Date;
+    endDate: Date;
 }
 
 export interface ISeekerSubscriptionUsage {
@@ -17,6 +19,8 @@ export interface ICompanySubscription {
     plan: CompanySubscriptioPlan;
     jobPostLimit: number;
     applicantionAccessLimit: number; 
+    startDate: Date;
+    endDate: Date;
 }
 
 export interface ICompanySubscriptionUsage {

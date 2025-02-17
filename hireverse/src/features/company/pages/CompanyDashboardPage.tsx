@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Grid2, Paper, Alert, capitalize } from "@mui/material";
+import { Box, Typography, Grid2, Paper, Alert, capitalize, Chip } from "@mui/material";
 import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, BarChart, Bar } from "recharts";
 import MetricSkeleton from "@core/components/ui/MetricSkeleton";
 import { Assignment, Subscriptions, Work } from "@mui/icons-material";
@@ -7,6 +7,7 @@ import ChartSkeleton from "@core/components/ui/ChartSkeleton";
 import { useCompanySubscription } from "@core/contexts/CompanySubscriptionContext";
 import { getMyJobApplicationStatistics, getMyJobStatistics } from "@core/api/company/statisticsApi";
 import { CompanyJobApplicationStatistics, CompanyJobStatistics } from "@core/types/statistics.interface";
+import moment from "moment";
 
 const CompanyDashboardPage: React.FC = () => {
     const { subscription } = useCompanySubscription();
@@ -52,6 +53,7 @@ const CompanyDashboardPage: React.FC = () => {
                 <Grid2 size={{ xs: 12, md: 4 }}>
                     <Paper sx={{
                         p: 3,
+                        height: "100%",
                         bgcolor: 'primary.main',
                         color: 'primary.contrastText',
                         boxShadow: 0
@@ -75,6 +77,7 @@ const CompanyDashboardPage: React.FC = () => {
                 <Grid2 size={{ xs: 12, md: 4 }}>
                     <Paper sx={{
                         p: 3,
+                        height: "100%",
                         bgcolor: 'secondary.main',
                         color: 'secondary.contrastText',
                         boxShadow: 0
@@ -110,6 +113,13 @@ const CompanyDashboardPage: React.FC = () => {
                                 <Box>
                                     <Typography variant="subtitle1">Subscription Plan</Typography>
                                     <Typography variant="h4">{subscription?.plan ? capitalize(subscription.plan) : "N/A"}</Typography>
+                                    {subscription?.plan !== "free" && subscription?.endDate && (
+                                        <Chip
+                                            label={`Expires on ${moment(subscription.endDate).format("DD MMM YYYY")}`}
+                                            size="small"
+                                            sx={{ mt: 1, backgroundColor: "rgba(255,255,255,0.3)", color: "inherit" }}
+                                        />
+                                    )}
                                 </Box>
                             </Box>
                         )}

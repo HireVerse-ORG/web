@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Paper, Alert, Grid2, capitalize } from "@mui/material";
+import { Box, Typography, Paper, Alert, Grid2, capitalize, Chip } from "@mui/material";
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { Work, Event, Subscriptions } from "@mui/icons-material";
 import MetricSkeleton from "@core/components/ui/MetricSkeleton";
@@ -7,17 +7,18 @@ import ChartSkeleton from "@core/components/ui/ChartSkeleton";
 import { useSeekerSubscription } from "@core/contexts/SeekerSubscriptionContext";
 import { getMyInterviewStatistics, getMyJobApplicationStatistics } from "@core/api/seeker/statisticsApi";
 import { SeekerJobApplicationStatistics } from "@core/types/statistics.interface";
+import moment from "moment";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
 const SeekerDashboardPage: React.FC = () => {
-    const {subscription} = useSeekerSubscription();
+    const { subscription } = useSeekerSubscription();
     const [jobApplicationStatistics, setJobApplicationStatistics] = useState<SeekerJobApplicationStatistics | null>(null);
-    
+
     const [loading, setLoading] = useState(true);
     const [upcomingInterviews, setUpcomingInterviews] = useState(3);
     const [error, setError] = useState<string | null>(null);
-    
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -55,6 +56,7 @@ const SeekerDashboardPage: React.FC = () => {
                 <Grid2 size={{ xs: 12, md: 4 }}>
                     <Paper sx={{
                         p: 3,
+                        height: "100%",
                         bgcolor: 'primary.main',
                         color: 'primary.contrastText',
                         boxShadow: 0
@@ -79,6 +81,7 @@ const SeekerDashboardPage: React.FC = () => {
                     <Paper sx={{
                         p: 3,
                         bgcolor: 'secondary.main',
+                        height: "100%",
                         color: 'secondary.contrastText',
                         boxShadow: 0
                     }}>
@@ -113,6 +116,13 @@ const SeekerDashboardPage: React.FC = () => {
                                 <Box>
                                     <Typography variant="subtitle1">Subscription Plan</Typography>
                                     <Typography variant="h4">{subscription?.plan ? capitalize(subscription.plan) : "N/A"}</Typography>
+                                    {subscription?.plan !== "free" && subscription?.endDate && (
+                                        <Chip
+                                            label={`Expires on ${moment(subscription.endDate).format("DD MMM YYYY")}`}
+                                            size="small"
+                                            sx={{ mt: 1, backgroundColor: "rgba(255,255,255,0.3)", color: "inherit" }}
+                                        />
+                                    )}
                                 </Box>
                             </Box>
                         )}

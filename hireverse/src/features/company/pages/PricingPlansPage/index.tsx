@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { CompanyPaymentPlans } from './plans';
 import { cancelCompanySubscription, getCompanyPaymentLink } from '@core/api/subscription/companySubscriptionApi';
 import SubscriptionUsageCard from '@core/components/ui/SubscriptionUsageCard';
+import moment from 'moment';
 
 
 const PricingPlansPage = () => {
@@ -149,10 +150,12 @@ const PricingPlansPage = () => {
 
             {/* Usage Section */}
             {usage && (
-                <SubscriptionUsageCard title='Your Plan Usage' data={{
+                <SubscriptionUsageCard title='Your Plan Details' data={{
+                    "Started On": `${moment(subscription.startDate).format("DD MMM YYYY")}`,
+                    "Expires On": `${moment(subscription.endDate).format("DD MMM YYYY")}`,
                     "Jobs Posted": usage.jobsPosted,
                     "Applications Accessed": usage.applicantionAccessed,
-                }} />      
+                }} />
             )}
         </Box>
     );
