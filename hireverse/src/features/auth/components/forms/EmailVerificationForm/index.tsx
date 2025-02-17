@@ -4,13 +4,15 @@ import { EmailVerificationSchema } from "./schema";
 import { requestResetPassword } from "@core/api/auth/authapi";
 import { toast } from "sonner";
 import { useState } from "react";
+import { APP_URL } from "@core/utils/constants";
 
 const EmailVerificationForm = () => {
     const [submitted, setSubmitted] = useState(false);
 
     const handleEmailSubmit = async (values: { email: string }) => {
         try {
-            await requestResetPassword(values);
+            const resetPageLink = `${APP_URL}/auth/reset-password`;
+            await requestResetPassword({...values, resetPageLink});
             toast.success("A reset link send to your mail", {duration: 10000});
             setSubmitted(true);
         } catch (error: any) {

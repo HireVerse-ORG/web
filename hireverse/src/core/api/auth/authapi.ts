@@ -55,7 +55,7 @@ export const verifyUser = async (data: {email: string, otp: string}): Promise<Lo
     }
 }
 
-export const requestResetPassword = async (data: {email: string}) => {
+export const requestResetPassword = async (data: {email: string, resetPageLink: string}) => {
     try {
         return (await axios.post('/user/request-password-reset', data)).data; 
     } catch (error: any) {
