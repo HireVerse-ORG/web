@@ -9,6 +9,7 @@ import { SeekerPaymentPlans } from "./plan";
 import SubscriptionUsageCard from "@core/components/ui/SubscriptionUsageCard";
 import { APP_URL } from "@core/utils/constants";
 import moment from "moment";
+import MyTransactions from "../../../shared/MyTransactions";
 
 
 function PricingPage() {
@@ -153,11 +154,17 @@ function PricingPage() {
 
             {/* Usage Section */}
             {usage && (
-                <SubscriptionUsageCard title='Your Plan Details' data={{
-                    "Started On": `${moment(subscription.startDate).format("DD MMM YYYY")}`,
-                    "Expires On": `${moment(subscription.endDate).format("DD MMM YYYY")}`,
-                    "Jobs Applied": usage.jobApplicationsUsed,
-                }} />
+                <>
+                    <SubscriptionUsageCard title='Your Plan Details' data={{
+                        "Started On": `${moment(subscription.startDate).format("DD MMM YYYY")}`,
+                        "Expires On": `${moment(subscription.endDate).format("DD MMM YYYY")}`,
+                        "Jobs Applied": usage.jobApplicationsUsed,
+                    }} />
+
+                    <Box sx={{mt: 3}}>
+                        <MyTransactions />
+                    </Box>
+                </>
             )}
         </Box>
     );

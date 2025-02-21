@@ -16,7 +16,7 @@ const SeekerDashboardPage: React.FC = () => {
     const [jobApplicationStatistics, setJobApplicationStatistics] = useState<SeekerJobApplicationStatistics | null>(null);
 
     const [loading, setLoading] = useState(true);
-    const [upcomingInterviews, setUpcomingInterviews] = useState(3);
+    const [upcomingInterviews, setUpcomingInterviews] = useState(0);
     const [error, setError] = useState<string | null>(null);
 
 

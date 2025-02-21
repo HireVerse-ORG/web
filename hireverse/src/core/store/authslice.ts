@@ -30,7 +30,7 @@ const authSlice = createSlice({
             }
         },
 
-        setUser: (state, action: PayloadAction<{ user: User}>) => {
+        setUser: (state, action: PayloadAction<{ user: User | null}>) => {
             const {user} = action.payload;
             state.user = user;
             if(sessionStorage.getItem("user")){

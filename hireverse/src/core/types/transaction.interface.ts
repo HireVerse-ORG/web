@@ -7,8 +7,8 @@ export interface ITransaction {
     amount: number;
     currency: string;
     paymentIdentifier?: string;
-    subscriptionId?: string;
     status: TransactionStatus;
+    metadata?: Record<string, any>;
     createdAt: Date;
     updatedAt: Date;
 }

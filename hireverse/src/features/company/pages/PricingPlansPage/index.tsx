@@ -9,6 +9,7 @@ import { CompanyPaymentPlans } from './plans';
 import { cancelCompanySubscription, getCompanyPaymentLink } from '@core/api/subscription/companySubscriptionApi';
 import SubscriptionUsageCard from '@core/components/ui/SubscriptionUsageCard';
 import moment from 'moment';
+import MyTransactions from '../../../shared/MyTransactions';
 
 
 const PricingPlansPage = () => {
@@ -150,12 +151,17 @@ const PricingPlansPage = () => {
 
             {/* Usage Section */}
             {usage && (
-                <SubscriptionUsageCard title='Your Plan Details' data={{
-                    "Started On": `${moment(subscription.startDate).format("DD MMM YYYY")}`,
-                    "Expires On": `${moment(subscription.endDate).format("DD MMM YYYY")}`,
-                    "Jobs Posted": usage.jobsPosted,
-                    "Applications Accessed": usage.applicantionAccessed,
-                }} />
+                <>
+                    <SubscriptionUsageCard title='Your Plan Details' data={{
+                        "Started On": `${moment(subscription.startDate).format("DD MMM YYYY")}`,
+                        "Expires On": `${moment(subscription.endDate).format("DD MMM YYYY")}`,
+                        "Jobs Posted": usage.jobsPosted,
+                        "Applications Accessed": usage.applicantionAccessed,
+                    }} />
+                    <Box sx={{ mt: 3 }}>
+                        <MyTransactions />
+                    </Box>
+                </>
             )}
         </Box>
     );
