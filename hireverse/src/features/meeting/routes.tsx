@@ -1,12 +1,17 @@
+import PageLoader from "@core/components/ui/PageLoader";
+import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
-import RoomPage from "./pages/RoomPage";
+
+const RoomPage = lazy(() => import("./pages/RoomPage"));
 
 const MeetingRoutes = () => {
-    return (
-        <Routes>
-            <Route path=":roomId" element={<RoomPage />} />
-        </Routes>
-    );
-}
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
+        <Route path=":roomId" element={<RoomPage />} />
+      </Routes>
+    </Suspense>
+  );
+};
 
 export default MeetingRoutes;
