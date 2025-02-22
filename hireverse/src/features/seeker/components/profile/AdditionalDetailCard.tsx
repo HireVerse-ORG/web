@@ -7,7 +7,7 @@ type AdditionalDetailCardProps = {
     editable?: boolean;
     username?: string;
 }
-const AdditionalDetailCard = ({ editable, username }: AdditionalDetailCardProps) => {
+const AdditionalDetailCard = ({ editable }: AdditionalDetailCardProps) => {
     return (
         <Box sx={{ padding: 3, border: `1px solid ${colors.borderColour}` }}>
             <Box display="flex" alignItems="center" justifyContent="space-between">

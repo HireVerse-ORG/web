@@ -1,7 +1,6 @@
 import { Box } from "@mui/material";
 import ProfileCard from "../components/profile/ProfileCard";
 import ProfileUrlCard from "../components/profile/ProfileUrlCard";
-import AdditionalDetailCard from "../components/profile/AdditionalDetailCard";
 import AboutMeCard from "../components/profile/AboutMeCard";
 import ExperiencesCard from "../components/profile/ExperiencsCard";
 import EducationCard from "../components/profile/EducationCard";
