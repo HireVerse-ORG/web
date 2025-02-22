@@ -85,7 +85,9 @@ const AuthLayout = ({ children, imageSrc = "/images/working-beach.png"}: AuthLay
                     justifyContent={"center"}
                     alignItems="center"
                     width={"100%"}
-                    height={"100%"} sx={{ overflowY: "scroll", paddingTop: 3}}>
+                    height={"100%"} sx={{ overflowY: "scroll", paddingTop: 3}}
+                    px={isSmallScreen ? 3 : 0}    
+                >
                     {children}
                 </ScrollableContainer>
             </Box>
