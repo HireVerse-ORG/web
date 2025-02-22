@@ -69,8 +69,12 @@ const AuthLayout = ({ children, imageSrc = "/images/working-beach.png"}: AuthLay
                 {isSmallScreen && (
                     <Box width={'100%'} textAlign={"left"} marginBottom={3} sx={{
                         position: "fixed",
-                        top: 16,
-                        left: 16
+                        top: 0,
+                        left: 0,
+                        zIndex: 1000,
+                        backgroundColor: "white",
+                        py: 2,
+                        px: 3,
                     }}>
                         <Logo />
                     </Box>
