@@ -21,6 +21,12 @@ const CountryInput = ({ onCountryChange, error, helperText, initialValue }: Coun
     }, [initialValue]);
 
     const handleInputChange = async (_: any, value: string) => {
+        setSelectedCountry(value);
+
+        if(value){
+            onCountryChange(value); 
+        }
+        
         if (!value) {
             setOptions([]);
             return;
@@ -38,6 +44,7 @@ const CountryInput = ({ onCountryChange, error, helperText, initialValue }: Coun
 
     return (
         <Autocomplete
+            freeSolo
             fullWidth
             options={options}
             value={selectedCountry} 

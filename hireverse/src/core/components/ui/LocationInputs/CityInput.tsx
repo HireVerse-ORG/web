@@ -30,11 +30,17 @@ const CityInput = ({ country, onCityChange, error, helperText, initialValue }: C
     }, [initialValue]);
 
     const handleCityInputChange = async (_: any, value: string) => {
+        setSelectedCity(value);
+
+        if(value){
+            onCityChange(value); 
+        }
+
         if (!country || !value) {
             setCityOptions([]);
             return;
         }
-    
+
         setLoadingCities(true);
         try {
             const cities = await getCities(value, countryCode);
@@ -48,6 +54,7 @@ const CityInput = ({ country, onCityChange, error, helperText, initialValue }: C
 
     return (
         <Autocomplete
+            freeSolo
             fullWidth
             value={selectedCity} 
             options={cityOptions}
